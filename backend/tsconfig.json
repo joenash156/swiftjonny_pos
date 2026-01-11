@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+
+    // File Layout
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // Environment / Module Settings
+    "module": "commonjs",
+    "target": "ESNext",
+    "lib": ["ESNext"],
+
+    // Outputs / Build Options
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    // Strict Type Checking Options
+    "strict": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // Module / Interop Options
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"],
+  "files": ["src/types/express.d.ts"]
+}
