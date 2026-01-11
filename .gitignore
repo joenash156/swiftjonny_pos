@@ -3,3 +3,7 @@ frontend/node_modules
 
 backend/.env
 frontend/.env
+
+backend/dist
+
+backend/src/secret.ts
