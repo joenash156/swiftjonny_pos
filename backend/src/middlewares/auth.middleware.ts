@@ -29,7 +29,7 @@ export async function requireAuth(req:Request, res: Response, next: NextFunction
   try {
     const payload = await verifyAccessToken(token)
 
-    const [user] = await db.query<RowDataPacket[]>("SELECT id, email FROM users WHERE id = ?", [payload.id]);
+    const [user] = await db.query<RowDataPacket[]>("SELECT id, email, role FROM users WHERE id = ?", [payload.id]);
     if(user.length === 0) {
         res.status(401).json({
         success: false,
@@ -42,7 +42,8 @@ export async function requireAuth(req:Request, res: Response, next: NextFunction
     // form a req user for authorization in future requests after login
     req.user = {
       id: payload.id,
-      email: payload.email
+      email: payload.email,
+      role: payload.role
     }
 
     next();

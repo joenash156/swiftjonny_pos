@@ -101,7 +101,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    if(!user.is_approved) {
+    if(user.role !== "admin" && !user.is_approved) {
       res.status(403).json({
         success: false,
         error: "User account pending approval. Be sure your administrator approves you!",
@@ -110,8 +110,8 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     }
 
     // sign/generate refresh and access tokens at login
-    const accessToken = await signAccessToken({ id: user.id, email: user.email });
-    const refreshToken = await signRefreshToken({ id: user.id, email: user.email });
+    const accessToken = await signAccessToken({ id: user.id, email: user.email, role: user.role });
+    const refreshToken = await signRefreshToken({ id: user.id, email: user.email, role: user.role });
 
     // store refresh token in httpOnly cookie
     res.cookie("refreshToken", refreshToken, {
@@ -478,7 +478,7 @@ export const generateNewAccessToken = async (req: Request, res: Response): Promi
     const payload = await verifyRefreshToken(refreshToken);
 
     // check to see if refresh token exists
-    const [rows] = await db.query<RowDataPacket[]>("SELECT id, email, refresh_token_hash FROM users WHERE id = ?", [payload.id]);
+    const [rows] = await db.query<RowDataPacket[]>("SELECT id, email, refresh_token_hash, role FROM users WHERE id = ?", [payload.id]);
 
     if(rows.length === 0) {
       res.status(404).json({
@@ -500,8 +500,8 @@ export const generateNewAccessToken = async (req: Request, res: Response): Promi
     }
 
     // generate new refresh and access token
-    const newAccessToken = await signAccessToken({ id: rows[0]!.id, email: rows[0]!.email });
-    const newRefreshToken = await signRefreshToken({ id: rows[0]!.id, email: rows[0]!.email });
+    const newAccessToken = await signAccessToken({ id: rows[0]!.id, email: rows[0]!.email, role: rows[0]!.role });
+    const newRefreshToken = await signRefreshToken({ id: rows[0]!.id, email: rows[0]!.email, role: rows[0]!.role });
 
     // hash new refresh token
     const newHashedRefreshToken = await hashItem(newRefreshToken);
