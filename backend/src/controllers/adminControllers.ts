@@ -1,6 +1,8 @@
 import db from "../configs/database";
 import { Request, Response } from "express"
 import { ResultSetHeader, RowDataPacket } from "mysql2"; 
+import { updateUserRoleSchema } from "../validators/user.schema";
+import { ZodError } from "zod";
 
 
 // controller to get all cashiers
@@ -207,5 +209,131 @@ export const disableCashier = async (req: Request, res: Response): Promise<void>
 
 // controller to delete/remove a cashier
 export const deleteCashier = async (req: Request, res: Response): Promise<void> => {
+   try {
+    // get id from request params
+    const  { id } = req.params;
 
+    // check if cashier exists
+    const [rows] = await db.query<RowDataPacket[]>("SELECT id, email, is_approved FROM users WHERE id = ? AND role = ?", [id, "cashier"]);
+
+    if(rows.length === 0) {
+      res.status(404).json({
+        success: false,
+        error: "Cashier not found. Might have been already deleted!"
+      });
+      return;
+    }
+
+    // now disable cashier
+    const [result] = await db.query<ResultSetHeader>("DELETE FROM users WHERE id = ? AND role = ?", [id, "cashier"]);
+
+    if(result.affectedRows === 0) {
+      res.status(404).json({
+        success: false,
+        error: "Unable to delete cashier!"
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Cashier deleted successfully!✅",
+      cashier: {
+        id: rows[0]!.id,
+        email: rows[0]!.email
+      }
+    });
+    return;
+
+  } catch(err: unknown) {
+      console.error("Failed deleting cashier:", err);
+      res.status(500).json({
+        success: false,
+        error: "Internal server error while deleting cashier"
+      });
+  }
 }
+
+// controller to update/promote/demote a user role
+export const updateUserRole = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    
+    const validatedUserData = updateUserRoleSchema.parse(req.body);
+
+    const { role } = validatedUserData;
+
+    // Validate role
+    if (!role || (role !== "admin" && role !== "cashier")) {
+      res.status(400).json({
+        success: false,
+        error: "Valid role is required: 'admin' or 'cashier'",
+      });
+      return;
+    }
+
+    // Check if user exists
+    const [rows] = await db.query<RowDataPacket[]>(
+      "SELECT id, email, role FROM users WHERE id = ?",
+      [id]
+    );
+
+    if (rows.length === 0) {
+      res.status(404).json({
+        success: false,
+        error: "User not found!",
+      });
+      return;
+    }
+
+    // Check if the role is already set
+    if (rows[0]!.role === role) {
+      res.status(409).json({
+        success: false,
+        message: `User already has the role '${role}'!`,
+      });
+      return;
+    }
+
+    // Update role
+    const [result] = await db.query<ResultSetHeader>(
+      "UPDATE users SET role = ? WHERE id = ?",
+      [role, id]
+    );
+
+    if (result.affectedRows === 0) {
+      res.status(500).json({
+        success: false,
+        error: "Unable to update user role!",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User role updated successfully!✅",
+      user: {
+        id: rows[0]!.id,
+        email: rows[0]!.email,
+        role,
+      },
+    });
+    return;
+
+  } catch (err: any) {
+    if (err instanceof ZodError) {
+      res.status(400).json({
+        success: false,
+        error: "Invalid request data",
+        issues: err.issues,
+      });
+      return;
+    }
+
+    console.error("Failed updating user role:", err);
+    res.status(500).json({
+      success: false,
+      error: "Internal server error while updating user role",
+    });
+  }
+};

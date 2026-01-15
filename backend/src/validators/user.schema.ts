@@ -46,8 +46,6 @@ export const createUserSchema = z.object({
     .string()
     .min(8, "Password must be at least 8 characters")
     .max(100),
-
-  role: z.enum(["admin", "cashier"]).optional(),
 });
 
 export const loginUserSchema = z.object({
@@ -85,6 +83,6 @@ export const deleteUserSchema = z.object({
     .min(1, "Password is required"),
 })
 
-export const approveUserSchema = z.object({
-  is_approved: z.boolean(),
+export const updateUserRoleSchema = z.object({
+  role: z.enum(["admin", "cashier"]),
 });
