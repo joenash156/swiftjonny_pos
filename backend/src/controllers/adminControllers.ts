@@ -60,7 +60,7 @@ export const getAllCashiers = async (req: Request, res: Response): Promise<void>
 };
 
 // controller get a user by id
-export const getCashiersById = async (req: Request, res: Response): Promise<void> => {
+export const getCashierById = async (req: Request, res: Response): Promise<void> => {
   try {
     // get id from request params
     const  { id } = req.params;
@@ -96,8 +96,8 @@ export const getCashiersById = async (req: Request, res: Response): Promise<void
   
     res.status(200).json({
       success: true,
-      message: "User found!✅",
-      user: rows[0]
+      message: "Cashier found!✅",
+      cashier: rows[0]
     });
     return;    
 
@@ -108,4 +108,9 @@ export const getCashiersById = async (req: Request, res: Response): Promise<void
         error: "Internal server error while fetching cashier"
       });
   }
+}
+
+// controller to approve a cashier
+export const approveCashier = async (req: Request, res: Response): Promise<void> => {
+  
 }

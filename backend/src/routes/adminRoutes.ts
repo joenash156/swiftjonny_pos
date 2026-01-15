@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { requireAdmin } from "../middlewares/role.middleware";
 import { requireAuth } from "../middlewares/auth.middleware";
-import { getAllCashiers, getCashiersById } from "../controllers/adminControllers";
+import { getAllCashiers, getCashierById } from "../controllers/adminControllers";
 
 const router: Router = express.Router();
 
@@ -9,7 +9,7 @@ const router: Router = express.Router();
 router.get("/cashiers", requireAuth, requireAdmin, getAllCashiers);
 
 // router to get a cashier by id (only executed by admins)
-router.get("/cashier/:id", requireAuth, requireAdmin, getCashiersById);
+router.get("/cashier/:id", requireAuth, requireAdmin, getCashierById);
 
 
 export default router;
