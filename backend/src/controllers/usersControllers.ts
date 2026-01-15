@@ -489,6 +489,14 @@ export const generateNewAccessToken = async (req: Request, res: Response): Promi
       return;
     }
 
+    if(!rows[0]!.refresh_token_hash) {
+      res.status(404).json({
+        success: false,
+        error: "Refresh token does not exist"
+      });
+      return;
+    }
+
     // verify refresh token
     const isMatch = await compareHashedItem(refreshToken, rows[0]!.refresh_token_hash);
 

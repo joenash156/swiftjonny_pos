@@ -1,8 +1,6 @@
 import db from "../configs/database";
 import { Request, Response } from "express"
-import { ResultSetHeader, RowDataPacket } from "mysql2";
-import { isUUID } from "../utils/checkID";  
-import { success } from "zod";
+import { ResultSetHeader, RowDataPacket } from "mysql2"; 
 
 
 // controller to get all cashiers
@@ -66,24 +64,6 @@ export const getCashierById = async (req: Request, res: Response): Promise<void>
     // get id from request params
     const  { id } = req.params;
 
-    // check if there is an id at ll
-    if (typeof id !== "string") {
-      res.status(400).json({
-        success: false,
-        error: "Valid user id is required",
-      });
-      return;
-    }
-
-    // check if the id provided is a uuid
-    if(!isUUID(id)) {
-      res.status(400).json({
-        success: false,
-        error: "Invalid user id"
-      });
-      return;
-    }
-
     // get user details from the database
     const [rows] = await db.query<RowDataPacket[]>("SELECT id, firstname, lastname, othername, email, phone, other_phone, is_approved, role, last_login_at, is_profile_complete, created_at FROM users WHERE id = ? AND role = ?", [id, "cashier"]);
 
@@ -117,24 +97,6 @@ export const approveCashier = async (req: Request, res: Response): Promise<void>
     // get id from request params
     const  { id } = req.params;
 
-    // check if there is an id at ll
-    if (typeof id !== "string") {
-      res.status(400).json({
-        success: false,
-        error: "Valid user id is required",
-      });
-      return;
-    }
-
-    // check if the id provided is a uuid
-    if(!isUUID(id)) {
-      res.status(400).json({
-        success: false,
-        error: "Invalid user id"
-      });
-      return;
-    }
-
     // check if cashier exists
     const [rows] = await db.query<RowDataPacket[]>("SELECT id, email, is_approved FROM users WHERE id = ? AND role = ?", [id, "cashier"]);
 
@@ -149,14 +111,14 @@ export const approveCashier = async (req: Request, res: Response): Promise<void>
     // check if cashier is already approved
     if(rows[0]!.is_approved) {
       res.status(409).json({
-        success: true,
-        message: "Cashier is already approved!✅"
+        success: false,
+        error: "Cashier is already approved!"
       });
       return;
     }
 
     // now approve cashier if not approved
-    const [result] = await db.query<ResultSetHeader>("UPDATE users SET is_approved = TRUE WHERE id = ?", [id]);
+    const [result] = await db.query<ResultSetHeader>("UPDATE users SET is_approved = TRUE WHERE id = ? AND role = ?", [id, "cashier"]);
 
     if(result.affectedRows === 0) {
       res.status(404).json({
@@ -168,7 +130,12 @@ export const approveCashier = async (req: Request, res: Response): Promise<void>
 
     res.status(200).json({
       success: true,
-      message: "Cashier approved successfully!✅"
+      message: "Cashier approved successfully!✅",
+      cashier: {
+        id: rows[0]!.id,
+        email: rows[0]!.email,
+        is_approved: 1
+      }
     });
     return;
 
@@ -179,4 +146,66 @@ export const approveCashier = async (req: Request, res: Response): Promise<void>
         error: "Internal server error while approving cashier"
       });
   }
+}
+
+// controller to disable/disprove a cashier
+export const disableCashier = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // get id from request params
+    const  { id } = req.params;
+
+    // check if cashier exists
+    const [rows] = await db.query<RowDataPacket[]>("SELECT id, email, is_approved FROM users WHERE id = ? AND role = ?", [id, "cashier"]);
+
+    if(rows.length === 0) {
+      res.status(404).json({
+        success: false,
+        error: "Cashier not found!"
+      });
+      return;
+    }
+
+    // check if cashier is disabled not approved
+    if(!rows[0]!.is_approved) {
+      res.status(409).json({
+        success: false,
+        error: "Cashier is disabled/not approved!"
+      });
+      return;
+    }
+
+    // now disable cashier
+    const [result] = await db.query<ResultSetHeader>("UPDATE users SET is_approved = FALSE, refresh_token_hash = NULL WHERE id = ? AND role = ?", [id, "cashier"]);
+
+    if(result.affectedRows === 0) {
+      res.status(404).json({
+        success: false,
+        error: "Unable to disable cashier!"
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Cashier disabled successfully!✅",
+      cashier: {
+        id: rows[0]!.id,
+        email: rows[0]!.email,
+        is_approved: 0
+      }
+    });
+    return;
+
+  } catch(err: unknown) {
+      console.error("Failed disabling cashier:", err);
+      res.status(500).json({
+        success: false,
+        error: "Internal server error while disabling cashier"
+      });
+  }
+}
+
+// controller to delete/remove a cashier
+export const deleteCashier = async (req: Request, res: Response): Promise<void> => {
+
 }
