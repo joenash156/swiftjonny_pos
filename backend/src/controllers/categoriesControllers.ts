@@ -2,7 +2,7 @@ import db from "../configs/database";
 import { Request, Response } from "express"
 import { ResultSetHeader, RowDataPacket } from "mysql2"; 
 import { ZodError } from "zod";
-import { createCategoryShema } from "../validators/category.schema";
+import { createCategoryShema, updateCategorySchema } from "../validators/category.schema";
 
 
 // controller to create/insert a category
@@ -25,7 +25,7 @@ export const createCategory = async (req: Request, res: Response): Promise<void>
     }
 
     // insert category into database since it does not exist
-    await db.query<ResultSetHeader>("INSERT INTO categories (name, description) VALUES (?, ?)", [name, description]);
+    await db.query<ResultSetHeader>("INSERT INTO categories (name, description) VALUES (?, ?)", [name, description ?? null]);
 
     res.status(201).json({
       success: true,
@@ -39,13 +39,13 @@ export const createCategory = async (req: Request, res: Response): Promise<void>
 
   } catch(err: unknown) {
       if (err instanceof ZodError) {
-      res.status(400).json({
-        success: false,
-        error: "Invalid request data",
-        issues: err.issues,
-      });
-      return;
-    }
+        res.status(400).json({
+          success: false,
+          error: "Invalid request data",
+          issues: err.issues,
+        });
+        return;
+      }
 
     console.error("Failed to create category: ", err);
     res.status(500).json({
@@ -61,7 +61,7 @@ export const getAllCategories = async (req: Request, res: Response): Promise<voi
   try {
     const { search, sortBy, limitTo, offsetTo } = req.query;
 
-    let query = `SELECT * FROM categories`;
+    let query = `SELECT id, name, description, created_at, updated_at FROM categories`;
 
     const params: (string | number)[] = [];
 
@@ -104,6 +104,137 @@ export const getAllCategories = async (req: Request, res: Response): Promise<voi
       res.status(500).json({
         success: false,
         error: "Internal server error while getting all categories"
+      });
+      return;
+  }
+}
+
+// controller to get a category by id
+export const getCategoryById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // get id from request params
+    const { id } = req.params;
+
+    const [rows] = await db.query<RowDataPacket[]>("SELECT id, name, description, created_at, updated_at FROM categories WHERE id = ?", [id]);
+
+    if(rows.length === 0) {
+      res.status(404).json({
+        success: false,
+        error: "No category found!"
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Category found!✅",
+      count: 1,
+      category: rows[0]
+    });
+    return;
+
+  } catch(err: unknown) {
+      console.error("Failed to get category: ", err);
+      res.status(500).json({
+        success: false,
+        error: "Internal server error while getting category"
+      });
+      return;
+  }
+}
+
+// controller to update category
+export const updateCategory = async (req: Request, res: Response): Promise<void> => {
+  try{
+    // get id from request params
+    const { id } = req.params;
+
+    const validatedCategoryData = updateCategorySchema.parse(req.body);
+    
+    const { name, description } = validatedCategoryData;
+
+    // check if category exists
+    const [rows] = await db.query<RowDataPacket[]>("SELECT name FROM categories WHERE id = ?", [id]);
+
+    if(rows.length === 0) {
+      res.status(404).json({
+        success: false,
+        error: "No category found to update",
+      });
+      return;
+    }
+
+    // check for duplicate upon update
+    if(name) {
+      const [cat] = await db.query<RowDataPacket[]>("SELECT name, description FROM categories WHERE LOWER(name) = LOWER(?) AND id != ?", [name, id]);
+
+      if(cat.length > 0) {
+        res.status(409).json({
+          success: false,
+          error: "Category already exists"
+        });
+        return;
+      }
+    }
+
+    const fields: string[] = [];
+    const values: (string | string[] | number | undefined)[] = [];
+
+    if(name !== undefined) {
+      fields.push("name = ?");
+      values.push(name);
+    }
+    if(description !== undefined) {
+      fields.push("description = ?");
+      values.push(description);
+    }
+
+    if(fields.length === 0) {
+      res.status(400).json({
+        success: false,
+        error: "No field provided to udpate category"
+      });
+      return;
+    }
+
+    values.push(id);
+
+    // update category
+    const [result] = await db.query<ResultSetHeader>(`UPDATE categories SET ${fields.join(", ")} WHERE id = ?`, values);
+
+    if(result.affectedRows === 0) {
+      res.status(404).json({
+        success: false,
+        error: "Unable to update category"
+      });
+      return;
+    }
+
+    // fetch the updated category details
+    const [updatedCat] = await db.query<RowDataPacket[]>("SELECT id, name, description, created_at, updated_at FROM categories WHERE id = ?", [id]);
+
+    res.status(200).json({
+      success: true,
+      message: "Category updated successfully!✅",
+      count: 1,
+      category: updatedCat[0]
+    });
+    return;
+
+  } catch(err: unknown) {
+      if (err instanceof ZodError) {
+        res.status(400).json({
+          success: false,
+          error: "Invalid request data",
+          issues: err.issues,
+        });
+        return;
+      }
+
+      console.error("Failed to update category: ", err);
+      res.status(500).json({
+        success: false,
+        error: "Internal server error while updating category"
       });
       return;
   }
