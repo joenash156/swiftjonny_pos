@@ -25,11 +25,13 @@ const userBaseSchema = {
 
   phone: z
     .string()
+    .trim()
     .regex(/^\+?[0-9]{9,15}$/, "Invalid phone number")
     .optional(),
 
   other_phone: z
     .string()
+    .trim()
     .regex(/^\+?[0-9]{9,15}$/, "Invalid phone number")
     .optional(),
 };
@@ -40,6 +42,7 @@ export const createUserSchema = z.object({
 
   email: z
     .email("Invalid email address")
+    .trim()
     .transform(email => email.toLowerCase()),
 
   password: z
@@ -51,6 +54,7 @@ export const createUserSchema = z.object({
 export const loginUserSchema = z.object({
   email: z
     .email("Invalid email address")
+    .trim()
     .transform(email => email.toLowerCase()),
 
   password: z

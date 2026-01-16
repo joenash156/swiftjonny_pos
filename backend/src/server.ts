@@ -1,6 +1,7 @@
 import express from "express";
 import usersRouter from "./routes/usersRoutes";
 import adminRouter from "./routes/adminRoutes";
+import categoriesRouter from "./routes/categoriesRoutes";
 import "./configs/database"; 
 import cookieParser from "cookie-parser";
 
@@ -11,9 +12,9 @@ app.use(express.json({ limit: "20mb" }))
 app.use(cookieParser());
 
 // API routes
-app.use("/user", usersRouter)
+app.use("/user", usersRouter);
 app.use("/admin", adminRouter);
-app.use("/category")
+app.use("/category", categoriesRouter);
 
 
 app.listen(PORT, () => {
