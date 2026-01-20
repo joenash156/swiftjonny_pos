@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { changePassword, changeThemePreference, createUser, deleteUser, generateNewAccessToken, getUserProfile, loginUser, logoutUser, updateUserProfile } from "../controllers/usersControllers";
+import { changePassword, changeThemePreference, createUser, deleteUser, generateNewAccessToken, getUserProfile, loginUser, logoutUser, updateUserProfile, verifyEmail } from "../controllers/usersControllers";
 import { requireAuth } from "../middlewares/auth.middleware";
 
 
@@ -7,6 +7,9 @@ const router: Router = express.Router();
 
 // router to register user
 router.post("/signup", createUser);
+
+// router to verify email
+router.get("/verify_email", verifyEmail)
 
 // router to login in user
 router.post("/login", loginUser);

@@ -8,4 +8,10 @@ const envSchema = z.object({
   CLIENT_URL: z.url(),
 });
 
+
+export const resendVerificationSchema = z.object({
+  email: z.email(),
+});
+
+
 export const mailEnv = envSchema.parse(process.env);

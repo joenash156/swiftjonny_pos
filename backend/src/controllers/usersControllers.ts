@@ -1,10 +1,13 @@
 import { compareHashedItem, hashItem } from "../utils/hashing"
+import crypto from "crypto";
 import db from "../configs/database";
 import { Request, Response } from "express"
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { changePasswordSchema, changeThemePreferenceSchema, createUserSchema, deleteUserSchema, loginUserSchema, updateUserProfileSchema } from "../validators/user.schema";
 import { ZodError } from "zod";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/jwt";
+import { generateToken } from "../utils/generateToken";
+import { sendVerificationEmail } from "../emails/emails";
 
 // controller to create/insert/signup new user
 export const createUser = async (req: Request, res:Response): Promise<void> => {
@@ -30,14 +33,24 @@ export const createUser = async (req: Request, res:Response): Promise<void> => {
 
     // get user id and hashed password
     const hashedPassword = await hashItem(password);
+
+    // generate email verification token
+    const { plainToken, tokenHash } = await generateToken();
+
+    const emailVerifyExpires = new Date(
+      Date.now() + 20 * 60 * 1000 
+    );
     
     // insert user into the database
-    await db.query<ResultSetHeader>("INSERT INTO users (firstname, lastname, othername, email, password_hash) VALUES (?, ?, ?, ?, ?)", [firstname, lastname, othername || null, email, hashedPassword]);
+    await db.query<ResultSetHeader>("INSERT INTO users (firstname, lastname, othername, email, password_hash, email_verify_token_hash, email_verify_expires) VALUES (?, ?, ?, ?, ?, ?, ?)", [firstname, lastname, othername || null, email, hashedPassword, tokenHash, emailVerifyExpires]);
+
+    // send verification email
+    await sendVerificationEmail(email, firstname, plainToken);
 
     // return user initial user info
     res.status(201).json({
       success: true,
-      message: "User created successfully!✅", 
+      message: "User created successfully!✅. Please check your email to verify your account.", 
       user: {
         firstname,
         lastname,
@@ -69,6 +82,60 @@ export const createUser = async (req: Request, res:Response): Promise<void> => {
   
 }
 
+// controller to verify user email
+export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { token } = req.query;
+
+    if (!token || typeof token !== "string") {
+      res.status(400).json({
+        success: false,
+        error: "Verification token is required",
+      });
+      return;
+    }
+
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+    // find user with valid token
+    const [users] = await db.query<RowDataPacket[]>("SELECT id, is_email_verified FROM users WHERE email_verify_token_hash = ? AND email_verify_expires > NOW()", [tokenHash]);
+
+    if (users.length === 0) {
+      res.status(400).json({
+        success: false,
+        error: "Invalid or expired verification token",
+      });
+      return;
+    }
+
+    // check if already verified
+    if (users[0]!.is_email_verified) {
+      res.status(409).json({
+        success: false,
+        error: "Email is already verified",
+      });
+      return;
+    }
+
+    // verify email & clear token
+    await db.query<ResultSetHeader>(`UPDATE users SET is_email_verified = TRUE, email_verify_token_hash = NULL, email_verify_expires = NULL WHERE id = ?`, [users[0]!.id]);
+
+    res.status(200).json({
+      success: true,
+      message: "Email verified successfully!✅ You can now log in.",
+    });
+    return;
+
+  } catch (err: unknown) {
+      console.error("Email verification failed:", err);
+      res.status(500).json({
+        success: false,
+        error: "Internal server error while verifying email",
+      });
+      return;
+    }
+}
+
 // controller to login user
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -78,7 +145,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const { email, password } = validatedUserData;
 
     // check if the user exists
-    const [rows] = await db.query<RowDataPacket[]>("SELECT id, firstname, lastname, othername, email, password_hash, phone, other_phone, avatar_url, theme_preference, is_approved, is_profile_complete, role, created_at, updated_at FROM users WHERE email = ?", [email]);
+    const [rows] = await db.query<RowDataPacket[]>("SELECT id, firstname, lastname, othername, email, is_email_verified, password_hash, phone, other_phone, avatar_url, theme_preference, is_approved, is_profile_complete, role, created_at, updated_at FROM users WHERE email = ?", [email]);
 
     if(rows.length === 0) {
       res.status(401).json({
@@ -101,6 +168,15 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
+    // ensure user email is verified before login
+    if(user.role !== "admin" && !user.is_email_verified) {
+      res.status(403).json({
+        success: false,
+        error: "Verify your email to login!"
+      });
+      return;
+    }
+    
     // enforces cashiers only but not admins approval before login
     if(user.role !== "admin" && !user.is_approved) {
       res.status(403).json({
@@ -142,6 +218,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         lastname: user.lastname,
         othername: user.othername,
         email: user.email,
+        is_email_verified: user.is_email_verified,
         phone: user.phone,
         other_phone: user.other_phone,
         avatar_url: user.avatar_url,

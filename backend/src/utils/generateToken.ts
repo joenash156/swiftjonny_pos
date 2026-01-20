@@ -10,3 +10,7 @@ export const generateToken = async () => {
   };
 
 };
+
+export const generateEmailVerificationToken = (): string => {
+  return crypto.randomBytes(32).toString("hex");
+};
