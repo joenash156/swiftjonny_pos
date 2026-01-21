@@ -163,7 +163,7 @@ export const getProductById = async (req: Request, res: Response): Promise<void>
     // get id from request params
     const { id } = req.params;
 
-    const [rows] = await db.query<RowDataPacket[]>("SELECT p.id, p.name, p.price, p.stock, p.description, p.image_url, p.created_at, c.id AS category_id, c.name AS category_name FROM products p JOIN categories c ON p.category_id = c.id WHERE p.id = ?", [id])
+    const [rows] = await db.query<RowDataPacket[]>("SELECT p.id, p.name, p.price, p.stock, p.description, p.image_url, p.created_at, p.updated_at, c.id AS category_id, c.name AS category_name FROM products p JOIN categories c ON p.category_id = c.id WHERE p.id = ?", [id])
 
     if(rows.length === 0) {
       res.status(404).json({
@@ -212,10 +212,23 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
       return;
     }
 
+    // validate category if category_id is provided
+    if (category_id !== undefined) {
+      const [categoryRows] = await db.query<RowDataPacket[]>("SELECT id FROM categories WHERE id = ?", [category_id]);
+
+      if (categoryRows.length === 0) {
+        res.status(404).json({
+          success: false,
+          error: "Category not found",
+        });
+        return;
+      }
+    }
+
      // check for duplicate upon update
-    if(name) {
+    if(name !== undefined) {
       // check if product with the same name and category already exist
-      const [existingProductRows] = await db.query<RowDataPacket[]>("SELECT id FROM products WHERE LOWER(name) = LOWER(?) AND category_id = ?", [name, category_id]);
+      const [existingProductRows] = await db.query<RowDataPacket[]>("SELECT id FROM products WHERE LOWER(name) = LOWER(?) AND category_id = ? AND id != ?", [name, category_id, id]);
 
       if(existingProductRows.length > 0) {
         res.status(409).json({
@@ -265,7 +278,7 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
     values.push(id);
 
      // update prodcut
-    const [result] = await db.query<ResultSetHeader>(`UPDATE product SET ${fields.join(", ")} WHERE id = ?`, values);
+    const [result] = await db.query<ResultSetHeader>(`UPDATE products SET ${fields.join(", ")} WHERE id = ?`, values);
 
     if(result.affectedRows === 0) {
       res.status(404).json({
@@ -276,7 +289,7 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
     }
 
     // fetch the updated product details
-    const [updatedProduct] = await db.query<RowDataPacket[]>("SELECT p.id, p.name, p.price, p.stock, p.description, p.image_url, p.created_at, c.id AS category_id, c.name AS category_name FROM products p JOIN categories c ON p.category_id = c.id WHERE p.id = ?", [id]);
+    const [updatedProduct] = await db.query<RowDataPacket[]>("SELECT p.id, p.name, p.price, p.stock, p.description, p.image_url, p.created_at, p.updated_at, c.id AS category_id, c.name AS category_name FROM products p JOIN categories c ON p.category_id = c.id WHERE p.id = ?", [id]);
 
     res.status(200).json({
       success: true,
@@ -304,3 +317,62 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
       return;
   }
 }
+
+// controller to delete product
+export const deleteProduct = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // get id from request params
+    const { id } = req.params;
+
+    // check if product exists
+    const [rows] = await db.query<RowDataPacket[]>("SELECT id, name FROM products WHERE id = ?", [id]);
+
+    if (rows.length === 0) {
+      res.status(404).json({
+        success: false,
+        error: "No product found to delete",
+      });
+      return;
+    }
+
+    // check if any sales item is using the product
+    const [salesItems] = await db.query<RowDataPacket[]>("SELECT id FROM sale_items WHERE product_id = ?", [id]);
+
+    if(salesItems.length > 0) {
+      res.status(409).json({
+        success: false,
+        error: "Product cannot be deleted because it is used by existing sale item(s)"
+      });
+      return;
+    }
+
+    // delete product
+    const [result] = await db.query<ResultSetHeader>("DELETE FROM products WHERE id = ?", [id]);
+
+    if (result.affectedRows === 0) {
+      res.status(500).json({
+        success: false,
+        error: "Failed to delete product",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Product deleted successfully!✅",
+      product: {
+        id,
+        name: rows[0]!.name,
+      },
+    });
+    return;
+
+  } catch (err: unknown) {
+    console.error("Failed to delete product: ", err);
+    res.status(500).json({
+      success: false,
+      error: "Internal server error while deleting product",
+    });
+    return;
+  }
+};

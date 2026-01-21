@@ -60,8 +60,7 @@ export const updateProductSchema = z.object({
     .number()
     .int("Stock must be an integer")
     .min(0, "Stock cannot be negative")
-    .optional()
-    .default(0),
+    .optional(),
   
   category_id: z
   .string()

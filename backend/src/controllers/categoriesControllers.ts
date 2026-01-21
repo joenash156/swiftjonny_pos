@@ -165,7 +165,7 @@ export const updateCategory = async (req: Request, res: Response): Promise<void>
     }
 
     // check for duplicate upon update
-    if(name) {
+    if(name !== undefined) {
       const [cat] = await db.query<RowDataPacket[]>("SELECT name, description FROM categories WHERE LOWER(name) = LOWER(?) AND id != ?", [name, id]);
 
       if(cat.length > 0) {
@@ -263,7 +263,7 @@ export const deleteCategory = async (req: Request, res: Response): Promise<void>
     if(prod.length > 0) {
       res.status(409).json({
         success: false,
-        error: "Category cannot be deleted because it is used by existing products"
+        error: "Category cannot be deleted because it is used by existing product(s)"
       });
       return;
     }
