@@ -36,7 +36,7 @@ export const createProductSchema = z.object({
     .optional()
 });
 
-export const updateProductBaseSchema = z.object({
+export const updateProductSchema = z.object({
   name: z
     .string()
     .trim()

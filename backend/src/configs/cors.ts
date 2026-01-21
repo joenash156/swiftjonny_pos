@@ -20,5 +20,5 @@ export const corsConfig = cors({
   },
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  methods: ["GET", "POST", "PATCH", "DELETE"],
 });

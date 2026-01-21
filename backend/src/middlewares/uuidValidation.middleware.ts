@@ -7,7 +7,7 @@ export const validateUUID = (req: Request, res: Response, next: NextFunction) =>
   if (typeof id !== "string") {
     res.status(400).json({
       success: false,
-      error: "Valid user id is required",
+      error: "Valid id is required",
     });
     return;
   }
@@ -15,7 +15,7 @@ export const validateUUID = (req: Request, res: Response, next: NextFunction) =>
   if (!isUUID(id)) {
     res.status(400).json({
       success: false,
-      error: "Invalid user id",
+      error: "Invalid id",
     });
     return;
   }

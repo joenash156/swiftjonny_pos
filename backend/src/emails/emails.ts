@@ -8,7 +8,7 @@ export const sendVerificationEmail = async (email: string, firstname: string, to
 
   sendEmail({
     to: email,
-    subject: "Verify Your Email - SwiftJonnyPOS",
+    subject: "Verify Your Email - SwiftJonny POS",
     html: VERIFY_EMAIL_HTML_CONTENT
       .replace("{verificationUrl}", verificationUrl)
       .replace("{firstname}", firstname),
@@ -21,7 +21,7 @@ export const sendResetPasswordEmail = async (email: string, firstname: string, t
 
   sendEmail({
     to: email,
-    subject: "Reset your password - SwiftJonnyPOS",
+    subject: "Reset your password - SwiftJonny POS",
     html: RESET_PASSWORD_HTML_CONTENT 
       .replace("{firstname}", firstname)
       .replace("{resetUrl}", resetUrl),
@@ -32,7 +32,7 @@ export const sendResetPasswordSuccessEmail = async (email: string, firstname: st
 
   sendEmail({
     to: email,
-    subject: "Reset password was successful - SwiftJonnyPOS",
+    subject: "Reset password was successful - SwiftJonny POS",
     html: PASSWORD_RESET_SUCCESS_HTML_CONTENT 
       .replace("{firstname}", firstname)
   });

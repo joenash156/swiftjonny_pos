@@ -66,7 +66,7 @@ export const getAllCategories = async (req: Request, res: Response): Promise<voi
     const params: (string | number)[] = [];
 
     if (search && typeof search === "string") {
-      query += " WHERE LOWER(name) LIKE ?";
+      query += " WHERE LOWER(name) LIKE LOWER(?)";
       const searchPattern = `%${search}%`;
       params.push(searchPattern);
     }
@@ -140,7 +140,7 @@ export const getCategoryById = async (req: Request, res: Response): Promise<void
         error: "Internal server error while getting category"
       });
       return;
-  }
+    }
 }
 
 // controller to update a category
