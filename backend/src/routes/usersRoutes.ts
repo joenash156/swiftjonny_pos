@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { changePassword, changeThemePreference, createUser, deleteUser, forgotPassword, generateNewAccessToken, getUserProfile, loginUser, logoutUser, resendVerificationEmail, updateUserProfile, verifyEmail } from "../controllers/usersControllers";
+import { changePassword, changeThemePreference, createUser, deleteUser, forgotPassword, generateNewAccessToken, getUserProfile, loginUser, logoutUser, resendVerificationEmail, resetPassword, updateUserProfile, verifyEmail } from "../controllers/usersControllers";
 import { requireAuth } from "../middlewares/auth.middleware";
 
 
@@ -28,6 +28,9 @@ router.patch("/change_password", requireAuth, changePassword);
 
 // router for forgot password
 router.post("/forgot_password", forgotPassword)
+
+// router to reset user password
+router.post("/reset_password", resetPassword)
 
 // router to update/change user theme preference when logged in (pretected router)
 router.patch("/change_theme_preference", requireAuth, changeThemePreference);

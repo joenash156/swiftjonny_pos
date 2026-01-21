@@ -1,4 +1,3 @@
-// validators/user.schema.ts
 import { z } from "zod";
 import { capitalizeName } from "../utils/normalize";
 
@@ -111,4 +110,16 @@ export const forgotPasswordSchema = z.object({
     .email("Invalid email address")
     .trim()
     .transform(email => email.toLowerCase()),
+})
+
+export const resetPasswordSchema = z.object({
+  new_password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .max(100)
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number")
+    .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character")
+    .regex(/^\S+$/, "Password must not contain spaces"),
 })

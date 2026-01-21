@@ -3,11 +3,11 @@ import crypto from "crypto";
 import db from "../configs/database";
 import { Request, Response } from "express"
 import { ResultSetHeader, RowDataPacket } from "mysql2";
-import { changePasswordSchema, changeThemePreferenceSchema, createUserSchema, deleteUserSchema, forgotPasswordSchema, loginUserSchema, updateUserProfileSchema } from "../validators/user.schema";
+import { changePasswordSchema, changeThemePreferenceSchema, createUserSchema, deleteUserSchema, forgotPasswordSchema, loginUserSchema, resetPasswordSchema, updateUserProfileSchema } from "../validators/user.schema";
 import { ZodError } from "zod";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/jwt";
 import { generateToken } from "../utils/generateToken";
-import { sendResetPasswordEmail, sendVerificationEmail } from "../emails/emails";
+import { sendResetPasswordEmail, sendResetPasswordSuccessEmail, sendVerificationEmail } from "../emails/emails";
 import { resendVerificationSchema } from "../validators/mailer.schema";
 
 // controller to create/insert/signup new user
@@ -596,6 +596,73 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
       res.status(500).json({
         success: false,
         error: "Failed to route forgot password. Internal server error",
+      });
+      return;
+    }
+}
+
+// controller to reset password
+export const resetPassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // get token from request query params
+    const { token } = req.query
+
+    if (!token || typeof token !== "string") {
+      res.status(400).json({
+        success: false,
+        error: "Verification token is required",
+      });
+      return;
+    }
+
+    const validatedUserData = resetPasswordSchema.parse(req.body);
+    const { new_password } = validatedUserData;
+
+    // hash the token to make a query
+    const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+    const [rows] = await db.query<RowDataPacket[]>("SELECT id, email, firstname FROM users WHERE password_reset_token_hash = ? AND password_reset_expires > NOW()", [tokenHash]);
+
+    if (rows.length === 0) {
+      res.status(400).json({
+        success: false,
+        error: "Invalid or expired reset token",
+      });
+      return;
+    }
+
+    // hash a new password
+    // hash new password
+    const hashedNewPassword = await hashItem(new_password);
+
+    // update password + clear reset fields
+    await db.query(
+      "UPDATE users SET password_hash = ?, password_reset_token_hash = NULL, password_reset_expires = NULL WHERE id = ?", [hashedNewPassword, rows[0]!.id]
+    );
+
+    // send an email to inform user
+    await sendResetPasswordSuccessEmail(rows[0]!.email, rows[0]!.firstname);
+
+    res.status(200).json({
+      success: true,
+      message: "Password reset successful✅. You can now log in."
+    });
+
+
+  } catch(err: unknown) {
+      if (err instanceof ZodError) {
+        res.status(400).json({
+          success: false,
+          error: "Invalid request data",
+          issues: err.issues,
+        });
+        return;
+      }
+
+      console.error("Failed to reset password:", err);
+      res.status(500).json({
+        success: false,
+        error: "Failed to reset password. Internal server error",
       });
       return;
     }
