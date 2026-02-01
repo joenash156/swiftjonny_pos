@@ -5,6 +5,7 @@ import routers from "./routes/routes";
 import { corsConfig } from "./configs/cors";
 import { helmetConfig } from "./configs/helmet";
 import { rateLimiter } from "./configs/rateLimiter";
+import path from "path";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -20,6 +21,8 @@ app.use(rateLimiter);
 app.use(express.json({ limit: "10mb" }))
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
+app.use("/uploads/avatars", express.static(path.join(__dirname, "..", "uploads", "avatars")))
 
 
 // API routes

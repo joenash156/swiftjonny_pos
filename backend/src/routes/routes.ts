@@ -5,6 +5,7 @@ import categoriesRouter from "./categoriesRoutes";
 import productsRouter from "./productsRoutes";
 import salesRouter from "./salesRoutes";
 
+
 const router: Router = express.Router();
 
 router.use("/user", usersRouter);
