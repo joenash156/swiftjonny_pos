@@ -727,9 +727,17 @@ export const changeThemePreference = async (req: Request, res: Response): Promis
 
 // controller to upload/change avatar
 export const updateAvatar = async (req: Request, res: Response): Promise<void> => {
-  
-}
+  try {
 
+  } catch(err: unknown) {
+      console.error("Failed to change avatar:", err);
+      res.status(500).json({
+        success: false,
+        error: "Internal server error changing avatar",
+      });
+      return;
+  }
+}
 
 // controller to generate/get new access token
 export const generateNewAccessToken = async (req: Request, res: Response): Promise<void> => {
