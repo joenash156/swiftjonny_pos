@@ -1,0 +1,87 @@
+import db from "../configs/database";
+import { RowDataPacket } from "mysql2";
+
+interface User {
+  id: string;
+  role: "admin" | "cashier";
+}
+
+interface SaleItem {
+  product_id: string;
+  product_name: string;
+  product_price: number;
+  quantity: number;
+  price: number;
+}
+
+interface SaleReceipt {
+  id: string;
+  public_id: string;
+  total: number;
+  payment_method: string;
+  cashier: {
+    name: string;
+    phone: string;
+  };
+  items: SaleItem[];
+  created_at: Date;
+}
+
+export async function getSaleReceiptData(public_id: string, reqUser: User): Promise<SaleReceipt> {
+
+  const { id: userId, role } = reqUser;
+
+  // fetch the sale
+  const saleQuery =
+    role === "admin"
+      ? `SELECT s.id, s.public_id, s.total, s.payment_method, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
+         FROM sales s
+         JOIN users u ON u.id = s.user_id
+         WHERE s.public_id = ?`
+      : `SELECT s.id, s.public_id, s.total, s.payment_method, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
+         FROM sales s
+         JOIN users u ON u.id = s.user_id
+         WHERE s.public_id = ? AND s.user_id = ?`;
+
+  const saleParams = role === "admin" ? [public_id] : [public_id, userId];
+
+  const [saleRows] = await db.query<RowDataPacket[]>(saleQuery, saleParams);
+
+  if (saleRows.length === 0) {
+    throw new Error("Sale not found or access denied");
+  }
+
+  const saleRow = saleRows[0]!;
+
+  // fetch the sale items
+  const [saleItemsRows] = await db.query<RowDataPacket[]>(
+    "SELECT product_id, product_name, product_price, quantity, price FROM sale_items WHERE sale_id = ?",
+    [saleRow.id]
+  );
+
+  if (saleItemsRows.length === 0) {
+    throw new Error("No items found for this sale");
+  }
+
+  // sanitize prices
+  const saleItems: SaleItem[] = saleItemsRows.map((item) => ({
+    product_id: item.product_id,
+    product_name: item.product_name,
+    product_price: Number(item.product_price),
+    quantity: item.quantity,
+    price: Number(item.price),
+  }));
+
+  return {
+    id: saleRow.id,
+    public_id: saleRow.public_id,
+    total: Number(saleRow.total),
+    payment_method: saleRow.payment_method,
+    cashier: {
+      name: `${saleRow.cashier_firstname} ${saleRow.cashier_lastname}`,
+      phone: saleRow.cashier_phone,
+    },
+    items: saleItems,
+    created_at: new Date(saleRow.created_at),
+  };
+}

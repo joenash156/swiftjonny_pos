@@ -6,6 +6,7 @@ import { generatePublicId } from "../utils/publicID";
 import { createSaleSchema } from "../validators/sales.schema";
 import { v4 as uuid } from "uuid";
 import { SaleItemsType } from "../types/types";
+import { getSaleReceiptData } from "../services/sales.service";
 
 
 // controller to create sales
@@ -112,6 +113,13 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
     // commit everything to database if successful
     await connection.commit();
 
+    // sanitize sales items (eg. to get the price not in string but number)
+    const sanitizedSaleItems = saleItems.map((saleItem) => ({
+      ...saleItem,
+      product_price: Number(saleItem.product_price),
+      price: Number(saleItem.price)
+    }))
+
     // return success response
     res.status(201).json({
       success: true,
@@ -125,7 +133,7 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
           name: `${saleRows[0]!.cashier_firstname} ${saleRows[0]!.cashier_lastname}`,
           phone: saleRows[0]!.cashier_phone,
         },
-        items: saleItems,
+        items: sanitizedSaleItems,
         created_at: saleRows[0]?.created_at || new Date()
       }
     });
@@ -159,7 +167,7 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
 // controller to reprint receipt
 export const reprintReceipt = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id: userId, role } = req.user;
+    // get public id of sale
     const { public_id } = req.params;
 
     if (!public_id || typeof public_id !== "string") {
@@ -170,55 +178,15 @@ export const reprintReceipt = async (req: Request, res: Response): Promise<void>
       return;
     }
 
+    const sale = await getSaleReceiptData(public_id, req.user)
     
-    // admins can fetch any sale, cashiers can fetch only their own sale
-    const saleQuery =
-      role === "admin"
-        ? `SELECT s.id, s.public_id, s.total, s.payment_method, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone FROM sales s JOIN users u ON u.id = s.user_id WHERE s.public_id = ?`
-
-        : `SELECT s.id, s.public_id, s.total, s.payment_method, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone FROM sales s JOIN users u ON u.id = s.user_id WHERE s.public_id = ? AND s.user_id = ?`;
-
-    const saleParams = role === "admin" ? [public_id] : [public_id, userId];
-
-    const [saleRows] = await db.query<RowDataPacket[]>(saleQuery, saleParams);
-
-    if (saleRows.length === 0) {
-      res.status(404).json({
-        success: false,
-        error: "Sale not found!",
-      });
-      return;
-    }
-
-    // fetch sale items
-    const [saleItems] = await db.query<RowDataPacket[]>(`SELECT product_name, product_price, quantity, price FROM sale_items WHERE sale_id = ?`, [saleRows[0]!.id]);
-
-    if (saleItems.length === 0) {
-      res.status(404).json({
-        success: false,
-        error: "No items found with this sale!",
-      });
-      return;
-    }
-
-    // return receipt-ready data
     res.status(200).json({
       success: true,
-      message: "Receipt ready for printing!✅",
-      sale: {
-        public_id: saleRows[0]!.public_id,
-        total: Number(saleRows[0]!.total),
-        payment_method: saleRows[0]!.payment_method,
-        cashier: {
-          name: `${saleRows[0]!.cashier_firstname} ${saleRows[0]!.cashier_lastname}`,
-          phone: saleRows[0]!.cashier_phone,
-        },
-        items: saleItems,
-        created_at: saleRows[0]!.created_at,
-      }
+      message: "Receipt ready for printing! ✅",
+      sale,
     });
     return;
-
+  
   } catch (err: unknown) {
     console.error("Failed to reprint receipt:", err);
     res.status(500).json({
@@ -228,3 +196,36 @@ export const reprintReceipt = async (req: Request, res: Response): Promise<void>
     return;
   }
 };
+
+// controller to get sale details by public id
+export const getSaleDetails = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // get the public of sale
+    const { public_id } = req.params;
+
+    if (!public_id || typeof public_id !== "string") {
+      res.status(400).json({
+        success: false,
+        error: "Valid public id is required!",
+      });
+      return;
+    }
+
+    const sale = await getSaleReceiptData(public_id, req.user);
+
+    res.status(200).json({
+      success: true,
+      message: "Sale details fetched successfully!✅",
+      sale,
+    });
+    return;
+
+  } catch(err: unknown) {
+      console.error("Failed to get sale details:", err);
+      res.status(500).json({
+        success: false,
+        error: "Internal server error while fetching sale details!",
+      });
+      return;
+  }
+}

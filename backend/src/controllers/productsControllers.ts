@@ -137,13 +137,19 @@ export const getAllProducts = async (req: Request, res: Response): Promise<void>
       return;
     }
 
+    // sanitize the products (eg. not to get the number in string)
+    const sanitizedProducts = products.map((product) => ({
+        ...product,
+        price: Number(product.price)
+    }))
+
     res.status(200).json({
       success: true,
       counts: products.length,
       page: pageNumber,
       limit: pageLimit,
       message: "Products fetched successfully!✅",
-      products,
+      products: sanitizedProducts
     });
     return;
 
@@ -200,7 +206,7 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
     // get id from request params
     const { id } = req.params;
 
-    // validate prodcut inputs data
+    // validate product inputs data
     const validatedProductData = updateProductSchema.parse(req.body);
     const { name, price, category_id, description, stock, image_url } = validatedProductData;
 
@@ -210,7 +216,7 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
     if(rows.length === 0) {
       res.status(404).json({
         success: false,
-        error: "No prodcut found to update",
+        error: "No product found to update",
       });
       return;
     }
@@ -273,14 +279,14 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
     if(fields.length === 0) {
       res.status(400).json({
         success: false,
-        error: "No field provided to udpate priduct"
+        error: "No field provided to update product"
       });
       return;
     }
 
     values.push(id);
 
-     // update prodcut
+     // update product
     const [result] = await db.query<ResultSetHeader>(`UPDATE products SET ${fields.join(", ")} WHERE id = ?`, values);
 
     if(result.affectedRows === 0) {
