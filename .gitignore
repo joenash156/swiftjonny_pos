@@ -6,4 +6,6 @@ frontend/.env
 
 backend/dist
 
+backend/uploads/
+
 backend/src/secret.ts

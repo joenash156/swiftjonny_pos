@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { changePassword, changeThemePreference, createUser, deleteUser, forgotPassword, generateNewAccessToken, getUserProfile, loginUser, logoutUser, resendVerificationEmail, resetPassword, updateAvatar, updateUserProfile, verifyEmail } from "../controllers/usersControllers";
+import { changePassword, changeThemePreference, createUser, deleteUser, forgotPassword, generateNewAccessToken, getUserProfile, loginUser, logoutUser, removeAvatar, resendVerificationEmail, resetPassword, updateAvatar, updateUserProfile, verifyEmail } from "../controllers/usersControllers";
 import { requireAuth } from "../middlewares/auth.middleware";
 import upload from "../middlewares/uploads.middleware";
 import { requireUploadType } from "../middlewares/requireUploadType.middleware";
@@ -38,7 +38,10 @@ router.post("/reset_password", resetPassword)
 router.patch("/change_theme_preference", requireAuth, changeThemePreference);
 
 // router to change/update user avatar (protected user)
-router.patch("/update_avatar", requireUploadType("avatar"), upload.single("avatar"), requireAuth, updateAvatar)
+router.patch("/avatar/update", requireAuth, requireUploadType("avatar"), upload.single("avatar"), updateAvatar)
+
+// router to remove user avatar (protected user)
+router.patch("/avatar/remove", requireAuth, requireUploadType("avatar"), upload.single("avatar"), removeAvatar)
 
 // router to refresh to generate new access token
 router.post("/refresh", generateNewAccessToken);

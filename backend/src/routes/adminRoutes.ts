@@ -15,10 +15,10 @@ router.get("/cashier/:id", requireAuth, requireAdmin, validateUUID, getCashierBy
 // router to approve a cashier by id (only executed by admins)
 router.patch("/cashier/:id/approve", requireAuth, requireAdmin, validateUUID, approveCashier);
 
-// router to disable/dispprove a cashier by id (only executed by admins)
+// router to disable/disprove a cashier by id (only executed by admins)
 router.patch("/cashier/:id/disable", requireAuth, requireAdmin, validateUUID, disableCashier);
 
-// router to disable/dispprove a cashier by id (only executed by admins)
+// router to disable/disprove a cashier by id (only executed by admins)
 router.delete("/cashier/:id/delete", requireAuth, requireAdmin, validateUUID, deleteCashier);
 
 // router to update a user's role (only executed by admins)

@@ -745,20 +745,28 @@ export const updateAvatar = async (req: Request, res: Response): Promise<void> =
     const [avatarRows] = await db.query<RowDataPacket[]>("SELECT avatar_url FROM users WHERE id = ?", [userId]);
 
     // check if it's not null to delete the file
-    if(avatarRows[0]?.avatar_url) {
-      deleteFile("avatars", avatarRows[0]?.avatar_url)
+    if(avatarRows[0] && avatarRows[0].avatar_url) {
+      deleteFile("avatars", avatarRows[0].avatar_url)
     }
 
     // get the file name
-    const avatar_url = req.file?.filename;
+    const avatar_url = avatar.filename;
 
     // update the database with the new file name
-    await db.query<ResultSetHeader>("UPDATE users SET avatar_url = ? WHERE id = ?", [avatar_url, userId]);
+    const [result] = await db.query<ResultSetHeader>("UPDATE users SET avatar_url = ? WHERE id = ?", [avatar_url, userId]);
+
+    if(result.affectedRows === 0) {
+      res.status(400).json({
+        success: false,
+        error: "Unable to update avatar. Try again!"
+      });
+      return;
+    }
 
     res.status(200).json({
       success: true,
       message: "Avatar updated successfully!✅",
-      accessible_avatar_url: `/uploads/avatars/${avatar_url}`
+      accessible_avatar_url: `${process.env.BASE_URL}/uploads/avatars/${avatar_url}`
     })
 
   } catch(err: unknown) {
@@ -766,6 +774,53 @@ export const updateAvatar = async (req: Request, res: Response): Promise<void> =
       res.status(500).json({
         success: false,
         error: "Internal server error changing avatar",
+      });
+      return;
+  }
+}
+
+// controller to remove avatar
+export const removeAvatar = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // get user id from request user
+    const userId = req.user.id;
+
+    // check to see if user already has an avatar
+    const [avatarRows] = await db.query<RowDataPacket[]>("SELECT avatar_url FROM users WHERE id = ?", [userId]);
+
+    if(!avatarRows[0]?.avatar_url) {
+      res.status(404).json({
+        success: false,
+        error: "User does not have an avatar to remove!"
+      });
+      return;
+    }
+
+    // delete avatar from file system
+    deleteFile("avatars", avatarRows[0]?.avatar_url)
+
+    // remove it from the database
+    const [result] = await db.query<ResultSetHeader>("UPDATE users SET avatar_url = NULL WHERE id = ?", [userId]);
+
+    if(result.affectedRows === 0) {
+      res.status(400).json({
+        success: false,
+        error: "Unable to remove avatar. Try again!"
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Avatar removed successfully!✅"
+    });
+    return;
+
+  } catch(err: unknown) {
+      console.error("Failed to remove avatar:", err);
+      res.status(500).json({
+        success: false,
+        error: "Internal server error removing avatar",
       });
       return;
   }
