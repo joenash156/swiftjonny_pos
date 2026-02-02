@@ -9,6 +9,7 @@ import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/
 import { generateToken } from "../utils/generateToken";
 import { sendResetPasswordEmail, sendResetPasswordSuccessEmail, sendVerificationEmail } from "../emails/emails";
 import { resendVerificationSchema } from "../validators/mailer.schema";
+import { deleteFile } from "../utils/delFileFunc";
 
 // controller to create/insert/signup new user
 export const createUser = async (req: Request, res:Response): Promise<void> => {
@@ -728,6 +729,37 @@ export const changeThemePreference = async (req: Request, res: Response): Promis
 // controller to upload/change avatar
 export const updateAvatar = async (req: Request, res: Response): Promise<void> => {
   try {
+    // get user id from request user
+    const userId = req.user.id;
+    const avatar = req.file;
+
+    if(!avatar) {
+      res.status(400).json({
+        success: false,
+        error: "No file uploaded!"
+      });
+      return;
+    }
+
+    // check for old avatar in database to delete from file system
+    const [avatarRows] = await db.query<RowDataPacket[]>("SELECT avatar_url FROM users WHERE id = ?", [userId]);
+
+    // check if it's not null to delete the file
+    if(avatarRows[0]?.avatar_url) {
+      deleteFile("avatars", avatarRows[0]?.avatar_url)
+    }
+
+    // get the file name
+    const avatar_url = req.file?.filename;
+
+    // update the database with the new file name
+    await db.query<ResultSetHeader>("UPDATE users SET avatar_url = ? WHERE id = ?", [avatar_url, userId]);
+
+    res.status(200).json({
+      success: true,
+      message: "Avatar updated successfully!✅",
+      accessible_avatar_url: `/uploads/avatars/${avatar_url}`
+    })
 
   } catch(err: unknown) {
       console.error("Failed to change avatar:", err);

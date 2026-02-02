@@ -2,6 +2,7 @@ import express, { Router } from "express";
 import { changePassword, changeThemePreference, createUser, deleteUser, forgotPassword, generateNewAccessToken, getUserProfile, loginUser, logoutUser, resendVerificationEmail, resetPassword, updateAvatar, updateUserProfile, verifyEmail } from "../controllers/usersControllers";
 import { requireAuth } from "../middlewares/auth.middleware";
 import upload from "../middlewares/uploads.middleware";
+import { requireUploadType } from "../middlewares/requireUploadType.middleware";
 
 
 const router: Router = express.Router();
@@ -37,7 +38,7 @@ router.post("/reset_password", resetPassword)
 router.patch("/change_theme_preference", requireAuth, changeThemePreference);
 
 // router to change/update user avatar (protected user)
-router.patch("/update_avatar", requireAuth, updateAvatar)
+router.patch("/update_avatar", requireUploadType("avatar"), upload.single("avatar"), requireAuth, updateAvatar)
 
 // router to refresh to generate new access token
 router.post("/refresh", generateNewAccessToken);
