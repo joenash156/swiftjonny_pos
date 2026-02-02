@@ -20,3 +20,11 @@ export const createSaleSchema = z.object({
     )
     .min(1, "At least one product is required"),
 });
+
+export const voidSaleSchema = z.object({
+  void_reason: z
+    .string()
+    .trim()
+    .min(3, "Reason must be at least 3 characters (eg. Wrong item scanned)")
+    .optional()
+})

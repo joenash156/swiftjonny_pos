@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import { requireAuth } from "../middlewares/auth.middleware";
-import { createSale, getSaleDetails, reprintReceipt } from "../controllers/salesControllers";
+import { createSale, getAllSales, getSaleDetails, reprintReceipt, reverseSale } from "../controllers/salesControllers";
 
 const router: Router = express.Router();
 
@@ -11,7 +11,13 @@ router.post("/create", requireAuth, createSale)
 router.get("/:public_id/receipt", requireAuth, reprintReceipt)
 
 // router to get sale details
-router.get("/:public_id", requireAuth, getSaleDetails)
+router.get("/:public_id/details", requireAuth, getSaleDetails)
+
+// router to get all sales
+router.get("/get_all", requireAuth, getAllSales)
+
+// router to reverse/void sale
+router.patch("/:public_id/void", requireAuth, reverseSale)
 
 
 export default router;

@@ -290,7 +290,7 @@ export const updateUserRole = async (req: Request, res: Response): Promise<void>
     );
 
     if (result.affectedRows === 0) {
-      res.status(500).json({
+      res.status(400).json({
         success: false,
         error: "Unable to update user role!",
       });

@@ -1,5 +1,7 @@
-import db from "../configs/database";
-import { RowDataPacket } from "mysql2";
+// import db from "../configs/database";
+import { Pool, PoolConnection, RowDataPacket } from "mysql2/promise";
+
+type Executor = Pool | PoolConnection;
 
 interface User {
   id: string;
@@ -15,10 +17,13 @@ interface SaleItem {
 }
 
 interface SaleReceipt {
-  id: string;
   public_id: string;
   total: number;
   payment_method: string;
+  status: string;
+  voided_at: Date;
+  voided_by: string;
+  void_reason: string;
   cashier: {
     name: string;
     phone: string;
@@ -27,25 +32,25 @@ interface SaleReceipt {
   created_at: Date;
 }
 
-export async function getSaleReceiptData(public_id: string, reqUser: User): Promise<SaleReceipt> {
+export async function getSaleReceiptData(executor: Executor, public_id: string, reqUser: User): Promise<SaleReceipt> {
 
   const { id: userId, role } = reqUser;
 
   // fetch the sale
   const saleQuery =
     role === "admin"
-      ? `SELECT s.id, s.public_id, s.total, s.payment_method, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
+      ? `SELECT s.id, s.public_id, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
          FROM sales s
          JOIN users u ON u.id = s.user_id
          WHERE s.public_id = ?`
-      : `SELECT s.id, s.public_id, s.total, s.payment_method, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
+      : `SELECT s.id, s.public_id, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
          FROM sales s
          JOIN users u ON u.id = s.user_id
          WHERE s.public_id = ? AND s.user_id = ?`;
 
   const saleParams = role === "admin" ? [public_id] : [public_id, userId];
 
-  const [saleRows] = await db.query<RowDataPacket[]>(saleQuery, saleParams);
+  const [saleRows] = await executor.query<RowDataPacket[]>(saleQuery, saleParams);
 
   if (saleRows.length === 0) {
     throw new Error("Sale not found or access denied");
@@ -54,7 +59,7 @@ export async function getSaleReceiptData(public_id: string, reqUser: User): Prom
   const saleRow = saleRows[0]!;
 
   // fetch the sale items
-  const [saleItemsRows] = await db.query<RowDataPacket[]>(
+  const [saleItemsRows] = await executor.query<RowDataPacket[]>(
     "SELECT product_id, product_name, product_price, quantity, price FROM sale_items WHERE sale_id = ?",
     [saleRow.id]
   );
@@ -73,10 +78,13 @@ export async function getSaleReceiptData(public_id: string, reqUser: User): Prom
   }));
 
   return {
-    id: saleRow.id,
     public_id: saleRow.public_id,
     total: Number(saleRow.total),
     payment_method: saleRow.payment_method,
+    status: saleRow.status,
+    voided_at: saleRow.voided_at,
+    voided_by: saleRow.voided_by,
+    void_reason: saleRow.void_reason,
     cashier: {
       name: `${saleRow.cashier_firstname} ${saleRow.cashier_lastname}`,
       phone: saleRow.cashier_phone,

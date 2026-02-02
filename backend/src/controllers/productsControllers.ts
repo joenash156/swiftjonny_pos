@@ -117,8 +117,8 @@ export const getAllProducts = async (req: Request, res: Response): Promise<void>
     query += ` ORDER BY ${sortColumn} ${sortOrder}`;
 
     // pagination (page-based)
-    const pageNumber = page ? Number(page) : 1;
-    const pageLimit = limit ? Number(limit) : 20;
+    const pageNumber = typeof page === "string" && Number(page) > 0 ? Number(page) : 1;
+    const pageLimit = typeof limit === "string" && Number(limit) > 0 && Number(limit) <= 100 ? Number(limit) : 20;
     const offset = (pageNumber - 1) * pageLimit;
 
     query += " LIMIT ? OFFSET ?";
