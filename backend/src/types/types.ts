@@ -28,6 +28,7 @@ export type SaleReceipt = {
   voided_by: string;
   void_reason: string;
   cashier: {
+    id: string;
     name: string;
     phone: string;
   };

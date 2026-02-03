@@ -134,7 +134,7 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
       await connection.query<ResultSetHeader>("UPDATE products SET stock = stock - ? WHERE id = ?", [saleItem.quantity, saleItem.product_id]);   
     }
 
-    const [saleRows] = await connection.query<RowDataPacket[]>("SELECT s.created_at, s.status, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone FROM sales s JOIN users u ON u.id = s.user_id WHERE s.id = ?", [saleId]);
+    const [saleRows] = await connection.query<RowDataPacket[]>("SELECT s.created_at, s.status, u.id AS cashier_id, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone FROM sales s JOIN users u ON u.id = s.user_id WHERE s.id = ?", [saleId]);
 
     // commit everything to database if successful
     await connection.commit();
@@ -160,6 +160,7 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
         payment_method,
         status: saleRows[0]?.status,
         cashier: {
+          id: saleRows[0]!.cashier_id,
           name: `${saleRows[0]!.cashier_firstname} ${saleRows[0]!.cashier_lastname}`,
           phone: saleRows[0]!.cashier_phone,
         },
@@ -289,10 +290,10 @@ export const getAllSales = async (req: Request, res: Response): Promise<void> =>
 
     let query =
       role === "admin"
-      ? `SELECT s.id, s.public_id, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
+      ? `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.id AS cashier_id, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
          FROM sales s
          JOIN users u ON u.id = s.user_id`
-      : `SELECT s.id, s.public_id, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
+      : `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.id AS cashier_id, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
          FROM sales s
          JOIN users u ON u.id = s.user_id
          WHERE s.user_id = ?`;
@@ -376,6 +377,9 @@ export const getAllSales = async (req: Request, res: Response): Promise<void> =>
 
     const sales = saleRows.map(sale => ({
       public_id: sale.public_id as string,
+      subtotal: Number(sale.subtotal),
+      tax_amount: Number(sale.tax_amount),
+      discount_amount: Number(sale.discount_amount),
       total: Number(sale.total),
       payment_method: sale.payment_method,
       status: sale.status,
@@ -383,6 +387,7 @@ export const getAllSales = async (req: Request, res: Response): Promise<void> =>
       voided_by: sale.voided_by,
       void_reason: sale.void_reason,
       cashier: {
+        id: sale.cashier_id,
         name: `${sale.cashier_firstname} ${sale.cashier_lastname}`,
         phone: sale.cashier_phone,
       },
@@ -394,7 +399,7 @@ export const getAllSales = async (req: Request, res: Response): Promise<void> =>
       success: true,
       counts: saleRows.length,
       message: "Sales fetched successfully!✅",
-      sales: sales
+      sales
     });
     return;
 

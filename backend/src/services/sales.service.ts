@@ -15,11 +15,11 @@ export async function getSaleReceiptData(executor: Executor, public_id: string, 
   // fetch the sale
   const saleQuery =
     role === "admin"
-      ? `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
+      ? `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.id AS cashier_id, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
          FROM sales s
          JOIN users u ON u.id = s.user_id
          WHERE s.public_id = ?`
-      : `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
+      : `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.id AS cashier_id, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
          FROM sales s
          JOIN users u ON u.id = s.user_id
          WHERE s.public_id = ? AND s.user_id = ?`;
@@ -65,6 +65,7 @@ export async function getSaleReceiptData(executor: Executor, public_id: string, 
     voided_by: saleRow.voided_by,
     void_reason: saleRow.void_reason,
     cashier: {
+      id: saleRow.cashier_id,
       name: `${saleRow.cashier_firstname} ${saleRow.cashier_lastname}`,
       phone: saleRow.cashier_phone,
     },
