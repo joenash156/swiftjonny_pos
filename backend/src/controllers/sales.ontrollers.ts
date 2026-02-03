@@ -7,6 +7,7 @@ import { createSaleSchema, voidSaleSchema } from "../validators/sales.schema";
 import { v4 as uuid } from "uuid";
 import { SaleItemsType } from "../types/types";
 import { getSaleReceiptData } from "../services/sales.service";
+import { getPOSSettings } from "../services/settings.service";
 
 interface User {
   id: string;
@@ -68,7 +69,14 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
-    let saleTotal = 0;
+    const POSSettings = await getPOSSettings(connection)
+    const { tax_percent, discount_percent, receipt_header, receipt_footer } = POSSettings;
+
+    let subtotal = 0;
+    let discountAmount = 0;
+    let taxableAmount = 0;
+    let taxAmount = 0;
+    let totalAmount = 0;
 
     const saleItems: SaleItemsType = [];
 
@@ -88,7 +96,7 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
 
       const itemTotalPrice = Number(product.price) * quantity;
 
-      saleTotal += itemTotalPrice;
+      subtotal += itemTotalPrice;
 
       saleItems.push({
         product_id: product.id,
@@ -99,12 +107,20 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
       });
     }
 
+    // calculate other amounts (taxable amount, discount amount, etc.)
+    discountAmount = Number((subtotal * (discount_percent / 100)).toFixed(2));
+    taxableAmount = Number((subtotal - discountAmount).toFixed(2));
+    taxAmount = Number((taxableAmount * (tax_percent / 100)).toFixed(2));
+
+    subtotal = Number((subtotal).toFixed(2))
+    totalAmount = Number((taxableAmount + taxAmount).toFixed(2));
+
     // get sales id and generate a public id for the sale
     const publicId = await generatePublicId();
     const saleId = uuid();
 
     // insert sales into database
-    await connection.query<ResultSetHeader>("INSERT INTO sales (id, user_id, public_id, total, payment_method) VALUES (?, ?, ?, ?, ?)", [saleId, userId, publicId, saleTotal, payment_method]);
+    await connection.query<ResultSetHeader>("INSERT INTO sales (id, user_id, public_id, subtotal, tax_amount, discount_amount, total, payment_method) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [saleId, userId, publicId, subtotal, taxAmount, discountAmount, totalAmount, payment_method]);
 
     // prepare bulk insert for sale_items
     const saleItemsValues = saleItems.map((item) => [saleId, item.product_id, item.product_name, item.product_price, item.quantity, item.price]);
@@ -137,7 +153,10 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
       sale: {
         id: saleId,
         public_id: publicId,
-        total: Number((saleTotal).toFixed(2)),
+        subtotal,
+        tax_amount: taxAmount,
+        discount_amount: discountAmount,
+        total: totalAmount,
         payment_method,
         status: saleRows[0]?.status,
         cashier: {
@@ -145,6 +164,8 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
           phone: saleRows[0]!.cashier_phone,
         },
         items: sanitizedSaleItems,
+        receipt_header,
+        receipt_footer,
         created_at: saleRows[0]?.created_at || new Date()
       }
     });
@@ -190,11 +211,27 @@ export const reprintReceipt = async (req: Request, res: Response): Promise<void>
     }
 
     const sale = await getSaleReceiptData(db, public_id, req.user)
+    const POSSettings = await getPOSSettings(db)
+
+    const { subtotal, tax_amount, discount_amount, total, payment_method, cashier, items, created_at } = sale
+    const { receipt_header, receipt_footer } = POSSettings;    
     
     res.status(200).json({
       success: true,
       message: "Receipt ready for printing! ✅",
-      sale,
+      sale: {
+        public_id,
+        subtotal,
+        tax_amount,
+        discount_amount,
+        total,
+        payment_method,
+        cashier,
+        items,
+        receipt_header,
+        receipt_footer,
+        created_at
+      },
     });
     return;
   

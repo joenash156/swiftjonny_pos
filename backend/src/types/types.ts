@@ -18,6 +18,9 @@ export type SaleItem = {
 
 export type SaleReceipt = {
   public_id: string;
+  subtotal: number;
+  tax_amount: number;
+  discount_amount: number;
   total: number;
   payment_method: string;
   status: string;

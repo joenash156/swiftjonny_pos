@@ -15,11 +15,11 @@ export async function getSaleReceiptData(executor: Executor, public_id: string, 
   // fetch the sale
   const saleQuery =
     role === "admin"
-      ? `SELECT s.id, s.public_id, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
+      ? `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
          FROM sales s
          JOIN users u ON u.id = s.user_id
          WHERE s.public_id = ?`
-      : `SELECT s.id, s.public_id, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
+      : `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
          FROM sales s
          JOIN users u ON u.id = s.user_id
          WHERE s.public_id = ? AND s.user_id = ?`;
@@ -55,6 +55,9 @@ export async function getSaleReceiptData(executor: Executor, public_id: string, 
 
   return {
     public_id: saleRow.public_id,
+    subtotal: Number(saleRow.subtotal),
+    tax_amount: Number(saleRow.tax_amount),
+    discount_amount: Number(saleRow.discount_amount),
     total: Number(saleRow.total),
     payment_method: saleRow.payment_method,
     status: saleRow.status,
