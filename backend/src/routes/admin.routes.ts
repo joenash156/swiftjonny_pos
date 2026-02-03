@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { requireAdmin } from "../middlewares/role.middleware";
 import { requireAuth } from "../middlewares/auth.middleware";
-import { approveCashier, deleteCashier, disableCashier, getAllCashiers, getCashierById, updateUserRole } from "../controllers/adminControllers";
+import { approveCashier, deleteCashier, disableCashier, getAllCashiers, getCashierById, updateUserRole } from "../controllers/admin.controllers";
 import { validateUUID } from "../middlewares/uuidValidation.middleware";
 
 const router: Router = express.Router();

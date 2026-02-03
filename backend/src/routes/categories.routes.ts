@@ -1,7 +1,7 @@
 import express, { Router } from "express";
 import { requireAuth } from "../middlewares/auth.middleware";
 import { requireAdmin } from "../middlewares/role.middleware";
-import { createCategory, deleteCategory, getAllCategories, getCategoryById, updateCategory } from "../controllers/categoriesControllers";
+import { createCategory, deleteCategory, getAllCategories, getCategoryById, updateCategory } from "../controllers/categories.controllers";
 import { validateUUID } from "../middlewares/uuidValidation.middleware";
 
 

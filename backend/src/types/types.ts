@@ -1,3 +1,5 @@
+import { Pool, PoolConnection } from "mysql2/promise";
+
 export type SaleItemsType = {
   product_id: string;
   product_name: string;
@@ -6,14 +8,35 @@ export type SaleItemsType = {
   price: number;
 }[]
 
-// export type SalesType = {
-//   public_id: string;
-//   total: number;
-//   payment_method: "cash" | "card" | "mobile";
-//   cashier: {
-//     name: string;
-//     phone: string | null;
-//   };
-//   items: SaleItemsType[];
-//   created_at: Date;
-// }[]
+export type SaleItem = {
+  product_id: string;
+  product_name: string;
+  product_price: number;
+  quantity: number;
+  price: number;
+}
+
+export type SaleReceipt = {
+  public_id: string;
+  total: number;
+  payment_method: string;
+  status: string;
+  voided_at: Date;
+  voided_by: string;
+  void_reason: string;
+  cashier: {
+    name: string;
+    phone: string;
+  };
+  items: SaleItem[];
+  created_at: Date;
+}
+
+export type Executor = Pool | PoolConnection;
+
+export type POSSettings = {
+  tax_percent: number,
+  discount_percent: number,
+  receipt_header: string | null,
+  receipt_footer: string | null
+}

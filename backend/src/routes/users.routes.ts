@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { changePassword, changeThemePreference, createUser, deleteUser, forgotPassword, generateNewAccessToken, getUserProfile, loginUser, logoutUser, removeAvatar, resendVerificationEmail, resetPassword, updateAvatar, updateUserProfile, verifyEmail } from "../controllers/usersControllers";
+import { changePassword, changeThemePreference, createUser, deleteUser, forgotPassword, generateNewAccessToken, getUserProfile, loginUser, logoutUser, removeAvatar, resendVerificationEmail, resetPassword, updateAvatar, updateUserProfile, verifyEmail } from "../controllers/users.controllers";
 import { requireAuth } from "../middlewares/auth.middleware";
 import upload from "../middlewares/uploads.middleware";
 import { requireUploadType } from "../middlewares/requireUploadType.middleware";

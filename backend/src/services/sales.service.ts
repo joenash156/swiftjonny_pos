@@ -1,37 +1,13 @@
-// import db from "../configs/database";
-import { Pool, PoolConnection, RowDataPacket } from "mysql2/promise";
-
-type Executor = Pool | PoolConnection;
+import { RowDataPacket } from "mysql2";
+import { SaleItem, SaleReceipt, Executor } from "../types/types";
 
 interface User {
   id: string;
   role: "admin" | "cashier";
 }
 
-interface SaleItem {
-  product_id: string;
-  product_name: string;
-  product_price: number;
-  quantity: number;
-  price: number;
-}
 
-interface SaleReceipt {
-  public_id: string;
-  total: number;
-  payment_method: string;
-  status: string;
-  voided_at: Date;
-  voided_by: string;
-  void_reason: string;
-  cashier: {
-    name: string;
-    phone: string;
-  };
-  items: SaleItem[];
-  created_at: Date;
-}
-
+// function to get sale receipt data
 export async function getSaleReceiptData(executor: Executor, public_id: string, reqUser: User): Promise<SaleReceipt> {
 
   const { id: userId, role } = reqUser;
