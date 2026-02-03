@@ -126,8 +126,8 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
     // sanitize sales items (eg. to get the price not in string but number)
     const sanitizedSaleItems = saleItems.map((saleItem) => ({
       ...saleItem,
-      product_price: Number(saleItem.product_price),
-      price: Number(saleItem.price)
+      product_price: Number((saleItem.product_price).toFixed(2)),
+      price: Number((saleItem.price).toFixed(2))
     }))
 
     // return success response
@@ -137,7 +137,7 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
       sale: {
         id: saleId,
         public_id: publicId,
-        total: Number(saleTotal),
+        total: Number((saleTotal).toFixed(2)),
         payment_method,
         status: saleRows[0]?.status,
         cashier: {
