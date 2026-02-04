@@ -6,14 +6,14 @@ import { createPOSSettingsSchema, updatePOSSettingsSchema } from "../validators/
 import { getPOSSettings } from "../services/settings.service";
 
 
-// router to create POS settings once
+// controller to create POS settings once
 export const createPOSSettings = async (req: Request, res: Response): Promise<void> => {
   try {
     // check if there is a configured
     const POSSettings = await getPOSSettings(db)
 
     if(POSSettings) {
-      res.status(403).json({
+      res.status(409).json({
         success: false,
         message: "POS settings already configured"
       });
@@ -57,6 +57,45 @@ export const createPOSSettings = async (req: Request, res: Response): Promise<vo
     }
 }
 
+// controller to get POS settings
+export const getActivePOSSettings = async (_req: Request, res: Response): Promise<void> => {
+  try {
+    // get POS setting if available
+    const POSSettings = await getPOSSettings(db);
+
+    if(!POSSettings) {
+      res.status(404).json({
+        success: false,
+        message: "POS settings not yet configured!",
+        is_set: false
+      });
+      return;
+    }
+
+    const { tax_percent, discount_percent, receipt_header, receipt_footer } = POSSettings;
+
+    res.status(200).json({
+      success: true,
+      message: "POS setting fetched successfully!✅",
+      is_set: true,
+      settings: {
+        tax_percent,
+        discount_percent,
+        receipt_header,
+        receipt_footer
+      }
+    })
+
+  } catch(err: unknown) {
+      console.error("Failed to get POS settings: ", err);
+      res.status(500).json({
+        success: false,
+        error: "Internal server error while fetching POS Settings"
+      });
+      return;
+    }
+}
+
 // controller to change/update pos settings
 export const updatePOSSettings = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -76,14 +115,6 @@ export const updatePOSSettings = async (req: Request, res: Response): Promise<vo
     }
 
     const { id } = POSSettings
-
-    if(!id) {
-      res.status(404).json({
-        success: false,
-        error: "POS settings is not yet configured!"
-      });
-      return;
-    }
 
     const fields: string[] = [];
     const values: (string | string[] | number | undefined)[] = [];
