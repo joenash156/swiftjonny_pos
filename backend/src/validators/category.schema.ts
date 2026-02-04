@@ -2,7 +2,7 @@ import { z } from "zod";
 import { capitalizeName } from "../utils/normalize";
 
 
-export const createCategoryShema = z.object({
+export const createCategorySchema = z.object({
   name: z
     .string()
     .trim()

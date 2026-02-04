@@ -2,14 +2,14 @@ import db from "../configs/database";
 import { Request, Response } from "express"
 import { ResultSetHeader, RowDataPacket } from "mysql2"; 
 import { ZodError } from "zod";
-import { createCategoryShema, updateCategorySchema } from "../validators/category.schema";
+import { createCategorySchema, updateCategorySchema } from "../validators/category.schema";
 
 
 // controller to create/insert a category
 export const createCategory = async (req: Request, res: Response): Promise<void> => {
   try {
     // validate request body
-    const validatedCategoryData = createCategoryShema.parse(req.body);
+    const validatedCategoryData = createCategorySchema.parse(req.body);
     
     const { name, description } = validatedCategoryData;
 
@@ -47,13 +47,13 @@ export const createCategory = async (req: Request, res: Response): Promise<void>
         return;
       }
 
-    console.error("Failed to create category: ", err);
-    res.status(500).json({
-      success: false,
-      error: "Internal server error while creating category"
-    });
-    return;
-  }
+      console.error("Failed to create category: ", err);
+      res.status(500).json({
+        success: false,
+        error: "Internal server error while creating category"
+      });
+      return;
+    }
 }
 
 // controller to get all categories
