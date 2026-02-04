@@ -20,6 +20,17 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
   const connection = await db.getConnection();
 
   try {
+    // check if POS settings is configured
+    const POSSettings = await getPOSSettings(connection)
+
+    if(!POSSettings) {
+      res.status(404).json({
+        success: false,
+        error: "POS settings not yet configured. Sale cannot be created without it!"
+      });
+      return;
+    }
+
     // get authenticated user id from
     const userId: string = req.user.id;
 
@@ -69,9 +80,8 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
-    const POSSettings = await getPOSSettings(connection)
     const { tax_percent, discount_percent, receipt_header, receipt_footer } = POSSettings;
-
+    
     let subtotal = 0;
     let discountAmount = 0;
     let taxableAmount = 0;
@@ -213,6 +223,14 @@ export const reprintReceipt = async (req: Request, res: Response): Promise<void>
 
     const sale = await getSaleReceiptData(db, public_id, req.user)
     const POSSettings = await getPOSSettings(db)
+
+    if(!POSSettings) {
+      res.status(404).json({
+        success: false,
+        error: "POS settings not yet configured!"
+      });
+      return;
+    }
 
     const { subtotal, tax_amount, discount_amount, total, payment_method, cashier, items, created_at } = sale
     const { receipt_header, receipt_footer } = POSSettings;    

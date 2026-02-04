@@ -39,6 +39,7 @@ export type SaleReceipt = {
 export type Executor = Pool | PoolConnection;
 
 export type POSSettings = {
+  id: string;
   tax_percent: number,
   discount_percent: number,
   receipt_header: string | null,
