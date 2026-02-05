@@ -843,12 +843,21 @@ export const generateNewAccessToken = async (req: Request, res: Response): Promi
     const payload = await verifyRefreshToken(refreshToken);
 
     // check to see if refresh token exists
-    const [rows] = await db.query<RowDataPacket[]>("SELECT id, email, refresh_token_hash, role FROM users WHERE id = ?", [payload.id]);
+    const [rows] = await db.query<RowDataPacket[]>("SELECT id, email, refresh_token_hash, is_approved, role FROM users WHERE id = ?", [payload.id]);
 
     if(rows.length === 0) {
       res.status(404).json({
         success: false,
         error: "No user found with the refresh token"
+      });
+      return;
+    }
+
+    // check if user is still approved
+    if(rows[0]!.role !== "admin" && !rows[0]!.is_approved) {
+      res.status(403).json({
+        success: false,
+        error: "Cashier account disproved. Be sure your administrator approves you!",
       });
       return;
     }
