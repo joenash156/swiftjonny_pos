@@ -15,5 +15,6 @@ router.use("/category", categoriesRouter);
 router.use("/product", productsRouter)
 router.use("/sale", salesRouter)
 router.use("/pos_settings", posSettingsRouter)
+router.use("/analytics")
 
 export default router;
