@@ -45,3 +45,9 @@ export type POSSettings = {
   receipt_header: string | null,
   receipt_footer: string | null
 }
+
+export type AnalyticsParams = {
+  startDate: Date;
+  endDate: Date;
+  userId?: string;
+}
