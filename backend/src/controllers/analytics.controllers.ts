@@ -47,7 +47,7 @@ export const getGeneralAnalyticsSummary = async (req: Request, res: Response): P
   }
 }
 
-// controller to get analytics of specific cashiers
+// controller to get analytics of specific cashier
 export const getAnalyticsSummaryOfCashier = async (req: Request, res: Response): Promise<void> => {
   try {
     // get user id from request user
