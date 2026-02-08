@@ -5,7 +5,8 @@ import categoriesRouter from "./categories.routes";
 import productsRouter from "./products.routes";
 import salesRouter from "./sales.routes";
 import posSettingsRouter from "./pos.settings.routes";
-import analyticsRouter from "./analytics.routes"
+import analyticsRouter from "./analytics.routes";
+import dashboardRouter from "./dashboard.routes";
 
 
 const router: Router = express.Router();
@@ -17,5 +18,6 @@ router.use("/product", productsRouter)
 router.use("/sale", salesRouter)
 router.use("/pos_settings", posSettingsRouter)
 router.use("/analytics", analyticsRouter)
+router.use("/dashboard", dashboardRouter)
 
 export default router;
