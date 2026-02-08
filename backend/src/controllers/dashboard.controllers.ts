@@ -7,7 +7,7 @@ export const getDashboardSummary = async (req: Request, res: Response): Promise<
     // get user id from request user
     const user = req.user;
 
-    // get from and to date from request query params
+    // get from and to date from request query paramss
     const { from, to } = req.query;
 
     let startDate: Date;
