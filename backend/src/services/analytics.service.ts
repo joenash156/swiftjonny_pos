@@ -49,5 +49,28 @@ export async function getAnalyticsSummary({ startDate, endDate, userId }: Analyt
 
 // function to get sales trend
 export async function getSalesTrend({ startDate, endDate, userId }: AnalyticsParams) {
-  
+  // enforce start and end of day
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(23, 59, 59, 999);
+
+  let query = "SELECT DATE(created_at) AS date, COALESCE(SUM(total), 0) AS total_sales FROM sales WHERE status = 'completed' AND created_at BETWEEN ? AND ?";
+
+  const params:(Date | string)[] = [startDate, endDate];
+
+  if(userId) {
+    query += " AND s.user_id = ?";
+    params.push(userId);
+  }
+
+  query += "GROUP BY DATE(created_at) ORDER BY DATE(created_at) ASC";
+
+  const [salesTrendRows] = await db.query<RowDataPacket[]>(query, params);
+
+  const salesTrend = salesTrendRows.map((salesTrendRow) => ({
+    date: salesTrendRow.date,
+    total_sales: Number(salesTrendRow.total_sales)  
+  }))
+
+  return salesTrend;
+
 }
