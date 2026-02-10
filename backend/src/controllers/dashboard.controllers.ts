@@ -22,7 +22,7 @@ export const getDashboardSummary = async (req: Request, res: Response): Promise<
       endDate = new Date(to as string);
 
     } else {
-        // default to today if no valid date is provided
+        // default to today if no valid date is provideds
         startDate = new Date();
         endDate = new Date();
     }
