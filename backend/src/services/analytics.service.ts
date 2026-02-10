@@ -2,6 +2,7 @@ import db from "../configs/database";
 import { RowDataPacket } from "mysql2";
 import { AnalyticsParams } from "../types/types";
 
+// function to get analytic summary
 export async function getAnalyticsSummary({ startDate, endDate, userId }: AnalyticsParams) {
   // enforce start and end of day
   startDate.setHours(0, 0, 0, 0);
@@ -44,4 +45,9 @@ export async function getAnalyticsSummary({ startDate, endDate, userId }: Analyt
     average_sale_value: averageSaleValue
   }
 
+}
+
+// function to get sales trend
+export async function getSalesTrend({ startDate, endDate, userId }: AnalyticsParams) {
+  
 }
