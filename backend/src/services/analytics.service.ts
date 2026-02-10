@@ -58,11 +58,11 @@ export async function getSalesTrend({ startDate, endDate, userId }: AnalyticsPar
   const params:(Date | string)[] = [startDate, endDate];
 
   if(userId) {
-    query += " AND s.user_id = ?";
+    query += " AND user_id = ?";
     params.push(userId);
   }
 
-  query += "GROUP BY DATE(created_at) ORDER BY DATE(created_at) ASC";
+  query += " GROUP BY DATE(created_at) ORDER BY DATE(created_at) ASC";
 
   const [salesTrendRows] = await db.query<RowDataPacket[]>(query, params);
 
