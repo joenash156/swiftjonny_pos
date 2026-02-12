@@ -4,7 +4,7 @@ import { RowDataPacket } from "mysql2";
 
 
 // controller to get end of day/current stock
-export const getEndOfDayStock = async (req: Request, res: Response): Promise<void> => {
+export const getEndOfDayStock = async (_req: Request, res: Response): Promise<void> => {
   try {
     // query database to get all products
     const [productsRows] = await db.query<RowDataPacket[]>("SELECT id, name, price, stock FROM products ORDER BY name ASC");
@@ -39,6 +39,7 @@ export const getEndOfDayStock = async (req: Request, res: Response): Promise<voi
       success: true,
       message: "End of day stock fetch successfully!✅",
       report: {
+        date: new Date().toISOString(),
         total_products: products.length,
         total_stock_quantity: totalStockQuantity,
         grand_total_stock_value: Number(grandTotalStockValue.toFixed(2)),
