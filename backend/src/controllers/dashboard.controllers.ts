@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { getAnalyticsSummary, getSalesTrend } from "../services/analytics.service";
+import { getAnalyticsSummary, getSalesTrend, getTopSellingProduct } from "../services/analytics.service";
 
 // controller to get dashboard summary
 export const getDashboardSummary = async (req: Request, res: Response): Promise<void> => {
@@ -27,9 +27,13 @@ export const getDashboardSummary = async (req: Request, res: Response): Promise<
         endDate = new Date();
     }
 
-    const summary = await getAnalyticsSummary({ startDate, endDate, userId: user.role === "admin" ? undefined : user.id });
+    const userId = user.role === "admin" ? undefined : user.id;
 
-    const salesTrend = await getSalesTrend({ startDate, endDate, userId: user.role === "admin" ? undefined : user.id });
+    const [summary, salesTrend, topSellingProducts] = await Promise.all([
+      getAnalyticsSummary({ startDate, endDate, userId }),
+      getSalesTrend({ startDate, endDate, userId }),
+      getTopSellingProduct({ startDate, endDate, userId })
+    ]);
 
     res.status(200).json({
       success: true,
@@ -40,7 +44,8 @@ export const getDashboardSummary = async (req: Request, res: Response): Promise<
       },
       summary,
       charts: {
-        sales_trend: salesTrend
+        sales_trend: salesTrend,
+        top_selling_products: topSellingProducts
       }
     });
 
