@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { getAnalyticsSummary, getSalesTrend, getTopSellingProduct } from "../services/analytics.service";
+import { getAnalyticsSummary, getSalesTrend, getTopSellingProducts } from "../services/analytics.service";
 
 // controller to get dashboard summary
 export const getDashboardSummary = async (req: Request, res: Response): Promise<void> => {
@@ -32,7 +32,7 @@ export const getDashboardSummary = async (req: Request, res: Response): Promise<
     const [summary, salesTrend, topSellingProducts] = await Promise.all([
       getAnalyticsSummary({ startDate, endDate, userId }),
       getSalesTrend({ startDate, endDate, userId }),
-      getTopSellingProduct({ startDate, endDate, userId })
+      getTopSellingProducts({ startDate, endDate, userId })
     ]);
 
     res.status(200).json({

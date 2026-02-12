@@ -76,7 +76,7 @@ export async function getSalesTrend({ startDate, endDate, userId }: AnalyticsPar
 }
 
 // function to get top selling products
-export async function getTopSellingProduct({ startDate, endDate, userId }: AnalyticsParams) {
+export async function getTopSellingProducts({ startDate, endDate, userId }: AnalyticsParams) {
   // enforce start and end of day
   startDate.setHours(0, 0, 0, 0);
   endDate.setHours(23, 59, 59, 999);
