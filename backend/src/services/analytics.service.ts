@@ -102,3 +102,29 @@ export async function getTopSellingProducts({ startDate, endDate, userId }: Anal
   }));
 
 }
+
+// function to get cashier performance
+export async function getCashierPerformance({ startDate, endDate }: AnalyticsParams) {
+  // enforce start and end of day
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(23, 59, 59, 999);
+
+  const [rows] = await db.query<RowDataPacket[]>("SELECT u.id, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, COALESCE(SUM(s.total), 0) AS total_sales, COUNT(s.id) AS total_transactions, COALESCE(SUM(si.quantity), 0) AS total_items_sold FROM users u LEFT JOIN sales s ON u.id = s.user_id AND s.status = 'completed' AND s.created_at BETWEEN ? AND ? LEFT JOIN sale_items si ON s.id = si.sale_id WHERE u.role = 'cashier' GROUP BY u.id, u.firstname, u.lastname ORDER BY total_sales DESC, u.firstname ASC", [startDate, endDate]);
+
+  return rows.map((row) => {
+    // calculate average sale value
+    const totalSales = Number(row.total_sales);
+    const totalTransactions = Number(row.total_transactions);
+
+    const averageSaleValue = totalTransactions > 0 ? Number((totalSales / totalTransactions).toFixed(2)) : 0;
+
+    return {
+      id: row.id,
+      name: `${row.cashier_firstname} ${row.cashier_lastname}`,
+      total_sales: totalSales,
+      total_transactions: totalTransactions,
+      total_items_sold: Number(row.total_items_sold),
+      average_sale_value: averageSaleValue
+    };
+  });
+}
