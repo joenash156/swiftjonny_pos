@@ -51,3 +51,11 @@ export type AnalyticsParams = {
   endDate: Date;
   userId?: string;
 }
+
+export type StockProduct = {
+  id: string;
+  name: string;
+  stock: number;
+  unit_price: number;
+  total_value: number;
+};

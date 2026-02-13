@@ -1,6 +1,7 @@
 import db from "../configs/database";
 import { Request, Response } from "express"
 import { RowDataPacket } from "mysql2"; 
+import { StockProduct } from "../types/types";
 
 
 // controller to get end of day/current stock
@@ -9,17 +10,9 @@ export const getEndOfDayStock = async (_req: Request, res: Response): Promise<vo
     // query database to get all products
     const [productsRows] = await db.query<RowDataPacket[]>("SELECT id, name, price, stock FROM products ORDER BY name ASC");
 
-    if(productsRows.length === 0) {
-      res.status(404).json({
-        success: false,
-        error: "No product found"
-      });
-      return;
-    }
-
     let totalStockQuantity = 0;
     let grandTotalStockValue = 0;
-    const products = [];
+    const products: StockProduct[] = [];
 
     for(const product of productsRows) {
       const totalValue = Number(product.price) * Number(product.stock);
@@ -35,11 +28,13 @@ export const getEndOfDayStock = async (_req: Request, res: Response): Promise<vo
       });
     }
 
+    const reportTime = new Date();
+
     res.status(200).json({
       success: true,
-      message: "End of day stock fetch successfully!✅",
+      message: "End of day stock fetched successfully!✅",
       report: {
-        date: new Date().toISOString(),
+        date: reportTime.toISOString(),
         total_products: products.length,
         total_stock_quantity: totalStockQuantity,
         grand_total_stock_value: Number(grandTotalStockValue.toFixed(2)),
