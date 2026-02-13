@@ -8,7 +8,7 @@ import upload from "../middlewares/uploads.middleware";
 
 const router: Router = express.Router();
 
-// router to create/insert a product (only executed by admins)
+// router to create/insert a product (only executed by admins) Todo: [Make some changes]
 router.post("/create", requireAuth, requireAdmin, requireUploadType("product"), upload.single("product"), createProduct);
 
 // router to get all products
