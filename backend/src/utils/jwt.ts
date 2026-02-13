@@ -14,7 +14,7 @@ async function signAccessToken(payload: TokenPayload): Promise<string> {
 }
 
 async function signRefreshToken(payload: TokenPayload): Promise<string> {
-  return jwt.sign(payload, REFRESH_TOKEN_SECRET_KEY, { expiresIn: "7d" });
+  return jwt.sign(payload, REFRESH_TOKEN_SECRET_KEY, { expiresIn: "4d" });
 }
 
 async function verifyAccessToken(token: string): Promise<TokenPayload> {

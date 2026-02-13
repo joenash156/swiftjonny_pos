@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { getAnalyticsSummary, getSalesTrend, getTopSellingProducts } from "../services/analytics.service";
+import { getAnalyticsSummary, getRevenueComparison, getSalesTrend, getTopSellingProducts } from "../services/analytics.service";
 
 // controller to get dashboard summary
 export const getDashboardSummary = async (req: Request, res: Response): Promise<void> => {
@@ -60,9 +60,20 @@ export const getDashboardSummary = async (req: Request, res: Response): Promise<
 }
 
 // controller to get revenue comparison
-export const getAnalyticRevenueComparison = async (req: Request, res: Response): Promise<void> => {
+export const getDashboardRevenueComparison = async (req: Request, res: Response): Promise<void> => {
   try {
-    
+    const user = req.user;
+
+    const userId = user.role === "admin" ? undefined : user.id;
+
+    const revenueComparison = await getRevenueComparison({ userId });
+
+    res.status(200).json({
+      success: true,
+      message: "Revenue comparison fetched successfully!✅",
+      revenue_comparison: revenueComparison
+    });
+    return;
 
   } catch(err: unknown) {
       console.error("Failed to fetch revenue comparison:", err);

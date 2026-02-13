@@ -262,7 +262,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       secure: process.env.NODE_ENV === "production" ? true : false,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      maxAge: 4 * 24 * 60 * 60 * 1000
     });
 
     // hash refresh token
@@ -897,7 +897,7 @@ export const generateNewAccessToken = async (req: Request, res: Response): Promi
       secure: process.env.NODE_ENV === "production" ? true : false,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 4 * 24 * 60 * 60 * 1000,
     })
 
     res.status(200).json({
@@ -1039,7 +1039,7 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
-    // if user exists, we verify the user passowrd entered
+    // if user exists, we verify the user password entered
     const isMatch = await compareHashedItem(password, rows[0]?.password_hash);
 
     if(!isMatch) {
@@ -1050,7 +1050,7 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
-    // delete user from the datebase
+    // delete user from the database
     const [results] = await db.query<ResultSetHeader>("DELETE FROM users WHERE id = ?", [userId]);
 
     if(results.affectedRows === 0) {
