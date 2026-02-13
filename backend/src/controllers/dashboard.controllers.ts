@@ -58,3 +58,18 @@ export const getDashboardSummary = async (req: Request, res: Response): Promise<
       return;
   }
 }
+
+// controller to get revenue comparison
+export const getAnalyticRevenueComparison = async (req: Request, res: Response): Promise<void> => {
+  try {
+    
+
+  } catch(err: unknown) {
+      console.error("Failed to fetch revenue comparison:", err);
+      res.status(500).json({
+        success: false,
+        error: "Internal server error fetching revenue comparison"
+      });
+      return;
+  }
+}

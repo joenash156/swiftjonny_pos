@@ -2,6 +2,10 @@ import db from "../configs/database";
 import { RowDataPacket } from "mysql2";
 import { AnalyticsParams } from "../types/types";
 
+type RevenueComparisonParams = {
+  userId?: string; // optional, for per-cashier view
+};
+
 // function to get analytic summary
 export async function getAnalyticsSummary({ startDate, endDate, userId }: AnalyticsParams) {
   // enforce start and end of day
@@ -127,4 +131,55 @@ export async function getCashierPerformance({ startDate, endDate }: AnalyticsPar
       average_sale_value: averageSaleValue
     };
   });
+}
+
+// function to get revenue comparison
+export async function getRevenueComparison({ userId }: RevenueComparisonParams) {
+  
+  // get today's date range
+  const today = new Date();
+  const startOfToday = new Date(today);
+  startOfToday.setHours(0, 0, 0, 0);
+  const endOfToday = new Date(today);
+  endOfToday.setHours(23, 59, 59, 999);
+
+  // get yesterday's date range
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  const startOfYesterday = new Date(yesterday);
+  startOfYesterday.setHours(0, 0, 0, 0);
+  const endOfYesterday = new Date(yesterday);
+  endOfYesterday.setHours(23, 59, 59, 999);
+
+  // base SQL query
+  let query = `SELECT COALESCE(SUM(total), 0) AS total_sales FROM sales WHERE status = 'completed' AND created_at BETWEEN ? AND ?`;
+
+  const paramsToday: (Date | string)[] = [startOfToday, endOfToday];
+  const paramsYesterday: (Date | string)[] = [startOfYesterday, endOfYesterday];
+
+  // add user filter if userId exists
+  if (userId) {
+    query += " AND user_id = ?";
+    paramsToday.push(userId);
+    paramsYesterday.push(userId);
+  }
+
+  // fetch today's total sales
+  const [todayRows] = await db.query<RowDataPacket[]>(query, paramsToday);
+  const todayTotal = Number(todayRows[0]?.total_sales ?? 0);
+
+  // fetch yesterday's total sales
+  const [yesterdayRows] = await db.query<RowDataPacket[]>(query, paramsYesterday);
+  const yesterdayTotal = Number(yesterdayRows[0]?.total_sales ?? 0);
+
+  // calculate difference and percent change
+  const difference = todayTotal - yesterdayTotal;
+  const percentChange = yesterdayTotal > 0 ? Number(((difference / yesterdayTotal) * 100).toFixed(2)) : 0;
+
+  return {
+    today: todayTotal,
+    yesterday: yesterdayTotal,
+    difference,
+    percent_change: percentChange
+  };
 }

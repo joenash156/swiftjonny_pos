@@ -124,6 +124,10 @@ export const getCashiersPerformance = async (req: Request, res: Response): Promi
     res.status(200).json({
       success: true,
       message: "Cashiers performance fetched successfully!✅",
+      period: {
+        start_date: startDate.toISOString(),
+        end_date: endDate.toISOString()
+      },
       cashiers_performance: cashiersPerformance
     })
 
