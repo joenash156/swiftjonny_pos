@@ -3,6 +3,7 @@ import { Request, Response } from "express"
 import { ResultSetHeader, RowDataPacket } from "mysql2"; 
 import { ZodError } from "zod";
 import { createProductSchema, updateProductSchema } from "../validators/products.schema";
+import { deleteFile } from "../utils/delFileFunc";
 
 // controller to create/insert new product
 export const createProduct = async (req: Request, res: Response): Promise<void> => {
@@ -224,7 +225,7 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
     }
 
     // check if product exists
-    const [rows] = await db.query<RowDataPacket[]>("SELECT name FROM products WHERE id = ?", [id]);
+    const [rows] = await db.query<RowDataPacket[]>("SELECT name, image_url FROM products WHERE id = ?", [id]);
 
     if(rows.length === 0) {
       res.status(404).json({
@@ -233,6 +234,9 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
       });
       return;
     }
+
+    // get the old image to be removed later in case user upload new one
+    const oldImage = rows[0]?.image_url;
 
     // validate category if category_id is provided
     if (category_id !== undefined) {
@@ -308,6 +312,11 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
         error: "Unable to update product"
       });
       return;
+    }
+
+    // delete old image if user uploaded a new one
+    if(imageUrl && oldImage) {
+      deleteFile("products", oldImage);
     }
 
     // fetch the updated product details
