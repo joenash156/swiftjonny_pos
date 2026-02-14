@@ -29,11 +29,7 @@ export const createProductSchema = z.object({
 
   category_id: z
     .string()
-    .refine((id) => isUUID(id), { message: "Invalid category ID" }),
-
-  image_url: z
-    .url("Image URL must be a valid URL")
-    .optional()
+    .refine((id) => isUUID(id), { message: "Invalid category ID" })
 });
 
 export const updateProductSchema = z.object({
@@ -66,8 +62,4 @@ export const updateProductSchema = z.object({
   .string()
   .refine((id) => isUUID(id), { message: "Invalid category ID" })
   .optional(),
-
-  image_url: z
-    .url("Image URL must be a valid URL")
-    .optional()
 });
