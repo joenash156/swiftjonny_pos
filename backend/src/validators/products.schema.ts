@@ -17,10 +17,12 @@ export const createProductSchema = z.object({
     .optional(),
 
   price: z
+    .coerce
     .number("Price must be a number" )
     .positive("Price must be greater than zero"),
 
   stock: z
+    .coerce
     .number()
     .int("Stock must be an integer")
     .min(0, "Stock cannot be negative")
@@ -48,11 +50,13 @@ export const updateProductSchema = z.object({
     .optional(),
 
   price: z
+    .coerce
     .number("Price must be a number" )
     .positive("Price must be greater than zero")
     .optional(),
 
   stock: z
+    .coerce
     .number()
     .int("Stock must be an integer")
     .min(0, "Stock cannot be negative")
