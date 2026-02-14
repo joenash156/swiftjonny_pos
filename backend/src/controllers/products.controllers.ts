@@ -10,7 +10,14 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
     // validate inputs from request body
     const validateProductData = createProductSchema.parse(req.body);
 
-    const { name, price, category_id, description, stock, image_url } = validateProductData;
+    const { name, price, category_id, description, stock } = validateProductData;
+
+    let { image_url } = validateProductData
+
+    // check if file exists in request body
+    if(req.file) {
+      image_url = req.file.filename;
+    }
 
     // check if category truly exists
     const [categoryRows] = await db.query<RowDataPacket[]>("SELECT id, name FROM categories WHERE id = ?", [category_id]);
@@ -47,7 +54,7 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
         price: Number(price),
         stock,
         category_name: categoryRows[0]!.name,
-        image_url: image_url || null,
+        image_url: `${process.env.BASE_URL}/uploads/products/${image_url}` || null,
       }
     });
     return;
