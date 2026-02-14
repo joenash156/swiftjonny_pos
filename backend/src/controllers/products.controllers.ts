@@ -12,11 +12,11 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 
     const { name, price, category_id, description, stock } = validateProductData;
 
-    let { image_url } = validateProductData
+    let imageUrl: string | undefined;
 
     // check if file exists in request body
     if(req.file) {
-      image_url = req.file.filename;
+      imageUrl = req.file.filename;
     }
 
     // check if category truly exists
@@ -42,7 +42,7 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
     }
 
     // insert product into the database
-    await db.query<ResultSetHeader>("INSERT INTO products (name, price, category_id, description, stock, image_url) VALUES (?, ?, ?, ?, ?, ?)", [name, price, category_id, description || null, stock, image_url || null]);
+    await db.query<ResultSetHeader>("INSERT INTO products (name, price, category_id, description, stock, image_url) VALUES (?, ?, ?, ?, ?, ?)", [name, price, category_id, description || null, stock, imageUrl || null]);
 
     res.status(201).json({
       success: true,
@@ -54,7 +54,7 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
         price: Number(price),
         stock,
         category_name: categoryRows[0]!.name,
-        image_url: `${process.env.BASE_URL}/uploads/products/${image_url}` || null,
+        image_url: `${process.env.BASE_URL}/uploads/products/${imageUrl}` || null,
       }
     });
     return;
@@ -215,7 +215,13 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
 
     // validate product inputs data
     const validatedProductData = updateProductSchema.parse(req.body);
-    const { name, price, category_id, description, stock, image_url } = validatedProductData;
+    const { name, price, category_id, description, stock } = validatedProductData;
+
+    let imageUrl: string | undefined;
+
+    if(req.file) {
+      imageUrl = req.file.filename;
+    }
 
     // check if product exists
     const [rows] = await db.query<RowDataPacket[]>("SELECT name FROM products WHERE id = ?", [id]);
@@ -278,9 +284,9 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
       fields.push("stock = ?");
       values.push(stock);
     }
-    if(image_url !== undefined) {
+    if(imageUrl !== undefined) {
       fields.push("image_url = ?");
-      values.push(image_url);
+      values.push(imageUrl);
     }
 
     if(fields.length === 0) {
