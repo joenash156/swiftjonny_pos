@@ -24,6 +24,11 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
     const [categoryRows] = await db.query<RowDataPacket[]>("SELECT id, name FROM categories WHERE id = ?", [category_id]);
 
     if(categoryRows.length === 0) {
+      // if there is no category, check and delete product image from file system
+      if(req.file) {
+        deleteFile("products", req.file.filename)
+      }
+
       res.status(404).json({
         success: false,
         error: "Category not found!"
@@ -35,6 +40,11 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
     const [existingProductRows] = await db.query<RowDataPacket[]>("SELECT id FROM products WHERE LOWER(name) = LOWER(?) AND category_id = ?", [name, category_id]);
 
     if(existingProductRows.length > 0) {
+      // if product exists, check and delete product image from file system
+      if(req.file) {
+        deleteFile("products", req.file.filename)
+      }
+
       res.status(409).json({
         success: false,
         error: "Product with this name already exists in the category!"
@@ -61,6 +71,11 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
     return;
 
   } catch(err: unknown) {
+      // if there is any error check and delete product image from file system
+      if(req.file) {
+        deleteFile("products", req.file.filename)
+      }
+      
       // check if the error comes from zod
       if (err instanceof ZodError) {
         res.status(400).json({
@@ -328,7 +343,8 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
       count: 1,
       product: {
         ...updatedProduct[0],
-        price: Number(updatedProduct[0]!.price)
+        price: Number(updatedProduct[0]!.price),
+        image_url: `${process.env.BASE_URL}/uploads/products/${updatedProduct[0]!.image_url}` || null,
       }
     });
     return;
