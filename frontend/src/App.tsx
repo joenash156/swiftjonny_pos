@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react"
 import SplashScreen from "./components/SplashScreen"
-import Logo from "./assets/auth-page-img.jpg"
+import { Route, Routes } from "react-router-dom"
+import AuthPagesLayout from "./layouts/AuthPagesLayout"
+import Login from "./pages/public/Login"
+import Homepage from "./pages/public/Homepage"
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -17,8 +20,15 @@ function App() {
 
   return (
     <div>
-      <h1 className="text-lg text-lime-400">Welcome</h1>
-      <img src={Logo} alt="" className="h-28 w-28" />
+      
+      <Routes>
+        {/* Auth pages layout (unprotected routes) */}
+        <Route element={<AuthPagesLayout />}>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/login" element={<Login />} />
+        </Route>
+
+      </Routes>
     </div>
   )
 }
