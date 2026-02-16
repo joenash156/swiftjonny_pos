@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
 import ThemeToggler from "../ThemeToggler";
 import Swal from "sweetalert2";
+import type { SweetAlertIcon } from "sweetalert2";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
@@ -43,20 +44,27 @@ function LoginForm() {
       const response = await login(formData);
 
       let title = "Login Failed!";
-      let icon: "success" | "error" = "error";
+      let icon: SweetAlertIcon = "error";
+
+      const isEmailNotVerified =
+        response.is_email_verified !== undefined &&
+        (response.is_email_verified === false || response.is_email_verified === 0);
+      const isNotApproved =
+        response.is_approved !== undefined &&
+        (response.is_approved === false || response.is_approved === 0);
 
       if (response.success) {
         // Fully successful login
         title = "Login Successful!";
         icon = "success";
-      } else if (response.is_email_verified !== undefined && response.is_email_verified === false) {
-        // Credentials correct but email not verified
+      } else if (isEmailNotVerified) {
+        // Credentials correct but email not verified – treat as a successful login step
         title = "Verify Your Email";
-        icon = "error";
-      } else if (response.is_approved !== undefined && response.is_approved === false) {
-        // Credentials correct but not approved
+        icon = "success";
+      } else if (isNotApproved) {
+        // Credentials correct but account pending approval
         title = "Approval Required";
-        icon = "error";
+        icon = "info";
       }
 
       const msg = response.success
@@ -89,7 +97,7 @@ function LoginForm() {
         return;
       }
 
-      if (response.is_email_verified !== undefined && response.is_email_verified === false) {
+      if (isEmailNotVerified) {
         setFormData({
           email: "",
           password: "",
@@ -98,7 +106,7 @@ function LoginForm() {
         return;
       }
 
-      if (response.is_approved !== undefined && response.is_approved === false) {
+      if (isNotApproved) {
         setFormData({
           email: "",
           password: "",

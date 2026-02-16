@@ -62,46 +62,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    * @returns ApiResponse with success/message/error from backend
    */
 
-const login = async (credentials: LoginCredentials): Promise<ApiResponse> => {
-  try {
-    setLoading(true);
-    const response = await api.post<ApiResponse>("/api/user/login", credentials);
+  const login = async (credentials: LoginCredentials): Promise<ApiResponse> => {
+    try {
+      setLoading(true);
+      const response = await api.post<ApiResponse>("/api/user/login", credentials);
 
-    const data = response.data;
+      const data = response.data;
 
-    // If backend signals business error with success === false
-    if (!data.success) {
-      const message = data.error || data.message || "Login failed. Please try again.";
-      return { success: false, error: message, message };
+      // If backend signals business error with success === false
+      if (!data.success) {
+        const message = data.error || data.message || "Login failed. Please try again.";
+        // Preserve any extra flags (e.g. is_email_verified, is_approved) from backend response
+        return { ...data, error: message, message };
+      }
+
+      // Success branch – ensure required fields exist
+      if (!data.accessToken || !data.user) {
+        const message = "Invalid login response from server.";
+        return { success: false, error: message, message };
+      }
+
+      // Store user and access token
+      setAccessToken(data.accessToken);
+      setUser(data.user);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // Apply user's theme preference if available
+      if (data.user.theme) setTheme(data.user.theme);
+      return data;
+    } catch (error: unknown) {
+      // Type-safe Axios error handling
+      if (error instanceof AxiosError) {
+        // Return backend error object if available
+        return error.response?.data || { success: false, error: "Login failed. Please try again." };
+      }
+
+      // Fallback for unexpected errors
+      return { success: false, error: "Unexpected error occurred during login." };
+    } finally {
+      setLoading(false);
     }
-
-    // Success branch – ensure required fields exist
-    if (!data.accessToken || !data.user) {
-      const message = "Invalid login response from server.";
-      return { success: false, error: message, message };
-    }
-
-    // Store user and access token
-    setAccessToken(data.accessToken);
-    setUser(data.user);
-    localStorage.setItem("user", JSON.stringify(data.user));
-
-    // Apply user's theme preference if available
-    if (data.user.theme) setTheme(data.user.theme);
-    return data;
-  } catch (error: unknown) {
-    // Type-safe Axios error handling
-    if (error instanceof AxiosError) {
-      // Return backend error object if available
-      return error.response?.data || { success: false, error: "Login failed. Please try again." };
-    }
-
-    // Fallback for unexpected errors
-    return { success: false, error: "Unexpected error occurred during login." };
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   /**
    * Register a new user
@@ -110,47 +111,47 @@ const login = async (credentials: LoginCredentials): Promise<ApiResponse> => {
    */
 
 
-const register = async (data: RegisterData): Promise<ApiResponse> => {
-  try {
-    setLoading(true);
+  const register = async (data: RegisterData): Promise<ApiResponse> => {
+    try {
+      setLoading(true);
 
-    // Client-side password check
-    if (data.password !== data.confirmPassword) {
-      return { success: false, error: "Passwords do not match" };
+      // Client-side password check
+      if (data.password !== data.confirmPassword) {
+        return { success: false, error: "Passwords do not match" };
+      }
+
+      // Call the API
+      const response = await api.post<ApiResponse>("/api/user/signup", {
+        firstname: data.firstname,
+        lastname: data.lastname,
+        othername: data.othername,
+        email: data.email,
+        password: data.password,
+      });
+
+      // If success, set user info
+      if (response.data.success) {
+        setUser(response.data.user);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+
+        if (response.data.user.theme) setTheme(response.data.user.theme);
+      }
+
+      // Always return the API response
+      return response.data;
+    } catch (error: unknown) {
+      // Axios error type
+      if (error instanceof AxiosError) {
+        // Return backend error object if available
+        return error.response?.data || { success: false, error: "Unknown error occurred" };
+      }
+
+      // Fallback for unexpected errors
+      return { success: false, error: "Unexpected error occurred" };
+    } finally {
+      setLoading(false);
     }
-
-    // Call the API
-    const response = await api.post<ApiResponse>("/api/user/signup", {
-      firstname: data.firstname,
-      lastname: data.lastname,
-      othername: data.othername,
-      email: data.email,
-      password: data.password,
-    });
-
-    // If success, set user info
-    if (response.data.success) {
-      setUser(response.data.user);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-
-      if (response.data.user.theme) setTheme(response.data.user.theme);
-    }
-
-    // Always return the API response
-    return response.data;
-  } catch (error: unknown) {
-    // Axios error type
-    if (error instanceof AxiosError) {
-      // Return backend error object if available
-      return error.response?.data || { success: false, error: "Unknown error occurred" };
-    }
-
-    // Fallback for unexpected errors
-    return { success: false, error: "Unexpected error occurred" };
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
 
   /**
@@ -158,24 +159,24 @@ const register = async (data: RegisterData): Promise<ApiResponse> => {
    * Clears tokens and user data both client-side and server-side
    */
 
-const logout = async (): Promise<void> => {
-  try {
-    // Attempt server logout (invalidate cookie/session/token)
-    await api.post("/api/user/logout");
-  } catch (error: unknown) {
-    // We don't block logout if server fails
-    if (error instanceof AxiosError) {
-      console.warn("Server logout failed:", error.response?.data || error.message);
-    } else {
-      console.warn("Unexpected logout error:", error);
+  const logout = async (): Promise<void> => {
+    try {
+      // Attempt server logout (invalidate cookie/session/token)
+      await api.post("/api/user/logout");
+    } catch (error: unknown) {
+      // We don't block logout if server fails
+      if (error instanceof AxiosError) {
+        console.warn("Server logout failed:", error.response?.data || error.message);
+      } else {
+        console.warn("Unexpected logout error:", error);
+      }
+    } finally {
+      // Always clear client-side state
+      setAccessToken(null);
+      setUser(null);
+      localStorage.removeItem("user");
     }
-  } finally {
-    // Always clear client-side state
-    setAccessToken(null);
-    setUser(null);
-    localStorage.removeItem("user");
-  }
-};
+  };
 
 
   /**
