@@ -4,19 +4,25 @@ import { Link } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
 import ThemeToggler from "../ThemeToggler";
 import type { FormData, PasswordRequirement } from "../../types/types";
+import { useAuth } from "../../contexts/AuthContext";
+import { TailSpin } from "react-loader-spinner";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 function RegisterForm() {
   const { theme, toggleTheme } = useTheme();
   const [formData, setFormData] = useState<FormData>({
     firstname: "",
     lastname: "",
-    othername: "",
+    othername: "".trim() || undefined,
     email: "",
     password: "",
     confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { loading, register } = useAuth();
+  const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,10 +32,62 @@ function RegisterForm() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
+
+    try {
+      const response = await register(formData);
+      // console.log("Registration response:", response);
+
+      // Pick the right message from the API response
+      const msg = response.success ? response.message : response.error;
+
+      await Swal.fire({
+        icon: response.success ? "success" : "error",
+        title: response.success ? "Registration Successful!" : "Registration Failed!",
+        html: `<p class="font-poppins text-[14px]">${msg}</p>`,
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: response.success ? 2000 : 3000,
+        background: theme === "dark" ? "#1f2937" : "#ffffff",
+        color: theme === "dark" ? "#f9fafb" : "#111827",
+        customClass: {
+          popup: "rounded-2xl shadow-2xl",
+          title: "font-semibold font-poppins",
+          htmlContainer: "font-poppins text-[14px]",
+        },
+      });
+
+      if (response.success) {
+        setFormData({
+          firstname: "",
+          lastname: "",
+          othername: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+        });
+        
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Unexpected error in form submit:", error);
+    }
+    // finally {
+    //   setFormData({
+    //     firstname: "",
+    //     lastname: "",
+    //     othername: "",
+    //     email: "",
+    //     password: "",
+    //     confirmPassword: "",
+    //   });
+    // }
   };
+
 
   // Password validation requirements
   const passwordRequirements: PasswordRequirement[] = useMemo(() => {
@@ -225,9 +283,8 @@ function RegisterForm() {
                 className={`absolute right-4 top-1/2 -translate-y-1/2 ${theme === "dark" ? "text-slate-500 hover:text-slate-300" : "text-slate-400 hover:text-slate-600"} transition-colors duration-200`}
               >
                 <i
-                  className={`fa-regular ${
-                    showPassword ? "fa-eye-slash" : "fa-eye"
-                  }`}
+                  className={`fa-regular ${showPassword ? "fa-eye-slash" : "fa-eye"
+                    }`}
                 ></i>
               </button>
             </div>
@@ -279,9 +336,8 @@ function RegisterForm() {
                 className={`absolute right-4 top-1/2 -translate-y-1/2 ${theme === "dark" ? "text-slate-500 hover:text-slate-300" : "text-slate-400 hover:text-slate-600"} transition-colors duration-200`}
               >
                 <i
-                  className={`fa-regular ${
-                    showConfirmPassword ? "fa-eye-slash" : "fa-eye"
-                  }`}
+                  className={`fa-regular ${showConfirmPassword ? "fa-eye-slash" : "fa-eye"
+                    }`}
                 ></i>
               </button>
             </div>
@@ -294,8 +350,20 @@ function RegisterForm() {
             whileTap={{ scale: 0.99 }}
             className={`w-full h-11 ${theme === "dark" ? "bg-lime-600 hover:bg-lime-700" : "bg-lime-500 hover:bg-lime-600"} text-white font-poppins font-semibold text-sm rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer mt-6`}
           >
-            <span>Create Account</span>
-            <i className="fa-solid fa-user-plus transition-transform duration-200"></i>
+            {loading ? (
+              <TailSpin
+                height="20"
+                width="20"
+                color="#FFFFFF"
+                ariaLabel="tail-spin-loading"
+                radius="1" visible={true}
+              />
+            ) : (
+              <>
+                <span>Create Account</span>
+                <i className="fa-solid fa-user-plus transition-transform duration-200"></i>
+              </>
+            )}
           </motion.button>
 
           {/* Sign In Link */}

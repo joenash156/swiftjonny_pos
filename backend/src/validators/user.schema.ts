@@ -5,19 +5,22 @@ import { capitalizeName } from "../utils/normalize";
 const userBaseSchema = {
   firstname: z
     .string()
+    .trim()
     .min(2, "First name must be at least 2 characters")
     .max(50)
     .transform(capitalizeName),
 
   lastname: z
     .string()
+    .trim()
     .min(2, "Last name must be at least 2 characters")
     .max(50)
     .transform(capitalizeName),
 
   othername: z
     .string()
-    .min(2)
+    .trim()
+    .min(2, "Other name must be at least 2 characters")
     .max(50)
     .transform(capitalizeName)
     .optional(),

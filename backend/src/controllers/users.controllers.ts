@@ -52,7 +52,7 @@ export const createUser = async (req: Request, res:Response): Promise<void> => {
     // return user initial user info
     res.status(201).json({
       success: true,
-      message: "User created successfully!✅. Please check your email to verify your account.", 
+      message: "Your account has been created successfully! Kindly check your email to verify your account.", 
       user: {
         firstname,
         lastname,
@@ -238,7 +238,8 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     if(user.role !== "admin" && !user.is_email_verified) {
       res.status(403).json({
         success: false,
-        error: "Verify your email to login!"
+        is_email_verified: user.is_email_verified,
+        error: "Verify your email to get started!"
       });
       return;
     }
@@ -247,6 +248,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     if(user.role !== "admin" && !user.is_approved) {
       res.status(403).json({
         success: false,
+        is_approved: user.is_approved,
         error: "Cashier account pending approval. Be sure your administrator approves you!",
       });
       return;
@@ -276,7 +278,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     // return success message and user details
     res.status(200).json({
       success: true,
-      message: "User logged in successfully!✅",
+      message: "User logged in successfully!",
       accessToken,
       user: {
         id: user.id,

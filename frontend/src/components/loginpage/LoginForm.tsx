@@ -3,6 +3,10 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
 import ThemeToggler from "../ThemeToggler";
+import Swal from "sweetalert2";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { TailSpin } from "react-loader-spinner";
 
 interface FormData {
   email: string;
@@ -15,8 +19,10 @@ function LoginForm() {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const { login, loading } = useAuth();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,10 +32,89 @@ function LoginForm() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+  // get user email from local storage
+  // const storedUser = localStorage.getItem("user") || "";
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ ...formData, rememberMe });
+
+    try {
+      const response = await login(formData);
+
+      let title = "Login Failed!";
+      let icon: "success" | "error" = "error";
+
+      if (response.success) {
+        // Fully successful login
+        title = "Login Successful!";
+        icon = "success";
+      } else if (response.is_email_verified !== undefined && response.is_email_verified === false) {
+        // Credentials correct but email not verified
+        title = "Verify Your Email";
+        icon = "error";
+      } else if (response.is_approved !== undefined && response.is_approved === false) {
+        // Credentials correct but not approved
+        title = "Approval Required";
+        icon = "error";
+      }
+
+      const msg = response.success
+        ? response.message
+        : response.error;
+
+      await Swal.fire({
+        icon,
+        title,
+        html: `<p class="font-poppins text-[14px]">${msg}</p>`,
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: response.success ? 2000 : 3000,
+        background: theme === "dark" ? "#1f2937" : "#ffffff",
+        color: theme === "dark" ? "#f9fafb" : "#111827",
+        customClass: {
+          popup: "rounded-2xl shadow-2xl",
+          title: "font-semibold font-poppins",
+          htmlContainer: "font-poppins text-[14px]",
+        },
+      });
+
+      if (response.success) {
+        setFormData({
+          email: "",
+          password: "",
+        });
+        navigate("/dashboard");
+        return;
+      }
+
+      if (response.is_email_verified !== undefined && response.is_email_verified === false) {
+        setFormData({
+          email: "",
+          password: "",
+        });
+        navigate("/verify-email");
+        return;
+      }
+
+      if (response.is_approved !== undefined && response.is_approved === false) {
+        setFormData({
+          email: "",
+          password: "",
+        });
+        navigate("/approval-pending");
+        return;
+      }
+
+      // Other login failure (wrong credentials etc.)
+      // Stay on login page
+
+    } catch (error) {
+      console.error("Unexpected error in logging in:", error);
+    }
   };
+
 
   return (
     <div className={`w-full h-screen lg:h-full flex flex-col ${theme === "dark" ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900" : "bg-linear-to-br from-lime-50/80 via-slate-50 to-purple-100/80"} px-6 sm:px-10 lg:px-12 xl:px-16 py-8 lg:py-10 transition-colors duration-300 overflow-y-auto hide-scrollbar`}>
@@ -136,9 +221,8 @@ function LoginForm() {
                 className={`absolute right-4 top-1/2 -translate-y-1/2 ${theme === "dark" ? "text-slate-500 hover:text-slate-300" : "text-slate-400 hover:text-slate-600"} transition-colors duration-200`}
               >
                 <i
-                  className={`fa-regular ${
-                    showPassword ? "fa-eye-slash" : "fa-eye"
-                  }`}
+                  className={`fa-regular ${showPassword ? "fa-eye-slash" : "fa-eye"
+                    }`}
                 ></i>
               </button>
             </div>
@@ -156,16 +240,14 @@ function LoginForm() {
                   className="sr-only"
                 />
                 <div
-                  className={`w-10 h-5 rounded-full transition-colors duration-300 ${
-                    rememberMe
-                      ? "bg-lime-500"
-                      : theme === "dark" ? "bg-slate-700" : "bg-slate-300"
-                  }`}
+                  className={`w-10 h-5 rounded-full transition-colors duration-300 ${rememberMe
+                    ? "bg-lime-500"
+                    : theme === "dark" ? "bg-slate-700" : "bg-slate-300"
+                    }`}
                 >
                   <div
-                    className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-300 ${
-                      rememberMe ? "translate-x-5" : "translate-x-0"
-                    }`}
+                    className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-300 ${rememberMe ? "translate-x-5" : "translate-x-0"
+                      }`}
                   />
                 </div>
               </div>
@@ -187,11 +269,24 @@ function LoginForm() {
           <motion.button
             type="submit"
             whileHover={{ scale: 1.01 }}
+            disabled={loading}
             whileTap={{ scale: 0.99 }}
             className={`group w-full h-11 ${theme === "dark" ? "bg-lime-600 hover:bg-lime-700" : "bg-lime-500 hover:bg-lime-600"} text-white font-poppins font-semibold text-sm rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer`}
           >
-            <span>Sign In</span>
-            <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform duration-200"></i>
+            {loading ? (
+              <TailSpin
+                height="20"
+                width="20"
+                color="#FFFFFF"
+                ariaLabel="tail-spin-loading"
+                radius="1" visible={true}
+              />
+            ) : (
+              <>
+                <span>Sign In</span>
+                <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform duration-200"></i>
+              </>
+            )}
           </motion.button>
 
           {/* Divider */}
