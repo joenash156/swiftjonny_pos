@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react"
-import SplashScreen from "./components/SplashScreen"
+import SplashScreen from "./pages/SplashScreen"
 import { Route, Routes } from "react-router-dom"
 import AuthPagesLayout from "./layouts/AuthPagesLayout"
 import Login from "./pages/public/Login"
 import Homepage from "./pages/public/Homepage"
+import Register from "./pages/public/Register"
+import AppLayout from "./layouts/AppLayout"
+import Dashboard from "./pages/private/Dashboard"
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -20,14 +23,18 @@ function App() {
 
   return (
     <div>
-      
       <Routes>
         {/* Auth pages layout (unprotected routes) */}
         <Route element={<AuthPagesLayout />}>
           <Route path="/" element={<Homepage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Route>
 
+        {/* Auth pages layout (unprotected routes) */}
+        <Route element={<AppLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
       </Routes>
     </div>
   )

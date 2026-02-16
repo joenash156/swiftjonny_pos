@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
-import LoginHeroBgImg from "../../assets/auth-page-img.jpg";
-import HeroImg from "../../assets/authpage-dashboard-img.png";
+import LoginHeroBgImg from "../assets/auth-page-img.jpg";
+import HeroImg from "../assets/authpage-dashboard-img.png";
 
-function LoginHero() {
+function AuthHero() {
   return (
     <div className="hidden lg:flex relative w-full h-full overflow-hidden">
       {/* Background Image */}
@@ -91,4 +91,4 @@ function LoginHero() {
   );
 }
 
-export default LoginHero;
+export default AuthHero;

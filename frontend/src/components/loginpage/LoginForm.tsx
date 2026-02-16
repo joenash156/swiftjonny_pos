@@ -223,7 +223,7 @@ function LoginForm() {
               to="/register"
               className={`font-semibold ${theme === "dark" ? "text-purple-400 hover:text-purple-300" : "text-purple-600 hover:text-purple-700"} transition-colors duration-200`}
             >
-              Create Account
+              Create One
             </Link>
           </p>
         </motion.form>

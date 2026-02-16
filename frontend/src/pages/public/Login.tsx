@@ -1,4 +1,4 @@
-import LoginHero from "../../components/loginpage/LoginHero";
+import AuthHero from "../../components/AuthHero";
 import LoginForm from "../../components/loginpage/LoginForm";
 
 function Login() {
@@ -6,7 +6,7 @@ function Login() {
     <div className="flex h-screen font-poppins overflow-hidden">
       {/* Left Side - Hero Section (Hidden on mobile, Fixed) */}
       <div className="hidden lg:block lg:w-1/2 xl:w-[55%] h-full">
-        <LoginHero />
+        <AuthHero />
       </div>
 
       {/* Right Side - Login Form (Scrollable) */}
