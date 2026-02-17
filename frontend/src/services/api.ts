@@ -2,12 +2,11 @@ import axios, { AxiosError } from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-
-// request timeout (30 seconds)
 const REQUEST_TIMEOUT = 30000;
 
 
-// main Axios instance for API calls
+  // AXIOS INSTANCES
+
 const api = axios.create({
   baseURL: API_URL,
   timeout: REQUEST_TIMEOUT,
@@ -17,8 +16,6 @@ const api = axios.create({
   },
 });
 
-
-// separate Axios instance for refresh token calls
 export const refreshApi = axios.create({
   baseURL: API_URL,
   timeout: REQUEST_TIMEOUT,
@@ -28,68 +25,61 @@ export const refreshApi = axios.create({
   },
 });
 
-// in-memory access token storage
+
+  // ACCESS TOKEN (IN MEMORY)
+
 let accessToken: string | null = null;
 
-// Refresh token promise to prevent race conditions
-let refreshTokenPromise: Promise<string> | null = null;
-
-/**
- * Set or clear the access token
- * @param token - The JWT access token or null to clear
- */
-export const setAccessToken = (token: string | null): void => {
+export const setAccessToken = (token: string | null) => {
   accessToken = token;
+
+  // set default header immediately
+  if (token) {
+    api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  } else {
+    delete api.defaults.headers.common.Authorization;
+  }
 };
 
-/**
- * Get the current access token
- * @returns The current access token or null
- */
-export const getAccessToken = (): string | null => {
-  return accessToken;
-};
+export const getAccessToken = () => accessToken;
 
-// Clear authentication state and redirect to login
-const handleAuthFailure = (): void => {
+
+  // AUTH FAILURE HANDLER
+const handleAuthFailure = () => {
   setAccessToken(null);
   localStorage.removeItem("user");
-  
-  // Redirect to login only if not already there
+
   if (!window.location.pathname.includes("/login")) {
     window.location.href = "/login";
   }
 };
 
-/**
- * Refresh the access token
- * Implements a lock mechanism to prevent concurrent refresh attempts
- */
-const refreshAccessToken = async (): Promise<string> => {
-  // If a refresh is already in progress, return that promise
-  if (refreshTokenPromise) {
-    return refreshTokenPromise;
-  }
 
-  // Create a new refresh promise
+  // REFRESH TOKEN LOGIC
+let refreshTokenPromise: Promise<string> | null = null;
+
+const refreshAccessToken = async (): Promise<string> => {
+  if (refreshTokenPromise) return refreshTokenPromise;
+
   refreshTokenPromise = (async () => {
     try {
       const { data } = await refreshApi.post("/api/user/refresh");
 
       if (!data?.accessToken) {
-        throw new Error("No access token received from refresh endpoint");
+        throw new Error("No access token from refresh endpoint");
       }
 
       const newAccessToken = data.accessToken;
+
+      // Store token + set header
       setAccessToken(newAccessToken);
-      
+
       return newAccessToken;
     } catch (error) {
-      console.error("Token refresh failed:", error);
+      console.error("Refresh failed:", error);
       handleAuthFailure();
       throw error;
     } finally {
-      // Clear the promise after completion (success or failure)
       refreshTokenPromise = null;
     }
   })();
@@ -97,10 +87,6 @@ const refreshAccessToken = async (): Promise<string> => {
   return refreshTokenPromise;
 };
 
-/**
- * Request Interceptor
- * Attaches the access token to every request if available
- */
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     if (accessToken && config.headers) {
@@ -108,15 +94,12 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error: AxiosError) => {
-    return Promise.reject(error);
-  }
+  (error: AxiosError) => Promise.reject(error)
 );
 
-/**
- * Response Interceptor
- * Handles 401 errors by attempting to refresh the access token
- */
+
+   // RESPONSE INTERCEPTOR
+
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
@@ -124,7 +107,6 @@ api.interceptors.response.use(
       _retry?: boolean;
     };
 
-    // Check if this is a 401 error that should trigger a refresh
     const shouldRefresh =
       error.response?.status === 401 &&
       originalRequest &&
@@ -137,22 +119,18 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        // Attempt to refresh the token (with race condition protection)
         const newAccessToken = await refreshAccessToken();
 
-        // Retry the original request with the new token
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         }
-        
+
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh failed, authentication failure already handled
         return Promise.reject(refreshError);
       }
     }
 
-    // For all other errors, reject as-is
     return Promise.reject(error);
   }
 );

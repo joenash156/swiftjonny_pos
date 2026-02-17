@@ -17,10 +17,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const { setTheme } = useTheme();
 
-  /**
-   * Check authentication status on mount
-   * Attempts to restore session from localStorage and refresh token
-   */
+
+   // Check authentication status and attempts to restore session from localStorage and refresh token
   useEffect(() => {
     async function checkAuth() {
       const storedUser = localStorage.getItem("user");
@@ -31,23 +29,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       try {
-        // Refresh the access token
         const { data } = await refreshApi.post("/api/user/refresh");
         setAccessToken(data.accessToken);
 
-        // Fetch current user data
-        const { data: userData } = await api.get("/api/user/profile");
-        setUser(userData.user);
+        // call profile
+        const profile = await api.get("/api/user/profile");
 
-        // Apply user's theme preference if available
-        if (userData.user?.theme) {
-          setTheme(userData.user.theme);
+        setUser({ ...data.user, ...profile.data });
+        localStorage.setItem("user", JSON.stringify({ ...data.user, ...profile.data }));
+
+        if (data.user?.theme) {
+          setTheme(data.user.theme);
         }
+
       } catch (error) {
         console.error("Session restoration failed:", error);
-        // Clear invalid session data
-        localStorage.removeItem("user");
+        setAccessToken(null);
         setUser(null);
+        localStorage.removeItem("user");
       } finally {
         setLoading(false);
       }
@@ -69,10 +68,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const data = response.data;
 
-      // If backend signals business error with success === false
+      // If backend signals success === false
       if (!data.success) {
         const message = data.error || data.message || "Login failed. Please try again.";
-        // Preserve any extra flags (e.g. is_email_verified, is_approved) from backend response
         return { ...data, error: message, message };
       }
 
@@ -88,11 +86,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("user", JSON.stringify(data.user));
 
       // Apply user's theme preference if available
-      if (data.user.theme) setTheme(data.user.theme);
+      if (data.user.theme_preference) setTheme(data.user.theme_preference);
       return data;
     } catch (error: unknown) {
-      // Type-safe Axios error handling
       if (error instanceof AxiosError) {
+
         // Return backend error object if available
         return error.response?.data || { success: false, error: "Login failed. Please try again." };
       }
@@ -137,7 +135,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (response.data.user.theme) setTheme(response.data.user.theme);
       }
 
-      // Always return the API response
+      // return the API response
       return response.data;
     } catch (error: unknown) {
       // Axios error type
@@ -164,14 +162,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Attempt server logout (invalidate cookie/session/token)
       await api.post("/api/user/logout");
     } catch (error: unknown) {
-      // We don't block logout if server fails
+
       if (error instanceof AxiosError) {
         console.warn("Server logout failed:", error.response?.data || error.message);
       } else {
         console.warn("Unexpected logout error:", error);
       }
     } finally {
-      // Always clear client-side state
+      // clear client-side state
       setAccessToken(null);
       setUser(null);
       localStorage.removeItem("user");
