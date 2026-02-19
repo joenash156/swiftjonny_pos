@@ -33,10 +33,6 @@ function LoginForm() {
     }));
   };
 
-
-  // get user email from local storage
-  // const storedUser = localStorage.getItem("user") || "";
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -98,11 +94,15 @@ function LoginForm() {
       }
 
       if (isEmailNotVerified) {
+        const userEmail = formData.email;
+        // Store in localStorage for persistence across page reloads
+        localStorage.setItem("pending_verification_email", userEmail);
+
         setFormData({
           email: "",
           password: "",
         });
-        navigate("/verify-email");
+        navigate("/verify-email", { state: { email: userEmail } });
         return;
       }
 
@@ -276,9 +276,9 @@ function LoginForm() {
           {/* Login Button */}
           <motion.button
             type="submit"
-            whileHover={{ scale: 1.01 }}
+            //whileHover={{ scale: 1.01 }}
             disabled={loading}
-            whileTap={{ scale: 0.99 }}
+            //whileTap={{ scale: 0.99 }}
             className={`group w-full h-11 ${theme === "dark" ? "bg-lime-600 hover:bg-lime-700" : "bg-lime-500 hover:bg-lime-600"} text-white font-poppins font-semibold text-sm rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer`}
           >
             {loading ? (

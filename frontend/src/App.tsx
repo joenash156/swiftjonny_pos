@@ -7,6 +7,7 @@ import Homepage from "./pages/public/Homepage"
 import Register from "./pages/public/Register"
 import AppLayout from "./layouts/AppLayout"
 import Dashboard from "./pages/private/Dashboard"
+import VerifyEmail from "./pages/public/VerifyEmail"
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -29,9 +30,10 @@ function App() {
           <Route path="/" element={<Homepage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
         </Route>
 
-        {/* Auth pages layout (unprotected routes) */}
+        {/* App layout (protected routes) */}
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
