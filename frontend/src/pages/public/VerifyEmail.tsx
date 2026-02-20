@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
 import { TailSpin } from "react-loader-spinner";
-import api from "../../services/api";
 import Swal from "sweetalert2";
 import type { SweetAlertIcon } from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 function VerifyEmail() {
   const { theme } = useTheme();
@@ -13,11 +13,12 @@ function VerifyEmail() {
   const navigate = useNavigate();
   const [countdown, setCountdown] = useState(0);
   const [isSending, setIsSending] = useState(false);
+  const { resendVerification } = useAuth();
 
   // Get email from navigation state or localStorage (for page reloads)
   const email = location.state?.email || localStorage.getItem("pending_verification_email") || null;
 
-  // Start with a 45-second countdown on component mount
+  // Start with a 45-second countdown
   useEffect(() => {
     setCountdown(45);
   }, []);
@@ -57,16 +58,16 @@ function VerifyEmail() {
     setIsSending(true);
 
     try {
-      const response = await api.post("/api/user/resend-verification", { email });
+      const response = await resendVerification(email);
 
       let title = "Email Sent!";
       let icon: SweetAlertIcon = "success";
-      let message = response.data.message || "Verification email has been sent to your inbox.";
+      let message = response.message || "Verification email has been sent to your inbox.";
 
-      if (!response.data.success) {
+      if (!response.success) {
         title = "Failed";
         icon = "error";
-        message = response.data.error || "Failed to send verification email.";
+        message = response.error || "Failed to send verification email.";
       }
 
       await Swal.fire({
@@ -86,7 +87,7 @@ function VerifyEmail() {
         },
       });
 
-      if (response.data.success) {
+      if (response.success) {
         setCountdown(45);
       }
     } catch (error) {
@@ -208,6 +209,11 @@ function VerifyEmail() {
                 >
                   Didn't receive the email? Check your spam folder or click the button
                   below to resend the verification link.
+                  <br />
+                  <span className="text-orange-400 text-[13px]">
+                    <i className="fa-solid fa-exclamation-triangle mr-1"></i>
+                    Note: The verification link expires in 20 minutes.
+                  </span>
                 </p>
               </div>
             </div>
@@ -217,7 +223,7 @@ function VerifyEmail() {
           <button
             onClick={handleResendVerification}
             disabled={countdown > 0 || isSending}
-            className={`mx-auto w-full max-w-xs h-12 rounded-md font-poppins font-semibold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 ${countdown > 0 || isSending
+            className={`mx-auto w-full max-w-xs h-11 rounded-xl font-poppins font-semibold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 ${countdown > 0 || isSending
               ? theme === "dark"
                 ? "bg-slate-700 text-slate-500 cursor-not-allowed"
                 : "bg-slate-200 text-slate-400 cursor-not-allowed"

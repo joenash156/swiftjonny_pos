@@ -95,4 +95,6 @@ export interface AuthContextValue {
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   updateThemePreference: (theme: "light" | "dark") => Promise<void>;
+  resendVerification: (email: string) => Promise<ApiResponse>;
+  verifyYourEmail: (token: string) => Promise<ApiResponse>;
 }

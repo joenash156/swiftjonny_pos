@@ -124,7 +124,7 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
 
     res.status(200).json({
       success: true,
-      message: "Email verified successfully!✅ You can now log in.",
+      message: "Email verified successfully! You can now login into your account.",
     });
     return;
 
@@ -178,7 +178,7 @@ export const resendVerificationEmail = async (req: Request, res: Response): Prom
 
     res.status(200).json({
       success: true,
-      message: "Verification email resent successfully!✅",
+      message: "Verification email resent successfully to your inbox!",
     });
     return;
 

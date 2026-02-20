@@ -68,10 +68,10 @@ function RegisterForm() {
           password: "",
           confirmPassword: "",
         });
-        
+
         setTimeout(() => {
           navigate("/login");
-        }, 2000);
+        }, 1600);
       }
     } catch (error) {
       console.error("Unexpected error in form submit:", error);
@@ -117,7 +117,13 @@ function RegisterForm() {
   }, [formData.password]);
 
   return (
-    <div className={`w-full h-screen lg:h-full flex flex-col ${theme === "dark" ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900" : "bg-linear-to-br from-lime-50/80 via-slate-50 to-purple-100/80"} px-6 sm:px-10 lg:px-12 xl:px-16 py-8 lg:py-10 transition-colors duration-300 overflow-y-auto hide-scrollbar`}>
+    <div
+      className={`w-full h-screen lg:h-full flex flex-col px-6 sm:px-10 lg:px-12 xl:px-16 py-8 lg:py-10 overflow-y-auto hide-scrollbar transition-[background] duration-300 ease-in-out ${
+        theme === "dark"
+          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+          : "bg-gradient-to-br from-lime-50 via-slate-50 to-purple-50"
+      }`}
+    >
       {/* Theme Toggler */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -129,7 +135,7 @@ function RegisterForm() {
       </motion.div>
 
       {/* Mobile Logo - Only visible on mobile */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -141,10 +147,10 @@ function RegisterForm() {
         <span className={`${theme === "dark" ? "text-white" : "text-slate-800"} font-poppins font-bold text-xl tracking-wide`}>
           SwiftJonny
         </span>
-      </motion.div>
+      </motion.div> */}
 
       {/* Form Container */}
-      <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
+      <div className="flex-1 flex flex-col lg:justify-center max-w-md mx-auto w-full pb-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

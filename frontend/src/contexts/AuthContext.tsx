@@ -60,7 +60,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    * @param credentials - User login credentials
    * @returns ApiResponse with success/message/error from backend
    */
-
   const login = async (credentials: LoginCredentials): Promise<ApiResponse> => {
     try {
       setLoading(true);
@@ -107,8 +106,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    * @param data - User registration data
    * @returns ApiResponse with success/message/error from backend
    */
-
-
   const register = async (data: RegisterData): Promise<ApiResponse> => {
     try {
       setLoading(true);
@@ -151,12 +148,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  /**
+   * Resend verification email for a new user
+   * @param email - The email address to resend verification to
+   * @returns ApiResponse with success/message/error from backend
+   */
+  const resendVerification = async (email: string): Promise<ApiResponse> => {
+    try {
+      setLoading(true);
+      const response = await api.post<ApiResponse>("/api/user/resend_verification_email", { email });
+      return response.data;
+
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        return error.response?.data || { success: false, error: "Failed to resend verification email" };
+      }
+      return { success: false, error: "Unexpected error occurred while resending verification email" };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+    /**
+   * verify email
+   * @param token - The verification token from the email link
+   * @returns ApiResponse with success/message/error from backend
+   */
+  const verifyYourEmail = async (token: string): Promise<ApiResponse> => {
+    try {
+      setLoading(true);
+      const response = await api.get<ApiResponse>(`/api/user/verify_email?token=${token}`);
+      console.log(response.data)
+      return response.data;
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        return error.response?.data || { success: false, error: "Failed to verify email" };
+      }
+      return { success: false, error: "Unexpected error occurred while verifying email" };
+    } finally {
+      setLoading(false);
+    }
+  };
 
   /**
    * Logout current user
    * Clears tokens and user data both client-side and server-side
    */
-
   const logout = async (): Promise<void> => {
     try {
       // Attempt server logout (invalidate cookie/session/token)
@@ -225,6 +262,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         refreshUser,
         updateThemePreference,
+        resendVerification,
+        verifyYourEmail,
       }}
     >
       {children}

@@ -4,7 +4,7 @@ import HeroImg from "../assets/authpage-dashboard-img.png";
 
 function AuthHero() {
   return (
-    <div className="hidden lg:flex relative w-full h-full overflow-hidden">
+    <div className="flex relative w-full h-full overflow-hidden rounded-bl-4xl rounded-br-4xl lg:rounded-bl-none lg:rounded-tr-4xl lg:rounded-br-4xl">
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -45,23 +45,23 @@ function AuthHero() {
               <span className="block text-lime-400">with SwiftJonny POS</span>
             </h1>
             <p className="text-slate-200 font-poppins text-xs lg:text-sm max-w-md mx-auto leading-relaxed">
-              The modern point-of-sale solution built for speed, reliability, 
+              The modern point-of-sale solution built for speed, reliability,
               and seamless business management. Experience the future of retail today.
             </p>
           </motion.div>
 
-          {/* Hero Image */}
+          {/* Hero Image - only show from md and up */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="relative w-full max-w-md"
+            className="relative w-full max-w-md hidden md:block"
           >
             <div className="absolute -inset-3 bg-lime-500/20 rounded-xl blur-xl" />
             <img
               src={HeroImg}
               alt="SwiftJonny POS Dashboard"
-              className="relative w-full h-auto rounded-lg shadow-2xl border border-white/10"
+              className="relative w-full h-auto rounded-lg shadow-2xl border border-white/10 "
             />
           </motion.div>
         </div>

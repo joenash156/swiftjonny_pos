@@ -4,7 +4,7 @@ import { VERIFY_EMAIL_HTML_CONTENT } from "./templates/verifyEmailTemplate"
 import { PASSWORD_RESET_SUCCESS_HTML_CONTENT, RESET_PASSWORD_HTML_CONTENT } from "./templates/resetPasswordTemplate";
 
 export const sendVerificationEmail = async (email: string, firstname: string, token: string): Promise<void> => {
-  const verificationUrl = `${mailEnv.CLIENT_URL}/verify-email?token=${token}&email=${encodeURIComponent(email)}`;
+  const verificationUrl = `${mailEnv.CLIENT_URL}/email/verify?token=${token}`;
 
   sendEmail({
     to: email,
