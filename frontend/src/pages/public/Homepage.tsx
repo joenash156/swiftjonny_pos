@@ -5,7 +5,7 @@ function Homepage() {
     <div className="flex items-center flex-col justify-center h-screen">
       <h1>Homepage</h1>
 
-      <Link to={"/login"} className="text-lg text-lime-500" >
+      <Link to={"/login"} className="text-lg text-teal-500" >
         Login
       </Link>
     </div>

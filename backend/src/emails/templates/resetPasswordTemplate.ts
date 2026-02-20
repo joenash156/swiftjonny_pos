@@ -13,7 +13,7 @@ body{
 }
 .container{max-width:600px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;}
 .header{
-  background:linear-gradient(135deg,#6cb00d 0%,#7bbe16 100%);
+  background:linear-gradient(135deg,#0db08d 0%, #16be97ea 100%);
   padding:20px;text-align:center;
 }
 .header-title{color:#fff;font-size:18px;font-weight:600;}
@@ -22,7 +22,7 @@ body{
 .message{font-size:14px;color:#64748b;margin-bottom:32px;line-height:1.8;text-align:left;}
 a.reset-button{
   display:inline-block;padding:12px 48px;
-  background:linear-gradient(135deg,#6cb00d 0%,#7bbe16 100%);
+  background:linear-gradient(135deg,#0db08d 0%, #16be97ea 100%);
   color:#fff;text-decoration:none;border-radius:5px;font-size:14px;margin:20px 0;
 }
 .info-box{
@@ -36,7 +36,7 @@ a.reset-button{
 }
 .footer{background:#f8fafc;padding:24px 30px;text-align:center;}
 .footer-text{font-size:12px;color:#94a3b8;margin:4px 0;}
-.footer-brand{font-weight:600;color:#65a30d;}
+.footer-brand{font-weight:600;color:#0db08d;}
 </style>
 </head>
 
@@ -110,7 +110,7 @@ export const PASSWORD_RESET_SUCCESS_HTML_CONTENT = `
         overflow: hidden;
       }
       .header {
-        background: linear-gradient(135deg, #6cb00d 0%, #7bbe16 100%);
+        background: linear-gradient(135deg, #0db08d 0%, #16be97ea 100%);
         padding: 20px;
         text-align: center;
       }
@@ -150,7 +150,7 @@ export const PASSWORD_RESET_SUCCESS_HTML_CONTENT = `
       a.contact-link {
         display: inline-block;
         padding: 12px 24px;
-        background: linear-gradient(135deg, #6cb00d 0%, #7bbe16 100%);
+        background: linear-gradient(135deg, #0db08d 0%, #16be97ea 100%);
         color: #fff;
         text-decoration: none;
         border-radius: 5px;
@@ -169,7 +169,7 @@ export const PASSWORD_RESET_SUCCESS_HTML_CONTENT = `
       }
       .footer-brand {
         font-weight: 600;
-        color: #65a30d;
+        color: #0db08d;
       }
     </style>
   </head>

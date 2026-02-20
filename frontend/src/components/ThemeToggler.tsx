@@ -13,14 +13,14 @@ function ThemeToggler({ theme, onToggle }: { theme: Theme; onToggle: () => void 
         cursor-pointer
         ${isDark
           ? "bg-linear-to-r from-purple-900 to-indigo-900 shadow-[inset_0_1px_4px_rgba(0,0,0,0.4),0_0_12px_rgba(168,85,247,0.15)]"
-          : "bg-lime-500 shadow-[inset_0_1px_4px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.08)]"
+          : "bg-teal-500 shadow-[inset_0_1px_4px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.08)]"
         }
       `}
     >
       {/* Stars (dark mode) */}
       <span
         className={`
-          absolute top-1.5 left-2 text-[6px] text-lime-200
+          absolute top-1.5 left-2 text-[6px] text-teal-200
           transition-all duration-500
           ${isDark ? "opacity-100 scale-100" : "opacity-0 scale-50"}
         `}

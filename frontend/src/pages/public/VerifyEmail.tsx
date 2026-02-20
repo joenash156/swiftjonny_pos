@@ -138,7 +138,7 @@ function VerifyEmail() {
           transition={{ duration: 0.5 }}
           className="flex items-center justify-center gap-3 mb-8"
         >
-          <div className="w-12 h-12 bg-lime-500 rounded-xl flex items-center justify-center shadow-lg">
+          <div className="w-12 h-12 bg-teal-500 rounded-xl flex items-center justify-center shadow-lg">
             <i className="fa-solid fa-bolt text-white text-xl"></i>
           </div>
           <span
@@ -166,7 +166,7 @@ function VerifyEmail() {
                 } flex items-center justify-center`}
             >
               <i
-                className={`fa-regular fa-envelope text-4xl ${theme === "dark" ? "text-lime-400" : "text-lime-500"
+                className={`fa-regular fa-envelope text-4xl ${theme === "dark" ? "text-teal-400" : "text-teal-500"
                   }`}
               ></i>
             </div>
@@ -186,7 +186,7 @@ function VerifyEmail() {
               } text-sm sm:text-base mb-6 leading-relaxed`}
           >
             We've sent a verification link to{" "}
-            <span className="font-semibold text-lime-500">{email}</span>. Please
+            <span className="font-semibold text-teal-500">{email}</span>. Please
             check your inbox and click the link to verify your account.
           </p>
 
@@ -228,8 +228,8 @@ function VerifyEmail() {
                 ? "bg-slate-700 text-slate-500 cursor-not-allowed"
                 : "bg-slate-200 text-slate-400 cursor-not-allowed"
               : theme === "dark"
-                ? "bg-lime-600 text-white hover:bg-lime-700"
-                : "bg-lime-500 text-white hover:bg-lime-600 "
+                ? "bg-teal-600 text-white hover:bg-teal-700"
+                : "bg-teal-500 text-white hover:bg-teal-600 "
               }`}
           >
             {isSending ? (
@@ -275,8 +275,8 @@ function VerifyEmail() {
             <button
               onClick={handleBackToLogin}
               className={`text-sm sm:text-base ${theme === "dark"
-                ? "text-lime-400 hover:text-lime-300"
-                : "text-lime-600 hover:text-lime-700"
+                ? "text-teal-400 hover:text-teal-300"
+                : "text-teal-600 hover:text-teal-700"
                 } transition-colors duration-200 inline-flex items-center gap-2 bg-transparent border-none cursor-pointer`}
             >
               <i className="fa-solid fa-arrow-left"></i>
@@ -296,7 +296,7 @@ function VerifyEmail() {
           Need help?{" "}
           <a
             href="mailto:support@swiftjonny.com"
-            className={`${theme === "dark" ? "text-lime-400 hover:text-lime-300" : "text-lime-600 hover:text-lime-700"
+            className={`${theme === "dark" ? "text-teal-400 hover:text-teal-300" : "text-teal-600 hover:text-teal-700"
               } transition-colors duration-200`}
           >
             Contact Support

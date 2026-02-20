@@ -120,7 +120,7 @@ function RegisterForm() {
     <div
       className={`w-full h-screen lg:h-full flex flex-col px-6 sm:px-10 lg:px-12 xl:px-16 py-8 lg:py-10 overflow-y-auto hide-scrollbar transition-[background] duration-300 ease-in-out ${theme === "dark"
           ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
-          : "bg-gradient-to-br from-lime-50 via-slate-50 to-purple-50"
+          : "bg-gradient-to-br from-teal-100/50 via-slate-50 to-purple-100/40"
         }`}
     >
       {/* Theme Toggler */}
@@ -140,7 +140,7 @@ function RegisterForm() {
         transition={{ duration: 0.5 }}
         className="lg:hidden flex items-center gap-3 mb-8"
       >
-        <div className="w-10 h-10 bg-lime-500 rounded-xl flex items-center justify-center shadow-lg">
+        <div className="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center shadow-lg">
           <i className="fa-solid fa-bolt text-white text-lg"></i>
         </div>
         <span className={`${theme === "dark" ? "text-white" : "text-slate-800"} font-bold text-xl tracking-wide`}>
@@ -190,7 +190,7 @@ function RegisterForm() {
                 value={formData.firstname}
                 onChange={handleInputChange}
                 placeholder="John"
-                className={`w-full h-11 px-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
+                className={`w-full h-11 px-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-teal-400/30 focus:border-teal-400" : "focus:ring-teal-500/30 focus:border-teal-500"} transition-all duration-200`}
                 required
               />
             </div>
@@ -210,7 +210,7 @@ function RegisterForm() {
                 value={formData.lastname}
                 onChange={handleInputChange}
                 placeholder="Doe"
-                className={`w-full h-11 px-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
+                className={`w-full h-11 px-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-teal-400/30 focus:border-teal-400" : "focus:ring-teal-500/30 focus:border-teal-500"} transition-all duration-200`}
                 required
               />
             </div>
@@ -231,7 +231,7 @@ function RegisterForm() {
               value={formData.othername || ""}
               onChange={handleInputChange}
               placeholder="Other name / Middle name"
-              className={`w-full h-11 px-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
+              className={`w-full h-11 px-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-teal-400/30 focus:border-teal-400" : "focus:ring-teal-500/30 focus:border-teal-500"} transition-all duration-200`}
             />
           </div>
 
@@ -254,7 +254,7 @@ function RegisterForm() {
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="Enter your email"
-                className={`w-full h-11 pl-11 pr-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
+                className={`w-full h-11 pl-11 pr-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-teal-400/30 focus:border-teal-400" : "focus:ring-teal-500/30 focus:border-teal-500"} transition-all duration-200`}
                 required
               />
             </div>
@@ -279,7 +279,7 @@ function RegisterForm() {
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="Create a password"
-                className={`w-full h-11 pl-11 pr-12 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
+                className={`w-full h-11 pl-11 pr-12 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-teal-400/30 focus:border-teal-400" : "focus:ring-teal-500/30 focus:border-teal-500"} transition-all duration-200`}
                 required
               />
               <button
@@ -298,14 +298,14 @@ function RegisterForm() {
             <div className={`mt-3 p-3 rounded-lg ${theme === "dark" ? "bg-slate-800/50" : "bg-slate-100/50"} space-y-1.5`}>
               {passwordRequirements.map((requirement, index) => (
                 <div key={index} className="flex items-center gap-2">
-                  <span className={`text-xs ${requirement.met ? "text-lime-500" : theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>
+                  <span className={`text-xs ${requirement.met ? "text-teal-500" : theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>
                     {requirement.met ? (
                       <i className="fa-solid fa-check"></i>
                     ) : (
                       <i className="fa-solid fa-xmark"></i>
                     )}
                   </span>
-                  <span className={`text-xs ${requirement.met ? "text-lime-500" : theme === "dark" ? "text-slate-400" : "text-slate-500"}`}>
+                  <span className={`text-xs ${requirement.met ? "text-teal-500" : theme === "dark" ? "text-slate-400" : "text-slate-500"}`}>
                     {requirement.label}
                   </span>
                 </div>
@@ -332,7 +332,7 @@ function RegisterForm() {
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 placeholder="Re-enter your password"
-                className={`w-full h-11 pl-11 pr-12 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
+                className={`w-full h-11 pl-11 pr-12 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-teal-400/30 focus:border-teal-400" : "focus:ring-teal-500/30 focus:border-teal-500"} transition-all duration-200`}
                 required
               />
               <button
@@ -353,7 +353,7 @@ function RegisterForm() {
             type="submit"
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
-            className={`w-full h-11 ${theme === "dark" ? "bg-lime-600 hover:bg-lime-700" : "bg-lime-500 hover:bg-lime-600"} text-white font-semibold text-sm rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer mt-6`}
+            className={`w-full h-11 ${theme === "dark" ? "bg-teal-600 hover:bg-teal-700" : "bg-teal-500 hover:bg-teal-600"} text-white font-semibold text-sm rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer mt-6`}
           >
             {loading ? (
               <TailSpin

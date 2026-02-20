@@ -33,7 +33,7 @@ export const VERIFY_EMAIL_HTML_CONTENT = `
         overflow: hidden;
       }
       .header {
-        background: linear-gradient(135deg, #6cb00d 0%, #7bbe16 100%);
+        background: linear-gradient(135deg, #0db08d 0%, #16be97 100%);
         padding: 20px;
         text-align: center;
       }
@@ -63,7 +63,7 @@ export const VERIFY_EMAIL_HTML_CONTENT = `
       a.verify-button {
         display: inline-block;
         padding: 12px 48px;
-        background: linear-gradient(135deg, #6cb00d 0%, #7bbe16 100%);
+        background: linear-gradient(135deg, #0db08d 0%, #16be97ea 100%);
         color: #fff;
         text-decoration: none;
         border-radius: 5px;
@@ -90,7 +90,7 @@ export const VERIFY_EMAIL_HTML_CONTENT = `
       }
       .footer-brand {
         font-weight: 600;
-        color: #65a30d;
+        color: #0db08d;
       }
     </style>
   </head>

@@ -79,7 +79,7 @@ function ApprovalPending() {
                     }`}
                 >
                   <p className="mb-1">
-                    <i className="fa-solid fa-user-shield mr-2 text-lime-500"></i>
+                    <i className="fa-solid fa-user-shield mr-2 text-teal-500"></i>
                     <span className="font-semibold">What to do:</span>
                   </p>
                   <ul className="ml-6 space-y-1 list-disc">
@@ -96,8 +96,8 @@ function ApprovalPending() {
           <button
             onClick={handleBackToLogin}
             className={`mx-auto w-full max-w-xs h-11 rounded-xl font-semibold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 ${theme === "dark"
-                ? "bg-lime-600 text-white hover:bg-lime-700"
-                : "bg-lime-500 text-white hover:bg-lime-600"
+                ? "bg-teal-600 text-white hover:bg-teal-700"
+                : "bg-teal-500 text-white hover:bg-teal-600"
               }`}
           >
             <i className="fa-solid fa-check"></i>
@@ -117,8 +117,8 @@ function ApprovalPending() {
           <a
             href="mailto:support@swiftjonny.com"
             className={`${theme === "dark"
-                ? "text-lime-400 hover:text-lime-300"
-                : "text-lime-600 hover:text-lime-700"
+                ? "text-teal-400 hover:text-teal-300"
+                : "text-teal-600 hover:text-teal-700"
               } transition-colors duration-200`}
           >
             Contact Support

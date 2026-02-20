@@ -12,7 +12,7 @@ export default function SplashScreen() {
       initial={{ opacity: 1 }}
       animate={{ opacity: 0 }}
       transition={{ delay: 1.5, duration: 0.5 }}
-      className={`fixed inset-0 flex flex-col items-center justify-center ${theme === "dark" ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900" : "bg-linear-to-br from-lime-50/80 via-slate-50 to-purple-100/80"} z-50`}
+      className={`fixed inset-0 flex flex-col items-center justify-center ${theme === "dark" ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-900" : "bg-gradient-to-br from-teal-100/80 via-slate-50 to-purple-100/80"} z-50`}
     >
       <motion.img
         src={Logo}

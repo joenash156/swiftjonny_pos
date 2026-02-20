@@ -128,7 +128,7 @@ function LoginForm() {
     <div
       className={`w-full h-screen lg:h-full flex flex-col px-6 sm:px-10 lg:px-12 xl:px-16 py-8 lg:py-10 overflow-y-auto hide-scrollbar transition-[background] duration-300 ease-in-out ${theme === "dark"
           ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
-          : "bg-gradient-to-br from-lime-50 via-slate-50 to-purple-50"
+          : "bg-gradient-to-br from-teal-100/50 via-slate-50 to-purple-100/40"
         }`}
     >
       {/* Theme Toggler */}
@@ -148,7 +148,7 @@ function LoginForm() {
         transition={{ duration: 0.5 }}
         className="hidden items-center gap-3 mb-8"
       >
-        <div className="w-10 h-10 bg-lime-500 rounded-xl flex items-center justify-center shadow-lg">
+        <div className="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center shadow-lg">
           <i className="fa-solid fa-bolt text-white text-lg"></i>
         </div>
         <span className={`${theme === "dark" ? "text-white" : "text-slate-800"} font-bold text-xl tracking-wide`}>
@@ -200,7 +200,7 @@ function LoginForm() {
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="Enter your email"
-                className={`w-full h-12 pl-11 pr-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
+                className={`w-full h-12 pl-11 pr-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-teal-400/30 focus:border-teal-400" : "focus:ring-teal-500/30 focus:border-teal-500"} transition-all duration-200`}
                 required
               />
             </div>
@@ -225,7 +225,7 @@ function LoginForm() {
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="Enter your password"
-                className={`w-full h-12 pl-11 pr-12 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
+                className={`w-full h-12 pl-11 pr-12 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-teal-400/30 focus:border-teal-400" : "focus:ring-teal-500/30 focus:border-teal-500"} transition-all duration-200`}
                 required
               />
               <button
@@ -254,7 +254,7 @@ function LoginForm() {
                 />
                 <div
                   className={`w-10 h-5 rounded-full transition-colors duration-300 ${rememberMe
-                    ? "bg-lime-500"
+                    ? "bg-teal-500"
                     : theme === "dark" ? "bg-slate-700" : "bg-slate-300"
                     }`}
                 >
@@ -284,7 +284,7 @@ function LoginForm() {
             //whileHover={{ scale: 1.01 }}
             disabled={loading}
             //whileTap={{ scale: 0.99 }}
-            className={`group w-full h-11 ${theme === "dark" ? "bg-lime-600 hover:bg-lime-700" : "bg-lime-500 hover:bg-lime-600"} text-white font-semibold text-sm rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer`}
+            className={`group w-full h-11 ${theme === "dark" ? "bg-teal-600 hover:bg-teal-700" : "bg-teal-500 hover:bg-teal-600"} text-white font-semibold text-sm rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer`}
           >
             {loading ? (
               <TailSpin

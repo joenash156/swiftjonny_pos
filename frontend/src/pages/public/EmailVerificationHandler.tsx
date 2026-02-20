@@ -185,7 +185,7 @@ function EmailVerificationHandler() {
                     wrapperClass="custom-loader"
                     visible={true}
                   />
-                  <span className="text-lime-500 text-xs">
+                  <span className="text-teal-500 text-xs">
                     Redirecting to login page...
                   </span>
                 </div>
@@ -207,8 +207,8 @@ function EmailVerificationHandler() {
             <button
               onClick={() => navigate("/login", { replace: true })}
               className={`w-full h-11 rounded-xl font-semibold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 ${theme === "dark"
-                ? "bg-lime-600 text-white hover:bg-lime-700"
-                : "bg-lime-500 text-white hover:bg-lime-600"
+                ? "bg-teal-600 text-white hover:bg-teal-700"
+                : "bg-teal-500 text-white hover:bg-teal-600"
                 }`}
             >
               <i className="fa-solid fa-arrow-left"></i>
@@ -220,8 +220,8 @@ function EmailVerificationHandler() {
             <button
               onClick={() => navigate("/login", { replace: true })}
               className={`w-full h-12 rounded-md font-semibold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 ${theme === "dark"
-                ? "bg-lime-600 text-white hover:bg-lime-700"
-                : "bg-lime-500 text-white hover:bg-lime-600"
+                ? "bg-teal-600 text-white hover:bg-teal-700"
+                : "bg-teal-500 text-white hover:bg-teal-600"
                 }`}
             >
               <i className="fa-solid fa-arrow-right"></i>
@@ -242,8 +242,8 @@ function EmailVerificationHandler() {
           <a
             href="mailto:support@swiftjonny.com"
             className={`${theme === "dark"
-              ? "text-lime-400 hover:text-lime-300"
-              : "text-lime-600 hover:text-lime-700"
+              ? "text-teal-400 hover:text-teal-300"
+              : "text-teal-600 hover:text-teal-700"
               } transition-colors duration-200`}
           >
             Contact Support
