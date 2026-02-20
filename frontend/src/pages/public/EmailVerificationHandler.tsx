@@ -156,7 +156,7 @@ function EmailVerificationHandler() {
 
           {/* Title */}
           <h1
-            className={`font-poppins font-bold text-2xl sm:text-3xl text-center ${theme === "dark" ? "text-white" : "text-slate-800"
+            className={`font-bold text-2xl sm:text-3xl text-center ${theme === "dark" ? "text-white" : "text-slate-800"
               } mb-3`}
           >
             {status === "verifying" && "Verifying Your Email"}
@@ -166,7 +166,7 @@ function EmailVerificationHandler() {
 
           {/* Message */}
           <div
-            className={`font-poppins text-center ${theme === "dark" ? "text-slate-400" : "text-slate-600"
+            className={`text-center ${theme === "dark" ? "text-slate-400" : "text-slate-600"
               } text-sm sm:text-base mb-6 leading-relaxed`}
           >
             {status === "verifying" && "Please wait while we verify your email address..."}
@@ -206,7 +206,7 @@ function EmailVerificationHandler() {
           {status === "error" && (
             <button
               onClick={() => navigate("/login", { replace: true })}
-              className={`w-full h-11 rounded-xl font-poppins font-semibold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 ${theme === "dark"
+              className={`w-full h-11 rounded-xl font-semibold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 ${theme === "dark"
                 ? "bg-lime-600 text-white hover:bg-lime-700"
                 : "bg-lime-500 text-white hover:bg-lime-600"
                 }`}
@@ -219,7 +219,7 @@ function EmailVerificationHandler() {
           {status === "success" && (
             <button
               onClick={() => navigate("/login", { replace: true })}
-              className={`w-full h-12 rounded-md font-poppins font-semibold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 ${theme === "dark"
+              className={`w-full h-12 rounded-md font-semibold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 ${theme === "dark"
                 ? "bg-lime-600 text-white hover:bg-lime-700"
                 : "bg-lime-500 text-white hover:bg-lime-600"
                 }`}
@@ -235,7 +235,7 @@ function EmailVerificationHandler() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className={`text-center mt-6 font-poppins text-xs sm:text-sm ${theme === "dark" ? "text-slate-500" : "text-slate-500"
+          className={`text-center mt-6 text-xs sm:text-sm ${theme === "dark" ? "text-slate-500" : "text-slate-500"
             }`}
         >
           Need help?{" "}

@@ -40,3 +40,15 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
 }
+
+input[type="password"] {
+  font-weight: 900;
+  letter-spacing: 3px;     /* more spacing between dots */
+  line-height: 1.5;        /* centers vertically */
+}
+
+input::placeholder {
+  font-size: 0.875rem;
+  font-weight: 500; 
+  letter-spacing: normal;  
+}

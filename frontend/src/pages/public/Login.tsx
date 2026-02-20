@@ -7,7 +7,7 @@ function Login() {
 
   return (
     <div
-      className={`flex flex-col lg:flex-row min-h-screen lg:h-screen font-poppins overflow-y-auto lg:overflow-hidden transition-[background] duration-300 ease-in-out ${
+      className={`flex flex-col lg:flex-row min-h-screen lg:h-screen .font-kumbh overflow-y-auto lg:overflow-hidden transition-[background] duration-300 ease-in-out ${
         theme === "dark"
           ? "bg-gradient-to-r md:bg-gradient-to-b from-slate-950 via-slate-900 to-slate-900"
           : "bg-gradient-to-r md:bg-gradient-to-b from-lime-50 via-slate-50 to-slate-50"

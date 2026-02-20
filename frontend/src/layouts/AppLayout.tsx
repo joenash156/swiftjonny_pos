@@ -29,7 +29,7 @@ function AppLayout() {
 
   // Authenticated users can see the app layout and its nested routes
   return (
-    <div>
+    <div className="font-kumbh">
       <main>
         <Outlet />
       </main>

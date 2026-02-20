@@ -22,48 +22,25 @@ export const VERIFY_EMAIL_HTML_CONTENT = `
           "Segoe UI",
           sans-serif;
         line-height: 1.6;
-        background-color: #f8fafc;
+        background: #f8fafc;
         padding: 40px 20px;
       }
       .container {
         max-width: 600px;
         margin: 0 auto;
-        background-color: #ffffff;
+        background: #fff;
         border-radius: 8px;
         overflow: hidden;
       }
       .header {
         background: linear-gradient(135deg, #6cb00d 0%, #7bbe16 100%);
-        padding: 20px 0;
+        padding: 20px;
         text-align: center;
       }
-      .logo {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 16px;
-      }
-      .logo-icon {
-        width: 40px;
-        height: 40px;
-        background-color: rgba(255, 255, 255, 0.2);
-        border-radius: 10px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-      }
-      .logo-text {
-        color: #ffffff;
-        font-size: 20px;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-      }
       .header-title {
-        color: #ffffff;
+        color: #fff;
         font-size: 18px;
         font-weight: 600;
-        margin: 0;
       }
       .content {
         padding: 40px 30px;
@@ -87,26 +64,11 @@ export const VERIFY_EMAIL_HTML_CONTENT = `
         display: inline-block;
         padding: 12px 48px;
         background: linear-gradient(135deg, #6cb00d 0%, #7bbe16 100%);
-        color: #ffffff;
+        color: #fff;
         text-decoration: none;
         border-radius: 5px;
         font-size: 14px;
-        transition: transform 0.2s ease;
         margin: 20px 0;
-        cursor: pointer;
-      }
-
-      a.verify-button:hover {
-        transform: translateY(-2px);
-      }
-
-      a.verify-button:active {
-        transform: translateY(0);
-      }
-
-      a.verify-button:focus {
-        outline: 2px solid #4a7c0a;
-        outline-offset: 2px;
       }
       .info-text {
         font-size: 13px;
@@ -114,9 +76,10 @@ export const VERIFY_EMAIL_HTML_CONTENT = `
         margin-top: 32px;
         padding-top: 24px;
         border-top: 1px solid #e2e8f0;
+        text-align: left;
       }
       .footer {
-        background-color: #f8fafc;
+        background: #f8fafc;
         padding: 24px 30px;
         text-align: center;
       }
@@ -131,6 +94,7 @@ export const VERIFY_EMAIL_HTML_CONTENT = `
       }
     </style>
   </head>
+
   <body>
     <div class="container">
       <div class="header">
@@ -146,11 +110,10 @@ export const VERIFY_EMAIL_HTML_CONTENT = `
           verify your email address by clicking the button below.
         </p>
 
-        <a href="{verificationUrl}" class="verify-button"> Verify Email </a>
+        <a href="{verificationUrl}" class="verify-button">Verify Email</a>
 
         <p class="info-text">
-          If you didn't create an account with SwiftJonny POS, you can safely
-          ignore this email.
+          If you didn't create an account, you can safely ignore this email.
         </p>
       </div>
 

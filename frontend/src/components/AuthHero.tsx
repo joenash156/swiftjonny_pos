@@ -26,7 +26,7 @@ function AuthHero() {
           <div className="w-8 h-8 bg-lime-500 rounded-lg flex items-center justify-center shadow-lg">
             <i className="fa-solid fa-bolt text-white text-sm"></i>
           </div>
-          <span className="text-white font-poppins font-bold text-lg tracking-wide">
+          <span className="text-white font-bold text-lg tracking-wide">
             SwiftJonny
           </span>
         </motion.div>
@@ -40,11 +40,11 @@ function AuthHero() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="text-center mb-4"
           >
-            <h1 className="text-white font-poppins font-bold text-2xl lg:text-3xl leading-tight mb-3">
+            <h1 className="text-white  font-bold text-2xl lg:text-3xl leading-tight mb-3">
               Elevate Your Business
               <span className="block text-lime-400">with SwiftJonny POS</span>
             </h1>
-            <p className="text-slate-200 font-poppins text-xs lg:text-sm max-w-md mx-auto leading-relaxed">
+            <p className="text-slate-200  text-xs lg:text-sm max-w-md mx-auto leading-relaxed">
               The modern point-of-sale solution built for speed, reliability,
               and seamless business management. Experience the future of retail today.
             </p>
@@ -75,15 +75,15 @@ function AuthHero() {
         >
           <div className="flex items-center gap-1.5 text-slate-300">
             <i className="fa-solid fa-shield-halved text-lime-400 text-xs"></i>
-            <span className="font-poppins text-[10px] lg:text-xs">Secure</span>
+            <span className="text-[10px] lg:text-xs">Secure</span>
           </div>
           <div className="flex items-center gap-1.5 text-slate-300">
             <i className="fa-solid fa-rocket text-lime-400 text-xs"></i>
-            <span className="font-poppins text-[10px] lg:text-xs">Lightning Fast</span>
+            <span className="text-[10px] lg:text-xs">Lightning Fast</span>
           </div>
           <div className="flex items-center gap-1.5 text-slate-300">
             <i className="fa-solid fa-chart-line text-lime-400 text-xs"></i>
-            <span className="font-poppins text-[10px] lg:text-xs">Real-time Analytics</span>
+            <span className="text-[10px] lg:text-xs">Real-time Analytics</span>
           </div>
         </motion.div>
       </div>

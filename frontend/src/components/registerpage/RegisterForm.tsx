@@ -45,7 +45,7 @@ function RegisterForm() {
       await Swal.fire({
         icon: response.success ? "success" : "error",
         title: response.success ? "Registration Successful!" : "Registration Failed!",
-        html: `<p class="font-poppins text-[14px]">${msg}</p>`,
+        html: `<p class="text-[14px]">${msg}</p>`,
         toast: true,
         position: "top-end",
         showConfirmButton: false,
@@ -54,8 +54,8 @@ function RegisterForm() {
         color: theme === "dark" ? "#f9fafb" : "#111827",
         customClass: {
           popup: "rounded-2xl shadow-2xl",
-          title: "font-semibold font-poppins",
-          htmlContainer: "font-poppins text-[14px]",
+          title: "font-semibold",
+          htmlContainer: "text-[14px]",
         },
       });
 
@@ -63,7 +63,7 @@ function RegisterForm() {
         setFormData({
           firstname: "",
           lastname: "",
-          othername: undefined,
+          othername: "",
           email: "",
           password: "",
           confirmPassword: "",
@@ -118,11 +118,10 @@ function RegisterForm() {
 
   return (
     <div
-      className={`w-full h-screen lg:h-full flex flex-col px-6 sm:px-10 lg:px-12 xl:px-16 py-8 lg:py-10 overflow-y-auto hide-scrollbar transition-[background] duration-300 ease-in-out ${
-        theme === "dark"
+      className={`w-full h-screen lg:h-full flex flex-col px-6 sm:px-10 lg:px-12 xl:px-16 py-8 lg:py-10 overflow-y-auto hide-scrollbar transition-[background] duration-300 ease-in-out ${theme === "dark"
           ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
           : "bg-gradient-to-br from-lime-50 via-slate-50 to-purple-50"
-      }`}
+        }`}
     >
       {/* Theme Toggler */}
       <motion.div
@@ -144,7 +143,7 @@ function RegisterForm() {
         <div className="w-10 h-10 bg-lime-500 rounded-xl flex items-center justify-center shadow-lg">
           <i className="fa-solid fa-bolt text-white text-lg"></i>
         </div>
-        <span className={`${theme === "dark" ? "text-white" : "text-slate-800"} font-poppins font-bold text-xl tracking-wide`}>
+        <span className={`${theme === "dark" ? "text-white" : "text-slate-800"} font-bold text-xl tracking-wide`}>
           SwiftJonny
         </span>
       </motion.div> */}
@@ -158,10 +157,10 @@ function RegisterForm() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="mb-8"
         >
-          <h1 className={`font-poppins font-bold text-2xl sm:text-3xl ${theme === "dark" ? "text-white" : "text-slate-800"} mb-2`}>
+          <h1 className={`font-bold text-2xl sm:text-3xl ${theme === "dark" ? "text-white" : "text-slate-800"} mb-2`}>
             Create Account
           </h1>
-          <p className={`font-poppins ${theme === "dark" ? "text-slate-400" : "text-slate-500"} text-sm sm:text-base`}>
+          <p className={`${theme === "dark" ? "text-slate-400" : "text-slate-500"} text-sm sm:text-base`}>
             Fill in your details to get started
           </p>
         </motion.div>
@@ -180,7 +179,7 @@ function RegisterForm() {
             <div className="space-y-2">
               <label
                 htmlFor="firstname"
-                className={`block font-poppins font-medium text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
+                className={`block font-medium text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
               >
                 First Name
               </label>
@@ -191,7 +190,7 @@ function RegisterForm() {
                 value={formData.firstname}
                 onChange={handleInputChange}
                 placeholder="John"
-                className={`w-full h-11 px-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl font-poppins text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
+                className={`w-full h-11 px-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
                 required
               />
             </div>
@@ -200,7 +199,7 @@ function RegisterForm() {
             <div className="space-y-2">
               <label
                 htmlFor="lastname"
-                className={`block font-poppins font-medium text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
+                className={`block font-medium text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
               >
                 Last Name
               </label>
@@ -211,7 +210,7 @@ function RegisterForm() {
                 value={formData.lastname}
                 onChange={handleInputChange}
                 placeholder="Doe"
-                className={`w-full h-11 px-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl font-poppins text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
+                className={`w-full h-11 px-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
                 required
               />
             </div>
@@ -221,7 +220,7 @@ function RegisterForm() {
           <div className="space-y-2">
             <label
               htmlFor="othername"
-              className={`block font-poppins font-medium text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
+              className={`block font-medium text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
             >
               Other Name <span className={`${theme === "dark" ? "text-slate-500" : "text-slate-400"} font-normal text-xs`}>(Optional)</span>
             </label>
@@ -229,10 +228,10 @@ function RegisterForm() {
               type="text"
               id="othername"
               name="othername"
-              value={formData.othername}
+              value={formData.othername || ""}
               onChange={handleInputChange}
               placeholder="Other name / Middle name"
-              className={`w-full h-11 px-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl font-poppins text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
+              className={`w-full h-11 px-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
             />
           </div>
 
@@ -240,7 +239,7 @@ function RegisterForm() {
           <div className="space-y-2">
             <label
               htmlFor="email"
-              className={`block font-poppins font-medium text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
+              className={`block font-medium text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
             >
               Email
             </label>
@@ -255,7 +254,7 @@ function RegisterForm() {
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="Enter your email"
-                className={`w-full h-11 pl-11 pr-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl font-poppins text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
+                className={`w-full h-11 pl-11 pr-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
                 required
               />
             </div>
@@ -265,7 +264,7 @@ function RegisterForm() {
           <div className="space-y-2">
             <label
               htmlFor="password"
-              className={`block font-poppins font-medium text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
+              className={`block font-medium text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
             >
               Password
             </label>
@@ -280,7 +279,7 @@ function RegisterForm() {
                 value={formData.password}
                 onChange={handleInputChange}
                 placeholder="Create a password"
-                className={`w-full h-11 pl-11 pr-12 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl font-poppins text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
+                className={`w-full h-11 pl-11 pr-12 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
                 required
               />
               <button
@@ -306,7 +305,7 @@ function RegisterForm() {
                       <i className="fa-solid fa-xmark"></i>
                     )}
                   </span>
-                  <span className={`font-poppins text-xs ${requirement.met ? "text-lime-500" : theme === "dark" ? "text-slate-400" : "text-slate-500"}`}>
+                  <span className={`text-xs ${requirement.met ? "text-lime-500" : theme === "dark" ? "text-slate-400" : "text-slate-500"}`}>
                     {requirement.label}
                   </span>
                 </div>
@@ -318,7 +317,7 @@ function RegisterForm() {
           <div className="space-y-2">
             <label
               htmlFor="confirmPassword"
-              className={`block font-poppins font-medium text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
+              className={`block font-medium text-sm ${theme === "dark" ? "text-slate-300" : "text-slate-700"}`}
             >
               Confirm Password
             </label>
@@ -333,7 +332,7 @@ function RegisterForm() {
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 placeholder="Re-enter your password"
-                className={`w-full h-11 pl-11 pr-12 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl font-poppins text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
+                className={`w-full h-11 pl-11 pr-12 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
                 required
               />
               <button
@@ -354,7 +353,7 @@ function RegisterForm() {
             type="submit"
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
-            className={`w-full h-11 ${theme === "dark" ? "bg-lime-600 hover:bg-lime-700" : "bg-lime-500 hover:bg-lime-600"} text-white font-poppins font-semibold text-sm rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer mt-6`}
+            className={`w-full h-11 ${theme === "dark" ? "bg-lime-600 hover:bg-lime-700" : "bg-lime-500 hover:bg-lime-600"} text-white font-semibold text-sm rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer mt-6`}
           >
             {loading ? (
               <TailSpin
@@ -373,7 +372,7 @@ function RegisterForm() {
           </motion.button>
 
           {/* Sign In Link */}
-          <p className={`text-center font-poppins text-sm ${theme === "dark" ? "text-slate-400" : "text-slate-500"} pt-2`}>
+          <p className={`text-center text-sm ${theme === "dark" ? "text-slate-400" : "text-slate-500"} pt-2`}>
             Already have an account?{" "}
             <Link
               to="/login"
@@ -392,7 +391,7 @@ function RegisterForm() {
         transition={{ duration: 0.5, delay: 0.4 }}
         className={`pt-6 border-t ${theme === "dark" ? "border-slate-800" : "border-slate-200"} mt-6`}
       >
-        <div className={`flex flex-col items-center justify-between gap-2 text-xs font-poppins ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>
+        <div className={`flex flex-col items-center justify-between gap-2 text-xs ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>
           <p>© 2026 SwiftJonny POS. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <Link to="/privacy" className={`${theme === "dark" ? "hover:text-slate-300" : "hover:text-slate-600"} transition-colors`}>

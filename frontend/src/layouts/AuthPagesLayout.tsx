@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 
 function AuthPagesLayout() {
   return (
-    <div>
+    <div className="font-kumbh">
       <main>
         <Outlet />
       </main>

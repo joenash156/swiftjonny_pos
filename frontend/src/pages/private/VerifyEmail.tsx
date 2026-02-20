@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
 import { TailSpin } from "react-loader-spinner";
+import api from "../../services/api";
 import Swal from "sweetalert2";
 import type { SweetAlertIcon } from "sweetalert2";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
 
 function VerifyEmail() {
   const { theme } = useTheme();
@@ -13,12 +13,11 @@ function VerifyEmail() {
   const navigate = useNavigate();
   const [countdown, setCountdown] = useState(0);
   const [isSending, setIsSending] = useState(false);
-  const { resendVerification } = useAuth();
 
-  // Get email from navigation state or localStorage (for page reloads)
-  const email = location.state?.email || localStorage.getItem("pending_verification_email") || null;
+  // Get email from navigation state
+  const email = location.state?.email;
 
-  // Start with a 45-second countdown
+  // Start with a 45-second countdown on component mount
   useEffect(() => {
     setCountdown(45);
   }, []);
@@ -37,16 +36,6 @@ function VerifyEmail() {
     }
   }, [email, navigate]);
 
-  // Cleanup localStorage when component unmounts (user leaves the page)
-  useEffect(() => {
-    return () => {
-      // Only clear if navigating away from verify-email page
-      if (!window.location.pathname.includes("/verify-email")) {
-        localStorage.removeItem("pending_verification_email");
-      }
-    };
-  }, []);
-
   // Don't render if no email (will redirect)
   if (!email) {
     return null;
@@ -58,16 +47,16 @@ function VerifyEmail() {
     setIsSending(true);
 
     try {
-      const response = await resendVerification(email);
+      const response = await api.post("/api/user/resend-verification", { email });
 
       let title = "Email Sent!";
       let icon: SweetAlertIcon = "success";
-      let message = response.message || "Verification email has been sent to your inbox.";
+      let message = response.data.message || "Verification email has been sent to your inbox.";
 
-      if (!response.success) {
+      if (!response.data.success) {
         title = "Failed";
         icon = "error";
-        message = response.error || "Failed to send verification email.";
+        message = response.data.error || "Failed to send verification email.";
       }
 
       await Swal.fire({
@@ -87,7 +76,7 @@ function VerifyEmail() {
         },
       });
 
-      if (response.success) {
+      if (response.data.success) {
         setCountdown(45);
       }
     } catch (error) {
@@ -119,20 +108,14 @@ function VerifyEmail() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const handleBackToLogin = () => {
-    // Clear localStorage when going back to login
-    localStorage.removeItem("pending_verification_email");
-    navigate("/login");
-  };
-
   return (
     <div
       className={`min-h-screen w-full flex items-center justify-center ${theme === "dark" ? "bg-slate-900" : "bg-slate-50"
         } px-4 sm:px-6 lg:px-8 py-8 transition-colors duration-300`}
     >
-      <div className="w-full max-w-2xl">
+      <div className="w-full max-w-md">
         {/* Logo */}
-        {/* <motion.div
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -147,7 +130,7 @@ function VerifyEmail() {
           >
             SwiftJonny
           </span>
-        </motion.div> */}
+        </motion.div>
 
         {/* Main Card */}
         <motion.div
@@ -155,9 +138,9 @@ function VerifyEmail() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
           className={`${theme === "dark"
-            ? "bg-slate-800/20"
-            : "bg-gray-100/50"
-            } rounded p-6 sm:p-8`}
+            ? "bg-slate-800 border-slate-700"
+            : "bg-white border-slate-200"
+            } border rounded-2xl shadow-xl p-6 sm:p-8`}
         >
           {/* Icon */}
           <div className="flex justify-center mb-6">
@@ -186,16 +169,16 @@ function VerifyEmail() {
               } text-sm sm:text-base mb-6 leading-relaxed`}
           >
             We've sent a verification link to{" "}
-            <span className="font-semibold text-lime-500">{email}</span>. Please
+            <span className="font-semibold">{email}</span>. Please
             check your inbox and click the link to verify your account.
           </p>
 
           {/* Info Box */}
           <div
             className={`${theme === "dark"
-              ? "bg-slate-700/20 border-slate-600"
+              ? "bg-slate-700/50 border-slate-600"
               : "bg-slate-50 border-slate-200"
-              } border rounded-xl p-4 mb-6 backdrop-blur-2xl`}
+              } border rounded-xl p-4 mb-6`}
           >
             <div className="flex items-start gap-3">
               <i
@@ -209,11 +192,6 @@ function VerifyEmail() {
                 >
                   Didn't receive the email? Check your spam folder or click the button
                   below to resend the verification link.
-                  <br />
-                  <span className="text-orange-400 text-[13px]">
-                    <i className="fa-solid fa-exclamation-triangle mr-1"></i>
-                    Note: The verification link expires in 20 minutes.
-                  </span>
                 </p>
               </div>
             </div>
@@ -223,13 +201,13 @@ function VerifyEmail() {
           <button
             onClick={handleResendVerification}
             disabled={countdown > 0 || isSending}
-            className={`mx-auto w-full max-w-xs h-11 rounded-xl font-semibold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 ${countdown > 0 || isSending
+            className={`w-full h-12 rounded-xl font-semibold text-sm sm:text-base transition-all duration-200 flex items-center justify-center gap-2 ${countdown > 0 || isSending
               ? theme === "dark"
                 ? "bg-slate-700 text-slate-500 cursor-not-allowed"
                 : "bg-slate-200 text-slate-400 cursor-not-allowed"
               : theme === "dark"
-                ? "bg-lime-600 text-white hover:bg-lime-700"
-                : "bg-lime-500 text-white hover:bg-lime-600 "
+                ? "bg-lime-500 text-white hover:bg-lime-600 shadow-lg hover:shadow-xl"
+                : "bg-lime-500 text-white hover:bg-lime-600 shadow-lg hover:shadow-xl"
               }`}
           >
             {isSending ? (
@@ -260,7 +238,7 @@ function VerifyEmail() {
             </div>
             <div className="relative flex justify-center text-sm">
               <span
-                className={`px-4 rounded-xl ${theme === "dark"
+                className={`px-4 ${theme === "dark"
                   ? "bg-slate-800 text-slate-500"
                   : "bg-white text-slate-500"
                   }`}
@@ -272,16 +250,16 @@ function VerifyEmail() {
 
           {/* Back to Login Link */}
           <div className="text-center">
-            <button
-              onClick={handleBackToLogin}
+            <a
+              href="/login"
               className={`text-sm sm:text-base ${theme === "dark"
                 ? "text-lime-400 hover:text-lime-300"
                 : "text-lime-600 hover:text-lime-700"
-                } transition-colors duration-200 inline-flex items-center gap-2 bg-transparent border-none cursor-pointer`}
+                } transition-colors duration-200 inline-flex items-center gap-2`}
             >
               <i className="fa-solid fa-arrow-left"></i>
               <span>Back to Login</span>
-            </button>
+            </a>
           </div>
         </motion.div>
 

@@ -18,7 +18,7 @@ const userBaseSchema = {
     .transform(capitalizeName),
 
   othername: z.preprocess(
-    (val) => val === "" ? undefined : val, z
+    (val:string) => val.trim() === "" ? undefined : val, z
     .string()
     .trim()
     .min(2, "Other name must be at least 2 characters")
