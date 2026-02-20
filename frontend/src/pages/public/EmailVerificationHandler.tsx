@@ -31,10 +31,10 @@ function EmailVerificationHandler() {
       try {
         const response = await verifyYourEmail(token);
 
-        console.log(response)
+        // console.log(response)
 
-        // Simulate a short "verifying" state for nicer UX
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // Simulate a short "verifying"
+        await new Promise((resolve) => setTimeout(resolve, 3000));
 
         const normalizedMessage = (response as ApiSuccessResponse).message as string | undefined;
         const normalizedError = (response as ApiErrorResponse).error as string | undefined;
@@ -60,7 +60,7 @@ function EmailVerificationHandler() {
           // Redirect to login after 3 seconds
           setTimeout(() => {
             navigate("/login", { replace: true });
-          }, 3000);
+          }, 3500);
         } else {
           if (hasSucceededRef.current) return;
           setStatus("error");
@@ -71,7 +71,7 @@ function EmailVerificationHandler() {
           );
         }
       } catch (error) {
-        console.error("Email verification error:", error);
+        // console.error("Email verification error:", error);
         if (error instanceof AxiosError) {
           const errorData = error.response?.data;
           const rawError = (errorData as ApiErrorResponse)?.error as string | undefined;
@@ -95,7 +95,7 @@ function EmailVerificationHandler() {
 
             setTimeout(() => {
               navigate("/login", { replace: true });
-            }, 3000);
+            }, 3500);
           } else {
             if (hasSucceededRef.current) return;
             setStatus("error");
@@ -165,7 +165,7 @@ function EmailVerificationHandler() {
           </h1>
 
           {/* Message */}
-          <p
+          <div
             className={`font-poppins text-center ${theme === "dark" ? "text-slate-400" : "text-slate-600"
               } text-sm sm:text-base mb-6 leading-relaxed`}
           >
@@ -185,7 +185,7 @@ function EmailVerificationHandler() {
                     wrapperClass="custom-loader"
                     visible={true}
                   />
-                  <span className="text-lime-500 font-semibold">
+                  <span className="text-lime-500 text-xs">
                     Redirecting to login page...
                   </span>
                 </div>
@@ -200,7 +200,7 @@ function EmailVerificationHandler() {
                 </span>
               </>
             )}
-          </p>
+          </div>
 
           {/* Action Buttons */}
           {status === "error" && (

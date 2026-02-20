@@ -17,13 +17,15 @@ const userBaseSchema = {
     .max(50)
     .transform(capitalizeName),
 
-  othername: z
+  othername: z.preprocess(
+    (val) => val === "" ? undefined : val, z
     .string()
     .trim()
     .min(2, "Other name must be at least 2 characters")
     .max(50)
     .transform(capitalizeName)
-    .optional(),
+    .optional()
+  ),
 
   phone: z
     .string()

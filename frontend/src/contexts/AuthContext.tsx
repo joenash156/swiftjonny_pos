@@ -178,7 +178,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       const response = await api.get<ApiResponse>(`/api/user/verify_email?token=${token}`);
-      console.log(response.data)
+      // console.log(response.data)
       return response.data;
     } catch (error: unknown) {
       if (error instanceof AxiosError) {

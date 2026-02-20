@@ -12,15 +12,14 @@ export type PasswordRequirement = {
   met: boolean;
 }
 
-/**
- * User interface representing authenticated user data from backend
- */
+
+ // User interface representing authenticated user data from backend
 export interface User {
   id: string;
   email: string;
   firstname: string;
   lastname: string;
-  othername?: string | null;
+  othername?: string;
   role?: string;
   is_email_verified?: number | boolean;
   phone?: string | null;
@@ -30,14 +29,13 @@ export interface User {
   is_profile_complete?: number | boolean;
   last_login_at?: string;
   theme_preference?: "light" | "dark";
-  theme?: "light" | "dark"; // Client-side normalized field
+  theme?: "light" | "dark"; 
   created_at?: string;
   createdAt?: string;
 }
 
-/**
- * API Success Response structure
- */
+
+// API Success Response structure
 export interface ApiSuccessResponse {
   success: true;
   message?: string;

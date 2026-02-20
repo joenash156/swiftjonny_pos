@@ -14,7 +14,7 @@ function RegisterForm() {
   const [formData, setFormData] = useState<FormData>({
     firstname: "",
     lastname: "",
-    othername: "".trim() || undefined,
+    othername: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -63,7 +63,7 @@ function RegisterForm() {
         setFormData({
           firstname: "",
           lastname: "",
-          othername: "",
+          othername: undefined,
           email: "",
           password: "",
           confirmPassword: "",
@@ -73,7 +73,7 @@ function RegisterForm() {
           navigate("/login");
         }, 1600);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Unexpected error in form submit:", error);
     }
     // finally {
@@ -231,7 +231,7 @@ function RegisterForm() {
               name="othername"
               value={formData.othername}
               onChange={handleInputChange}
-              placeholder="Middle name"
+              placeholder="Other name / Middle name"
               className={`w-full h-11 px-4 ${theme === "dark" ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500" : "bg-slate-50 border-slate-300 text-slate-800 placeholder:text-slate-400"} border rounded-xl font-poppins text-sm focus:outline-none focus:ring-2 ${theme === "dark" ? "focus:ring-lime-400/30 focus:border-lime-400" : "focus:ring-lime-500/30 focus:border-lime-500"} transition-all duration-200`}
             />
           </div>
