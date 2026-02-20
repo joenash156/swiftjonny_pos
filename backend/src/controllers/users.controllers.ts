@@ -99,13 +99,13 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
 
     const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
 
-    // find user with valid token
-    const [users] = await db.query<RowDataPacket[]>("SELECT id, is_email_verified FROM users WHERE email_verify_token_hash = ? AND email_verify_expires > NOW()", [tokenHash]);
+    // find user with this token (don't check expiry yet)
+    const [users] = await db.query<RowDataPacket[]>("SELECT id, is_email_verified, email_verify_expires FROM users WHERE email_verify_token_hash = ?", [tokenHash]);
 
     if (users.length === 0) {
       res.status(400).json({
         success: false,
-        error: "Invalid or expired verification token",
+        error: "Invalid verification token",
       });
       return;
     }
@@ -115,6 +115,15 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
       res.status(409).json({
         success: false,
         error: "Email is already verified",
+      });
+      return;
+    }
+
+    // check if token has expired
+    if (users[0]!.email_verify_expires && new Date(users[0]!.email_verify_expires) <= new Date()) {
+      res.status(400).json({
+        success: false,
+        error: "Verification token has expired. Please request a new one",
       });
       return;
     }

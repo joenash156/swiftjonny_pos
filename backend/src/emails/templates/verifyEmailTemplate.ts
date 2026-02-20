@@ -63,7 +63,7 @@ export const VERIFY_EMAIL_HTML_CONTENT = `
       a.verify-button {
         display: inline-block;
         padding: 12px 48px;
-        background: linear-gradient(135deg, #0db08d 0%, #16be97ea 100%);
+        background: linear-gradient(135deg, #0db08d 0%, #16be97 100%);
         color: #fff;
         text-decoration: none;
         border-radius: 5px;

@@ -138,15 +138,15 @@ function EmailVerificationHandler() {
                   ? "bg-slate-700"
                   : "bg-slate-100"
                 : status === "success"
-                  ? "bg-green-100"
+                  ? "bg-teal-100"
                   : "bg-red-100"
                 } flex items-center justify-center`}
             >
               {status === "verifying" && (
-                <TailSpin height="40" width="40" color={theme === "dark" ? "#84cc16" : "#65a30d"} />
+                <TailSpin height="40" width="40" color={theme === "dark" ? "#16be97" : "#65a30d"} />
               )}
               {status === "success" && (
-                <i className="fa-solid fa-circle-check text-4xl text-green-600"></i>
+                <i className="fa-solid fa-circle-check text-4xl text-teal-600"></i>
               )}
               {status === "error" && (
                 <i className="fa-solid fa-circle-xmark text-4xl text-red-600"></i>
