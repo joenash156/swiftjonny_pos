@@ -143,7 +143,7 @@ function EmailVerificationHandler() {
                 } flex items-center justify-center`}
             >
               {status === "verifying" && (
-                <TailSpin height="40" width="40" color={theme === "dark" ? "#16be97" : "#65a30d"} />
+                <TailSpin height="40" width="40" color={theme === "dark" ? "#16be97" : "#16be97"} />
               )}
               {status === "success" && (
                 <i className="fa-solid fa-circle-check text-4xl text-teal-600"></i>
