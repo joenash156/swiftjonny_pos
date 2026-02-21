@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import { requireAuth } from "../middlewares/auth.middleware";
-import { createSale, getAllSales, getSaleDetails, reprintReceipt, reverseSale } from "../controllers/sales.ontrollers";
+import { createSale, getAllSales, getSaleDetails, reprintReceipt, reverseSale } from "../controllers/sales.controllers";
 
 const router: Router = express.Router();
 

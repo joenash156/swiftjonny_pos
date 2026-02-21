@@ -1,6 +1,6 @@
 import api from "./api";
 
-export type PeriodPreset = "today" | "week" | "month";
+export type PeriodPreset = "today" | "week" | "month" | "all";
 
 export interface DashboardSummary {
   total_sales: number;
@@ -63,9 +63,13 @@ export function getDateRangeForPeriod(period: PeriodPreset): { from: string; to:
     return { from: isoDate(monday), to: isoDate(now) };
   }
 
-  // month
-  const from = new Date(now.getFullYear(), now.getMonth(), 1);
-  return { from: isoDate(from), to: isoDate(now) };
+  if (period === "month") {
+    const from = new Date(now.getFullYear(), now.getMonth(), 1);
+    return { from: isoDate(from), to: isoDate(now) };
+  }
+
+  // all — from a far-past date to today
+  return { from: "2000-01-01", to: isoDate(now) };
 }
 
 export const dashboardService = {

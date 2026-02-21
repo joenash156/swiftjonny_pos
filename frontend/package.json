@@ -17,6 +17,7 @@
     "react-dom": "^19.2.0",
     "react-loader-spinner": "^8.0.2",
     "react-router-dom": "^7.13.0",
+    "recharts": "^3.7.0",
     "sweetalert2": "^11.26.18",
     "tailwindcss": "^4.1.18"
   },

@@ -13,6 +13,7 @@ import POSTerminal from "./pages/private/POSTerminal"
 import VerifyEmail from "./pages/public/VerifyEmail"
 import EmailVerificationHandler from "./pages/public/EmailVerificationHandler"
 import ApprovalPending from "./pages/public/ApprovalPending"
+import HelpSupport from "./pages/public/HelpSupport"
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -47,6 +48,9 @@ function App() {
           <Route path="/cashiers" element={<Cashiers />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
+
+        {/* Standalone pages (no layout) */}
+        <Route path="/help" element={<HelpSupport />} />
       </Routes>
     </div>
   )
