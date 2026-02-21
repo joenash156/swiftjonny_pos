@@ -13,12 +13,22 @@ import { AxiosError } from "axios";
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  // Seed user immediately from localStorage so components always have data
+  // while the async refresh/validation check completes in the background
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      const stored = localStorage.getItem("user");
+      return stored ? (JSON.parse(stored) as User) : null;
+    } catch {
+      return null;
+    }
+  });
   const [loading, setLoading] = useState(true);
   const { setTheme } = useTheme();
 
 
-   // Check authentication status and attempts to restore session from localStorage and refresh token
+  // Validate session with server: get fresh access token + latest profile.
+  // If validation fails the session is truly invalid, so we clear state.
   useEffect(() => {
     async function checkAuth() {
       const storedUser = localStorage.getItem("user");
@@ -35,8 +45,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // call profile
         const profile = await api.get("/api/user/profile");
 
-        setUser({ ...data.user, ...profile.data });
-        localStorage.setItem("user", JSON.stringify({ ...data.user, ...profile.data }));
+        const freshUser = profile.data.user;
+        setUser(freshUser);
+        localStorage.setItem("user", JSON.stringify(freshUser));
 
         if (data.user?.theme) {
           setTheme(data.user.theme);
@@ -169,11 +180,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-    /**
-   * verify email
-   * @param token - The verification token from the email link
-   * @returns ApiResponse with success/message/error from backend
-   */
+  /**
+ * verify email
+ * @param token - The verification token from the email link
+ * @returns ApiResponse with success/message/error from backend
+ */
   const verifyYourEmail = async (token: string): Promise<ApiResponse> => {
     try {
       setLoading(true);

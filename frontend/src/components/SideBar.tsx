@@ -31,7 +31,7 @@ function SidebarContent() {
 
   const isDark = theme === "dark";
 
-  console.log(user)
+  // console.log(user)
 
   const handleLogout = async () => {
     await logout();
@@ -46,7 +46,7 @@ function SidebarContent() {
     ? `${user.firstname?.[0] ?? ""}${user.lastname?.[0] ?? ""}`.toUpperCase()
     : "Guest";
 
-  console.log(userInitials)
+  // console.log(userInitials)
 
   return (
     <div
@@ -120,11 +120,11 @@ function SidebarContent() {
                 </p>
                 <span
                   className={`inline-block mt-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full ${user?.role === "admin"
-                      ? "bg-amber-400/20 text-amber-300"
-                      : "bg-white/10 text-white/70"
+                    ? "bg-amber-400/20 text-amber-300"
+                    : "bg-white/10 text-white/70"
                     }`}
                 >
-                  {user?.role ?? "cashier"}
+                  {user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : "Cashier"}
                 </span>
               </motion.div>
             )}

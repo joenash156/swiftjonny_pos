@@ -33,11 +33,11 @@ function Dashboard() {
   return (
     <div
       className={`min-h-full p-5 md:p-7 transition-colors duration-300 ${isDark
-          ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900"
-          : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80"
+        ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900"
+        : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80"
         }`}
     >
-      {/* ── Greeting ───────────────────────────────────────── */}
+      {/*  Greeting */}
       <div className="mb-7">
         <h1
           className={`text-2xl font-bold tracking-tight ${isDark ? "text-white" : "text-slate-900"
@@ -50,14 +50,14 @@ function Dashboard() {
         </p>
       </div>
 
-      {/* ── Stat Cards ─────────────────────────────────────── */}
+      {/*  Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
         {stats.map((s) => (
           <div
             key={s.label}
             className={`rounded-2xl p-5 border transition-colors duration-300 ${isDark
-                ? "bg-slate-900/70 border-slate-800 hover:bg-slate-800/80"
-                : "bg-white/80 border-slate-200/80 hover:bg-white"
+              ? "bg-slate-900/70 border-slate-800 hover:bg-slate-800/80"
+              : "bg-white/80 border-slate-200/80 hover:bg-white"
               }`}
           >
             <div className="flex items-start justify-between mb-4">
@@ -76,8 +76,8 @@ function Dashboard() {
             </p>
             <p
               className={`text-xs mt-1.5 font-medium ${s.changeUp
-                  ? isDark ? "text-teal-400" : "text-teal-600"
-                  : "text-red-400"
+                ? isDark ? "text-teal-400" : "text-teal-600"
+                : "text-red-400"
                 }`}
             >
               <i
@@ -90,7 +90,7 @@ function Dashboard() {
         ))}
       </div>
 
-      {/* ── Quick Actions ── */}
+      {/*  Quick Actions  */}
       <div className="mb-8">
         <h2 className={`text-sm font-semibold uppercase tracking-widest mb-3 ${isDark ? "text-slate-500" : "text-slate-400"}`}>
           Quick Actions
@@ -112,14 +112,14 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* ── Placeholder Charts Row ── */}
+      {/*  Placeholder Charts Row  */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {["Sales Overview", "Top Products"].map((title) => (
           <div
             key={title}
             className={`rounded-2xl p-5 border min-h-55 flex flex-col transition-colors duration-300 ${isDark
-                ? "bg-slate-900/70 border-slate-800"
-                : "bg-white/80 border-slate-200/80"
+              ? "bg-slate-900/70 border-slate-800"
+              : "bg-white/80 border-slate-200/80"
               }`}
           >
             <h3 className={`text-sm font-semibold mb-4 ${isDark ? "text-slate-300" : "text-slate-700"}`}>

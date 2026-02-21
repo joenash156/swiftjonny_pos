@@ -128,7 +128,7 @@ function LoginForm() {
     <div
       className={`w-full h-screen lg:h-full flex flex-col px-6 sm:px-10 lg:px-12 xl:px-16 py-8 lg:py-10 overflow-y-auto hide-scrollbar transition-[background] duration-300 ease-in-out ${theme === "dark"
           ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
-          : "bg-gradient-to-br from-teal-100/50 via-slate-50 to-purple-100/40"
+          : "bg-gradient-to-br from-teal-50/40 via-slate-50 to-purple-100/40"
         }`}
     >
       {/* Theme Toggler */}
