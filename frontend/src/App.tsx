@@ -7,6 +7,7 @@ import Homepage from "./pages/public/Homepage"
 import Register from "./pages/public/Register"
 import AppLayout from "./layouts/AppLayout"
 import Dashboard from "./pages/private/Dashboard"
+import Cashiers from "./pages/private/Cashiers"
 import VerifyEmail from "./pages/public/VerifyEmail"
 import EmailVerificationHandler from "./pages/public/EmailVerificationHandler"
 import ApprovalPending from "./pages/public/ApprovalPending"
@@ -40,6 +41,7 @@ function App() {
         {/* App layout (protected routes) */}
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/cashiers" element={<Cashiers />} />
         </Route>
       </Routes>
     </div>

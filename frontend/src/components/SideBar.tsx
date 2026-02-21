@@ -9,6 +9,7 @@ interface NavItem {
   label: string;
   path: string;
   icon: string;
+  adminOnly?: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -18,7 +19,7 @@ const navItems: NavItem[] = [
   { label: "Products", path: "/products", icon: "fa-solid fa-box" },
   { label: "Categories", path: "/categories", icon: "fa-solid fa-tags" },
   { label: "Inventory", path: "/inventory", icon: "fa-solid fa-warehouse" },
-  { label: "Customers", path: "/customers", icon: "fa-solid fa-users" },
+  { label: "Cashiers", path: "/cashiers", icon: "fa-solid fa-users", adminOnly: true },
   { label: "Analytics", path: "/analytics", icon: "fa-solid fa-chart-bar" },
   { label: "Settings", path: "/settings", icon: "fa-solid fa-gear" },
 ];
@@ -134,43 +135,45 @@ function SidebarContent() {
 
       {/*  Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 space-y-0.5 pb-4 hide-scrollbar">
-        {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={closeSidebar}
-              title={isCollapsed ? item.label : undefined}
-              className={`flex items-center gap-3 rounded-xl transition-all duration-200 group
+        {navItems
+          .filter((item) => !item.adminOnly || user?.role === "admin")
+          .map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={closeSidebar}
+                title={isCollapsed ? item.label : undefined}
+                className={`flex items-center gap-3 rounded-xl transition-all duration-200 group
                 ${isCollapsed ? "justify-center px-0 py-3" : "px-3 py-2.5"}
                 ${isActive
-                  ? "bg-white/20 text-white"
-                  : "text-white/70 hover:bg-white/10 hover:text-white"
-                }`}
-            >
-              <i
-                className={`${item.icon} text-[15px] shrink-0 transition-transform duration-200
+                    ? "bg-white/20 text-white"
+                    : "text-white/70 hover:bg-white/10 hover:text-white"
+                  }`}
+              >
+                <i
+                  className={`${item.icon} text-[15px] shrink-0 transition-transform duration-200
                   ${isActive ? "text-white" : "text-white/70 group-hover:text-white"}
                   ${!isCollapsed ? "" : "mx-auto"}`}
-              />
-              <AnimatePresence initial={false}>
-                {!isCollapsed && (
-                  <motion.span
-                    key={`label-${item.path}`}
-                    initial={{ opacity: 0, x: -6 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -6 }}
-                    transition={{ duration: 0.15 }}
-                    className="text-sm font-medium truncate"
-                  >
-                    {item.label}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </Link>
-          );
-        })}
+                />
+                <AnimatePresence initial={false}>
+                  {!isCollapsed && (
+                    <motion.span
+                      key={`label-${item.path}`}
+                      initial={{ opacity: 0, x: -6 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -6 }}
+                      transition={{ duration: 0.15 }}
+                      className="text-sm font-medium truncate"
+                    >
+                      {item.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </Link>
+            );
+          })}
       </nav>
 
       {/*  Bottom: Logout  */}

@@ -11,10 +11,10 @@ interface StatCard {
 }
 
 const stats: StatCard[] = [
-  { label: "Total Sales Today", value: "GH₵ 0.00", icon: "fa-solid fa-chart-line", iconColor: "text-teal-500", change: "+0%", changeUp: true },
-  { label: "Transactions", value: "0", icon: "fa-solid fa-receipt", iconColor: "text-blue-500", change: "+0", changeUp: true },
-  { label: "Products", value: "0", icon: "fa-solid fa-box", iconColor: "text-purple-500", change: "0 low", changeUp: true },
-  { label: "Customers", value: "0", icon: "fa-solid fa-users", iconColor: "text-amber-500", change: "+0", changeUp: true },
+  { label: "Total Sales Today", value: "GH₵ 2,500.34", icon: "fa-solid fa-chart-line", iconColor: "text-teal-500", change: "+8%", changeUp: true },
+  { label: "Transactions", value: "36", icon: "fa-solid fa-receipt", iconColor: "text-blue-500", change: "+4", changeUp: true },
+  { label: "Products", value: "116", icon: "fa-solid fa-box", iconColor: "text-purple-500", change: "0 low", changeUp: true },
+  { label: "Customers", value: "62", icon: "fa-solid fa-users", iconColor: "text-amber-500", change: "+0", changeUp: true },
 ];
 
 function Dashboard() {
