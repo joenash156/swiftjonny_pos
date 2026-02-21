@@ -5,252 +5,19 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { userService, type UpdateProfilePayload } from "../../services/userService";
 import { formatDate } from "../../utils/formatDate";
-
-// ─── Types ──────────────────────────────────────────────────────────────────
+import { ConfirmDialog, type ConfirmDialogConfig } from "../../components/shared/ConfirmDialog";
+import { SectionCard } from "../../components/settings/SectionCard";
+import { FieldRow } from "../../components/settings/FieldRow";
+import { PwField } from "../../components/settings/PwField";
 
 type Tab = "profile" | "security";
 
-interface ConfirmConfig {
-  title: string;
-  message: string | React.ReactNode;
-  confirmLabel: string;
-  variant: "danger" | "warning" | "success";
-  iconClass: string;
+interface ConfirmConfig extends ConfirmDialogConfig {
   onConfirm: () => Promise<void>;
 }
 
 
-// ─── Confirm Dialog ───────────────────────────────────────────────────────────
-
-function ConfirmDialog({
-  isDark,
-  config,
-  onCancel,
-  onConfirm,
-  loading,
-}: {
-  isDark: boolean;
-  config: ConfirmConfig;
-  onCancel: () => void;
-  onConfirm: () => void;
-  loading: boolean;
-}) {
-  const vs = {
-    danger: {
-      bg: isDark ? "bg-red-500/10" : "bg-red-50",
-      icon: "text-red-500",
-      btn: "bg-red-500 hover:bg-red-600 text-white",
-    },
-    warning: {
-      bg: isDark ? "bg-amber-500/10" : "bg-amber-50",
-      icon: "text-amber-500",
-      btn: "bg-amber-500 hover:bg-amber-600 text-white",
-    },
-    success: {
-      bg: isDark ? "bg-teal-500/10" : "bg-teal-50",
-      icon: "text-teal-500",
-      btn: "bg-teal-600 hover:bg-teal-700 text-white",
-    },
-  }[config.variant];
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-      onClick={onCancel}
-    >
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
-        transition={{ duration: 0.15 }}
-        onClick={(e) => e.stopPropagation()}
-        className={`w-full max-w-sm rounded-2xl p-6 border shadow-2xl ${isDark ? "bg-slate-900 border-slate-700" : "bg-white border-slate-200"
-          }`}
-      >
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${vs.bg}`}>
-          <i className={`${config.iconClass} ${vs.icon}`} />
-        </div>
-        <h3 className={`text-base font-semibold mb-1 ${isDark ? "text-white" : "text-slate-900"}`}>
-          {config.title}
-        </h3>
-        <div className={`text-sm mb-6 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-          {config.message}
-        </div>
-        <div className="flex gap-3">
-          <button
-            onClick={onCancel}
-            disabled={loading}
-            className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors border ${isDark
-              ? "border-slate-700 text-slate-300 hover:bg-slate-800"
-              : "border-slate-200 text-slate-600 hover:bg-slate-50"
-              }`}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={loading}
-            className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors disabled:opacity-60 ${vs.btn}`}
-          >
-            {loading ? (
-              <i className="fa-solid fa-circle-notch animate-spin" />
-            ) : (
-              config.confirmLabel
-            )}
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-// ─── Field Row ────────────────────────────────────────────────────────────────
-
-function FieldRow({
-  label,
-  value,
-  placeholder,
-  editing,
-  isDark,
-  type = "text",
-  readOnly = false,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  placeholder?: string;
-  editing: boolean;
-  isDark: boolean;
-  type?: string;
-  readOnly?: boolean;
-  onChange?: (v: string) => void;
-}) {
-  const disabled = !editing || readOnly;
-  return (
-    <div>
-      <label
-        className={`block text-xs font-semibold uppercase tracking-wider mb-1.5 ${isDark ? "text-slate-500" : "text-slate-400"
-          }`}
-      >
-        {label}
-        {readOnly && (
-          <span className={`ml-2 font-normal normal-case tracking-normal text-[10px] ${isDark ? "text-slate-600" : "text-slate-400"}`}>
-            (cannot be changed)
-          </span>
-        )}
-      </label>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange?.(e.target.value)}
-        disabled={disabled}
-        placeholder={placeholder}
-        className={`w-full rounded-xl px-3.5 py-2.5 text-sm border outline-none transition-all ${disabled
-          ? isDark
-            ? "bg-slate-800/60 border-slate-700/60 text-slate-400 cursor-default"
-            : "bg-slate-50 border-slate-200 text-slate-500 cursor-default"
-          : isDark
-            ? "bg-slate-800 border-slate-600 text-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
-            : "bg-white border-slate-300 text-slate-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
-          }`}
-      />
-    </div>
-  );
-}
-
-// ─── Password Field ───────────────────────────────────────────────────────────
-
-function PwField({
-  label,
-  value,
-  placeholder,
-  isDark,
-  onChange,
-  show,
-  onToggleShow,
-}: {
-  label: string;
-  value: string;
-  placeholder?: string;
-  isDark: boolean;
-  onChange: (v: string) => void;
-  show: boolean;
-  onToggleShow: () => void;
-}) {
-  return (
-    <div>
-      <label
-        className={`block text-xs font-semibold uppercase tracking-wider mb-1.5 ${isDark ? "text-slate-500" : "text-slate-400"
-          }`}
-      >
-        {label}
-      </label>
-      <div className="relative">
-        <input
-          type={show ? "text" : "password"}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          autoComplete="new-password"
-          className={`w-full rounded-xl px-3.5 py-2.5 pr-10 text-sm border outline-none transition-all ${isDark
-            ? "bg-slate-800 border-slate-600 text-white placeholder-slate-600 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
-            : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
-            }`}
-        />
-        <button
-          type="button"
-          onClick={onToggleShow}
-          className={`absolute right-3 top-1/2 -translate-y-1/2 text-sm transition-colors ${isDark ? "text-slate-500 hover:text-slate-300" : "text-slate-400 hover:text-slate-600"
-            }`}
-          tabIndex={-1}
-        >
-          <i className={`fa-solid ${show ? "fa-eye-slash" : "fa-eye"}`} />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// ─── Section Card ─────────────────────────────────────────────────────────────
-
-function SectionCard({
-  title,
-  description,
-  isDark,
-  children,
-}: {
-  title: string;
-  description?: string;
-  isDark: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <div
-      className={`rounded-2xl border p-6 ${isDark ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
-        }`}
-    >
-      <div className="mb-5">
-        <h2 className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
-          {title}
-        </h2>
-        {description && (
-          <p className={`text-xs mt-0.5 ${isDark ? "text-slate-500" : "text-slate-500"}`}>
-            {description}
-          </p>
-        )}
-      </div>
-      {children}
-    </div>
-  );
-}
-
-// ─── Main Settings Page ───────────────────────────────────────────────────────
-
 function Settings() {
-
   const { theme } = useTheme();
   const { user, logout, refreshUser } = useAuth();
   const isDark = theme === "dark";
@@ -259,10 +26,8 @@ function Settings() {
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const [confirm, setConfirm] = useState<ConfirmConfig | null>(null);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-
-  // ── Profile form state ──────────────────────────────────────────────
+  // Profile form state
   const [editing, setEditing] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
   const [form, setForm] = useState({
@@ -286,12 +51,12 @@ function Settings() {
     }
   }, [user, editing]);
 
-  // ── Avatar state ────────────────────────────────────────────────────
+  // Avatar state
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [avatarLoading, setAvatarLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // ── Security form state ─────────────────────────────────────────────
+  // Security form state
   const [pwForm, setPwForm] = useState({
     current_password: "",
     new_password: "",
@@ -300,17 +65,17 @@ function Settings() {
   const [showPw, setShowPw] = useState({ current: false, newPw: false, confirm: false });
   const [pwLoading, setPwLoading] = useState(false);
 
-  // ── Delete account password ──────────────────────────────────────────
+  // Delete account password
   const [deletePassword, setDeletePassword] = useState("");
   const [showDeletePw, setShowDeletePw] = useState(false);
 
-  // ── Toast helper ────────────────────────────────────────────────────
+  // Toast helper
   const showToast = (msg: string, ok: boolean) => {
     setToast({ msg, ok });
     setTimeout(() => setToast(null), 3500);
   };
 
-  // ── Confirm helper ───────────────────────────────────────────────────
+  // Confirm helper
   const openConfirm = (config: ConfirmConfig) => setConfirm(config);
   const closeConfirm = () => {
     if (!confirmLoading) setConfirm(null);
@@ -327,7 +92,7 @@ function Settings() {
     }
   };
 
-  // ── Profile save ─────────────────────────────────────────────────────
+  // Profile save
   const startSaveProfile = () => {
     openConfirm({
       title: "Save Profile Changes",
@@ -362,7 +127,7 @@ function Settings() {
     });
   };
 
-  // ── Avatar upload ────────────────────────────────────────────────────
+  // Avatar upload
   const handleAvatarFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -421,7 +186,7 @@ function Settings() {
     });
   };
 
-  // ── Change password ──────────────────────────────────────────────────
+  // Change password
   const handleChangePassword = () => {
     if (!pwForm.current_password || !pwForm.new_password || !pwForm.confirm_new_password) {
       showToast("All password fields are required.", false);
@@ -471,7 +236,7 @@ function Settings() {
     });
   };
 
-  // ── Delete account ───────────────────────────────────────────────────
+  // Delete account
   const handleDeleteAccount = () => {
     if (!deletePassword) {
       showToast("Please enter your password to confirm.", false);
@@ -508,7 +273,7 @@ function Settings() {
     });
   };
 
-  // ─── Computed ──────────────────────────────────────────────────────────
+  // Computed
   const initials = `${user?.firstname?.[0] ?? ""}${user?.lastname?.[0] ?? ""}`.toUpperCase();
   // avatar_url already contains the full URL as returned by the backend
   const displayAvatarSrc = user?.avatar_url || previewUrl;
@@ -603,7 +368,7 @@ function Settings() {
                     style={{ width: 72, height: 72 }}>
                     {displayAvatarSrc ? (
                       <img
-                        src={user?.avatar_url ? `${API_URL}/uploads/avatars/${user.avatar_url}` : previewUrl!}
+                        src={displayAvatarSrc!}
                         alt="Avatar"
                         className="w-full h-full object-cover"
                       />

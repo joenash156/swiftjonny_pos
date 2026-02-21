@@ -4,30 +4,15 @@ import { AxiosError } from "axios";
 import { useTheme } from "../../contexts/ThemeContext";
 import { adminService, type Cashier } from "../../services/adminService";
 import { formatDate } from "../../utils/formatDate";
-
-// ─── Helpers ───────────────────────────────────────────────────────────────
+import { StatusBadge } from "../../components/cashiers/StatusBadge";
+import { DetailModal, type PendingAction } from "../../components/cashiers/DetailModal";
+import { ConfirmDialog, type ConfirmDialogConfig } from "../../components/shared/ConfirmDialog";
 
 function getInitials(c: Cashier) {
   return `${c.firstname?.[0] ?? ""}${c.lastname?.[0] ?? ""}`.toUpperCase();
 }
 
-// ─── Pending Action Types ────────────────────────────────────────────────────
-
-type PendingAction =
-  | { type: "approve"; cashier: Cashier }
-  | { type: "disable"; cashier: Cashier }
-  | { type: "delete"; cashier: Cashier }
-  | { type: "role"; cashier: Cashier; role: "admin" | "cashier" };
-
-interface ConfirmConfig {
-  title: string;
-  message: string;
-  confirmLabel: string;
-  variant: "danger" | "warning" | "success";
-  iconClass: string;
-}
-
-function getConfirmConfig(action: PendingAction): ConfirmConfig {
+function getConfirmConfig(action: PendingAction): ConfirmDialogConfig {
   const name = `${action.cashier.firstname} ${action.cashier.lastname}`;
   switch (action.type) {
     case "approve":
@@ -69,315 +54,6 @@ function getConfirmConfig(action: PendingAction): ConfirmConfig {
   }
 }
 
-// ─── Status Badge ───────────────────────────────────────────────────────────
-
-function StatusBadge({
-  approved,
-  isDark,
-}: {
-  approved: boolean;
-  isDark: boolean;
-}) {
-  return approved ? (
-    <span
-      className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${isDark
-        ? "bg-teal-500/10 text-teal-300 border border-teal-500/20"
-        : "bg-teal-50 text-teal-700 border border-teal-200"
-        }`}
-    >
-      <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
-      Active
-    </span>
-  ) : (
-    <span
-      className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${isDark
-        ? "bg-slate-700 text-slate-400 border border-slate-600"
-        : "bg-slate-100 text-slate-500 border border-slate-200"
-        }`}
-    >
-      <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-      Pending
-    </span>
-  );
-}
-
-// ─── Confirm Dialog ─────────────────────────────────────────────────────────
-
-function ConfirmDialog({
-  isDark,
-  config,
-  onConfirm,
-  onCancel,
-  loading,
-}: {
-  isDark: boolean;
-  config: ConfirmConfig;
-  onConfirm: () => void;
-  onCancel: () => void;
-  loading: boolean;
-}) {
-  const variantStyles = {
-    danger: {
-      iconBg: isDark ? "bg-red-500/10" : "bg-red-50",
-      iconText: "text-red-500",
-      btn: "bg-red-500 hover:bg-red-600 text-white",
-    },
-    warning: {
-      iconBg: isDark ? "bg-amber-500/10" : "bg-amber-50",
-      iconText: "text-amber-500",
-      btn: "bg-amber-500 hover:bg-amber-600 text-white",
-    },
-    success: {
-      iconBg: isDark ? "bg-teal-500/10" : "bg-teal-50",
-      iconText: "text-teal-500",
-      btn: "bg-teal-600 hover:bg-teal-700 text-white",
-    },
-  };
-  const vs = variantStyles[config.variant];
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-      onClick={onCancel}
-    >
-      <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.95, opacity: 0 }}
-        transition={{ duration: 0.15 }}
-        onClick={(e) => e.stopPropagation()}
-        className={`w-full max-w-sm rounded-2xl p-6 border shadow-2xl ${isDark ? "bg-slate-900 border-slate-700" : "bg-white border-slate-200"
-          }`}
-      >
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${vs.iconBg}`}>
-          <i className={`${config.iconClass} ${vs.iconText}`} />
-        </div>
-        <h3
-          className={`text-base font-semibold mb-1 ${isDark ? "text-white" : "text-slate-900"
-            }`}
-        >
-          {config.title}
-        </h3>
-        <p className={`text-sm mb-6 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-          {config.message}
-        </p>
-        <div className="flex gap-3">
-          <button
-            onClick={onCancel}
-            disabled={loading}
-            className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors border ${isDark
-              ? "border-slate-700 text-slate-300 hover:bg-slate-800"
-              : "border-slate-200 text-slate-600 hover:bg-slate-50"
-              }`}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={loading}
-            className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors disabled:opacity-60 ${vs.btn}`}
-          >
-            {loading ? (
-              <i className="fa-solid fa-circle-notch animate-spin" />
-            ) : (
-              config.confirmLabel
-            )}
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-// ─── Detail Modal ───────────────────────────────────────────────────────────
-
-function DetailModal({
-  cashier,
-  isDark,
-  onClose,
-  onRequestAction,
-}: {
-  cashier: Cashier;
-  isDark: boolean;
-  onClose: () => void;
-  onRequestAction: (action: PendingAction) => void;
-}) {
-  const isApproved = Boolean(cashier.is_approved);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ scale: 0.96, opacity: 0, y: 8 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.96, opacity: 0, y: 8 }}
-        transition={{ duration: 0.18, ease: "easeOut" }}
-        onClick={(e) => e.stopPropagation()}
-        className={`w-full max-w-md rounded-2xl border shadow-2xl overflow-hidden ${isDark
-          ? "bg-slate-900 border-slate-700"
-          : "bg-white border-slate-200"
-          }`}
-      >
-        {/* Header */}
-        <div
-          className={`flex items-center justify-between px-6 py-4 border-b ${isDark ? "border-slate-700/60" : "border-slate-100"
-            }`}
-        >
-          <h2
-            className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"
-              }`}
-          >
-            Cashier Details
-          </h2>
-          <button
-            onClick={onClose}
-            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${isDark
-              ? "text-slate-500 hover:bg-slate-800 hover:text-white"
-              : "text-slate-400 hover:bg-slate-100 hover:text-slate-700"
-              }`}
-          >
-            <i className="fa-solid fa-xmark text-sm" />
-          </button>
-        </div>
-
-        {/* Body */}
-        <div className="px-6 py-5 space-y-5">
-          {/* Avatar + name */}
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
-              {getInitials(cashier)}
-            </div>
-            <div>
-              <p
-                className={`font-semibold text-base ${isDark ? "text-white" : "text-slate-900"
-                  }`}
-              >
-                {cashier.firstname}{" "}
-                {cashier.othername ? `${cashier.othername} ` : ""}
-                {cashier.lastname}
-              </p>
-              <p
-                className={`text-sm ${isDark ? "text-slate-400" : "text-slate-500"
-                  }`}
-              >
-                {cashier.email}
-              </p>
-            </div>
-          </div>
-
-          {/* Info grid */}
-          <div
-            className={`grid grid-cols-2 gap-3 rounded-xl p-4 text-sm ${isDark ? "bg-slate-800/50" : "bg-slate-50"
-              }`}
-          >
-            {[
-              { label: "Phone", value: cashier.phone || "—" },
-              { label: "Alt. Phone", value: cashier.other_phone || "—" },
-              { label: "Status", value: <StatusBadge approved={isApproved} isDark={isDark} /> },
-              { label: "Last Login", value: formatDate(cashier.last_login_at) },
-              { label: "Member Since", value: formatDate(cashier.created_at) },
-              { label: "Profile", value: cashier.is_profile_complete ? "Complete" : "Incomplete" },
-            ].map(({ label, value }) => (
-              <div key={label}>
-                <p
-                  className={`text-[11px] font-medium uppercase tracking-wider mb-0.5 ${isDark ? "text-slate-500" : "text-slate-400"
-                    }`}
-                >
-                  {label}
-                </p>
-                <p
-                  className={`${isDark ? "text-slate-200" : "text-slate-700"
-                    } text-[12px] font-medium`}
-                >
-                  {value}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* Role update */}
-          <div>
-            <label
-              className={`text-xs font-medium uppercase tracking-wider block mb-2 ${isDark ? "text-slate-500" : "text-slate-400"
-                }`}
-            >
-              Role
-            </label>
-            <select
-              defaultValue={cashier.role}
-              onChange={(e) => {
-                const newRole = e.target.value as "admin" | "cashier";
-                if (newRole !== cashier.role) {
-                  onRequestAction({ type: "role", cashier, role: newRole });
-                  // Reset select back to current role visually — confirm will change it
-                  e.target.value = cashier.role;
-                }
-              }}
-              className={`w-full rounded-xl px-3 py-2 text-sm border transition-colors ${isDark
-                ? "bg-slate-800 border-slate-700 text-white focus:border-teal-500"
-                : "bg-white border-slate-200 text-slate-900 focus:border-teal-500"
-                } outline-none`}
-            >
-              <option value="cashier">Cashier</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Footer actions */}
-        <div
-          className={`px-6 py-4 border-t flex flex-wrap gap-2 ${isDark ? "border-slate-700/60" : "border-slate-100"
-            }`}
-        >
-          {isApproved ? (
-            <button
-              onClick={() => onRequestAction({ type: "disable", cashier })}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-medium border transition-colors ${isDark
-                ? "border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
-                : "border-amber-200 text-amber-600 hover:bg-amber-50"
-                }`}
-            >
-              <i className="fa-solid fa-ban text-xs" />
-              Disable
-            </button>
-          ) : (
-            <button
-              onClick={() => onRequestAction({ type: "approve", cashier })}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-medium border transition-colors ${isDark
-                ? "border-teal-500/30 text-teal-400 hover:bg-teal-500/10"
-                : "border-teal-200 text-teal-600 hover:bg-teal-50"
-                }`}
-            >
-              <i className="fa-solid fa-check text-xs" />
-              Approve
-            </button>
-          )}
-          <button
-            onClick={() => onRequestAction({ type: "delete", cashier })}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-medium border transition-colors ${isDark
-              ? "border-red-500/30 text-red-400 hover:bg-red-500/10"
-              : "border-red-200 text-red-500 hover:bg-red-50"
-              }`}
-          >
-            <i className="fa-solid fa-trash-can text-xs" />
-            Delete
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-// ─── Main Page ──────────────────────────────────────────────────────────────
-
 function Cashiers() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -393,7 +69,7 @@ function Cashiers() {
   const [actionLoading, setActionLoading] = useState(false);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
-  // ─── Derived stats ────────────────────────────────────────────────────
+  // Derived stats
   const stats = {
     total: cashiers.length,
     active: cashiers.filter((c) => c.is_approved).length,
@@ -449,13 +125,13 @@ function Cashiers() {
     );
   });
 
-  // ─── Request an action (shows confirm dialog) ─────────────────────────
+  // Request an action (shows confirm dialog)
   const requestAction = (action: PendingAction) => {
     setSelectedCashier(null); // close detail modal first
     setPendingAction(action);
   };
 
-  // ─── Execute confirmed action ──────────────────────────────────────────
+  // Execute confirmed action
   const executeAction = async () => {
     if (!pendingAction) return;
     setActionLoading(true);
@@ -493,7 +169,7 @@ function Cashiers() {
     }
   };
 
-  // ── Table row actions ──────────────────────────────────────────────────
+  // Table row actions
 
   const ActionCell = ({ cashier }: { cashier: Cashier }) => {
     const isApproved = Boolean(cashier.is_approved);
@@ -542,7 +218,7 @@ function Cashiers() {
     );
   };
 
-  // ── Render ─────────────────────────────────────────────────────────────
+  // Render
 
   return (
     <div
@@ -734,7 +410,7 @@ function Cashiers() {
           </div>
         ) : (
           <>
-            {/* ── Desktop Table ──────────────────────────────── */}
+            {/* Desktop Table */}
             <div
               className={`hidden md:block rounded-2xl border overflow-hidden ${isDark ? "border-slate-800" : "border-slate-200"
                 }`}
@@ -796,7 +472,7 @@ function Cashiers() {
               </table>
             </div>
 
-            {/* ── Mobile Cards ───────────────────────────────── */}
+            {/* Mobile Cards */}
             <div className="md:hidden space-y-3">
               {filtered.map((cashier) => (
                 <div

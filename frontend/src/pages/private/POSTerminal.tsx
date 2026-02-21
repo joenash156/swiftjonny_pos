@@ -8,8 +8,10 @@ import {
   type POSSettings,
   type CreatePOSSettingsPayload,
 } from "../../services/posSettingsService";
+import { POSField } from "../../components/pos/POSField";
+import { InfoRow } from "../../components/pos/InfoRow";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// Types
 
 interface FormState {
   tax_percent: string;
@@ -18,98 +20,13 @@ interface FormState {
   receipt_footer: string;
 }
 
-// ── Field Component ───────────────────────────────────────────────────────────
-
-function Field({
-  label,
-  value,
-  placeholder,
-  type = "text",
-  disabled,
-  isDark,
-  hint,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  placeholder?: string;
-  type?: string;
-  disabled: boolean;
-  isDark: boolean;
-  hint?: string;
-  onChange?: (v: string) => void;
-}) {
-  return (
-    <div>
-      <label
-        className={`block text-xs font-semibold uppercase tracking-wider mb-1.5 ${isDark ? "text-slate-500" : "text-slate-400"
-          }`}
-      >
-        {label}
-      </label>
-      {type === "textarea" ? (
-        <textarea
-          value={value}
-          onChange={(e) => onChange?.(e.target.value)}
-          disabled={disabled}
-          placeholder={placeholder}
-          rows={2}
-          className={`w-full rounded-xl px-3.5 py-2.5 text-sm border outline-none transition-all resize-none ${disabled
-              ? isDark
-                ? "bg-slate-800/60 border-slate-700/60 text-slate-400 cursor-default"
-                : "bg-slate-50 border-slate-200 text-slate-500 cursor-default"
-              : isDark
-                ? "bg-slate-800 border-slate-600 text-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
-                : "bg-white border-slate-300 text-slate-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
-            }`}
-        />
-      ) : (
-        <input
-          type={type}
-          value={value}
-          onChange={(e) => onChange?.(e.target.value)}
-          disabled={disabled}
-          placeholder={placeholder}
-          className={`w-full rounded-xl px-3.5 py-2.5 text-sm border outline-none transition-all ${disabled
-              ? isDark
-                ? "bg-slate-800/60 border-slate-700/60 text-slate-400 cursor-default"
-                : "bg-slate-50 border-slate-200 text-slate-500 cursor-default"
-              : isDark
-                ? "bg-slate-800 border-slate-600 text-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
-                : "bg-white border-slate-300 text-slate-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
-            }`}
-        />
-      )}
-      {hint && (
-        <p className={`text-xs mt-1 ${isDark ? "text-slate-600" : "text-slate-400"}`}>{hint}</p>
-      )}
-    </div>
-  );
-}
-
-// ── Info Row ──────────────────────────────────────────────────────────────────
-
-function InfoRow({ label, value, isDark }: { label: string; value: string; isDark: boolean }) {
-  return (
-    <div
-      className={`flex items-center justify-between py-3 border-b last:border-0 ${isDark ? "border-slate-800" : "border-slate-100"
-        }`}
-    >
-      <span className={`text-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}>{label}</span>
-      <span className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>{value}</span>
-    </div>
-  );
-}
-
-// ── Main Page ─────────────────────────────────────────────────────────────────
-
 function POSTerminal() {
   const { theme } = useTheme();
   const { user } = useAuth();
   const isDark = theme === "dark";
   const isAdmin = user?.role === "admin";
 
-  // ── State ─────────────────────────────────────────────────────────
+  // State
   const [pageLoading, setPageLoading] = useState(true);
   const [settings, setSettings] = useState<POSSettings | null>(null);
   const [isSet, setIsSet] = useState(false);
@@ -126,7 +43,7 @@ function POSTerminal() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
-  // ── Helpers ───────────────────────────────────────────────────────
+  // Helpers
   const showToast = (msg: string, ok: boolean) => {
     setToast({ msg, ok });
     setTimeout(() => setToast(null), 3500);
@@ -141,7 +58,7 @@ function POSTerminal() {
     });
   };
 
-  // ── Fetch settings ─────────────────────────────────────────────────
+  // Fetch settings
   const loadSettings = async () => {
     setPageLoading(true);
     setFetchError(null);
@@ -166,7 +83,7 @@ function POSTerminal() {
     loadSettings();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Validate form ──────────────────────────────────────────────────
+  // Validate form
   const validate = (): string | null => {
     const tax = parseFloat(form.tax_percent);
     const disc = parseFloat(form.discount_percent);
@@ -179,7 +96,7 @@ function POSTerminal() {
     return null;
   };
 
-  // ── Save (create or update) ────────────────────────────────────────
+  // Save (create or update)
   const handleSave = async () => {
     const err = validate();
     if (err) {
@@ -226,13 +143,13 @@ function POSTerminal() {
     setEditing(false);
   };
 
-  // ── Render ─────────────────────────────────────────────────────────
+  // Render
 
   return (
     <div
       className={`min-h-full p-5 md:p-7 ${isDark
-          ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900"
-          : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80"
+        ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900"
+        : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80"
         }`}
     >
       {/* Toast */}
@@ -243,12 +160,12 @@ function POSTerminal() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             className={`fixed top-5 right-5 z-70 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium shadow-lg ${toast.ok
-                ? isDark
-                  ? "bg-teal-900 text-teal-300 border border-teal-700"
-                  : "bg-teal-50 text-teal-700 border border-teal-200"
-                : isDark
-                  ? "bg-red-900/50 text-red-300 border border-red-700"
-                  : "bg-red-50 text-red-600 border border-red-200"
+              ? isDark
+                ? "bg-teal-900 text-teal-300 border border-teal-700"
+                : "bg-teal-50 text-teal-700 border border-teal-200"
+              : isDark
+                ? "bg-red-900/50 text-red-300 border border-red-700"
+                : "bg-red-50 text-red-600 border border-red-200"
               }`}
           >
             <i className={`fa-solid ${toast.ok ? "fa-check" : "fa-xmark"} text-xs`} />
@@ -342,8 +259,8 @@ function POSTerminal() {
               {/* Banner */}
               <div
                 className={`flex items-start gap-3 rounded-xl px-4 py-3 mb-5 text-sm ${isDark
-                    ? "bg-amber-500/8 border border-amber-500/20 text-amber-300"
-                    : "bg-amber-50 border border-amber-200 text-amber-700"
+                  ? "bg-amber-500/8 border border-amber-500/20 text-amber-300"
+                  : "bg-amber-50 border border-amber-200 text-amber-700"
                   }`}
               >
                 <i className="fa-solid fa-triangle-exclamation mt-0.5 shrink-0" />
@@ -363,7 +280,7 @@ function POSTerminal() {
 
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <Field
+                  <POSField
                     label="Tax (%)"
                     value={form.tax_percent}
                     placeholder="e.g. 15"
@@ -373,7 +290,7 @@ function POSTerminal() {
                     hint="Applied to every sale"
                     onChange={(v) => setForm((p) => ({ ...p, tax_percent: v }))}
                   />
-                  <Field
+                  <POSField
                     label="Discount (%)"
                     value={form.discount_percent}
                     placeholder="e.g. 0"
@@ -384,7 +301,7 @@ function POSTerminal() {
                     onChange={(v) => setForm((p) => ({ ...p, discount_percent: v }))}
                   />
                 </div>
-                <Field
+                <POSField
                   label="Receipt Header"
                   value={form.receipt_header}
                   placeholder="e.g. SwiftJonny Store"
@@ -393,7 +310,7 @@ function POSTerminal() {
                   hint="Printed at the top of every receipt"
                   onChange={(v) => setForm((p) => ({ ...p, receipt_header: v }))}
                 />
-                <Field
+                <POSField
                   label="Receipt Footer"
                   value={form.receipt_footer}
                   placeholder="e.g. Thank you for shopping with us!"
@@ -436,7 +353,7 @@ function POSTerminal() {
                 POS Configured &amp; Active
               </div>
 
-              {/* ── Tax & Discount ─── */}
+              {/* Tax & Discount */}
               <div
                 className={`rounded-2xl border p-6 ${isDark ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
                   }`}
@@ -454,8 +371,8 @@ function POSTerminal() {
                     <button
                       onClick={() => setEditing(true)}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${isDark
-                          ? "border-slate-700 text-slate-300 hover:bg-slate-800"
-                          : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                        ? "border-slate-700 text-slate-300 hover:bg-slate-800"
+                        : "border-slate-200 text-slate-600 hover:bg-slate-50"
                         }`}
                     >
                       <i className="fa-solid fa-pen text-[10px]" />
@@ -467,7 +384,7 @@ function POSTerminal() {
                 {editing ? (
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
-                      <Field
+                      <POSField
                         label="Tax (%)"
                         value={form.tax_percent}
                         placeholder="e.g. 15"
@@ -476,7 +393,7 @@ function POSTerminal() {
                         isDark={isDark}
                         onChange={(v) => setForm((p) => ({ ...p, tax_percent: v }))}
                       />
-                      <Field
+                      <POSField
                         label="Discount (%)"
                         value={form.discount_percent}
                         placeholder="e.g. 0"
@@ -486,7 +403,7 @@ function POSTerminal() {
                         onChange={(v) => setForm((p) => ({ ...p, discount_percent: v }))}
                       />
                     </div>
-                    <Field
+                    <POSField
                       label="Receipt Header"
                       value={form.receipt_header}
                       placeholder="e.g. SwiftJonny Store"
@@ -494,7 +411,7 @@ function POSTerminal() {
                       isDark={isDark}
                       onChange={(v) => setForm((p) => ({ ...p, receipt_header: v }))}
                     />
-                    <Field
+                    <POSField
                       label="Receipt Footer"
                       value={form.receipt_footer}
                       placeholder="e.g. Thank you for shopping with us!"
@@ -508,8 +425,8 @@ function POSTerminal() {
                         onClick={handleCancelEdit}
                         disabled={saving}
                         className={`flex-1 py-2 rounded-xl text-sm font-medium border transition-colors ${isDark
-                            ? "border-slate-700 text-slate-300 hover:bg-slate-800"
-                            : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                          ? "border-slate-700 text-slate-300 hover:bg-slate-800"
+                          : "border-slate-200 text-slate-600 hover:bg-slate-50"
                           }`}
                       >
                         Cancel
@@ -535,7 +452,7 @@ function POSTerminal() {
                 )}
               </div>
 
-              {/* ── Receipt Settings ─── */}
+              {/* Receipt Settings */}
               {!editing && (
                 <div
                   className={`rounded-2xl border p-6 ${isDark ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
