@@ -160,9 +160,8 @@ function StatCard({
 }) {
   return (
     <div
-      className={`rounded-2xl p-5 border transition-colors duration-300 ${
-        isDark ? "bg-slate-900/70 border-slate-800 hover:bg-slate-800/80" : "bg-white/80 border-slate-200/80 hover:bg-white"
-      }`}
+      className={`rounded-2xl p-5 border transition-colors duration-300 ${isDark ? "bg-slate-900/70 border-slate-800 hover:bg-slate-800/80" : "bg-white/80 border-slate-200/80 hover:bg-white"
+        }`}
     >
       <div className="flex items-start justify-between mb-4">
         <p className={`text-sm font-medium ${isDark ? "text-slate-400" : "text-slate-500"}`}>{label}</p>
@@ -249,11 +248,10 @@ function Dashboard() {
 
   return (
     <div
-      className={`min-h-full p-5 md:p-7 transition-colors duration-300 ${
-        isDark
+      className={`min-h-full p-5 md:p-7 transition-colors duration-300 ${isDark
           ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900"
           : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80"
-      }`}
+        }`}
     >
       {/* Greeting */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -270,11 +268,10 @@ function Dashboard() {
         <button
           onClick={() => fetchDashboard(period)}
           disabled={loading}
-          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium border transition-colors disabled:opacity-50 self-start sm:self-auto ${
-            isDark
+          className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium border transition-colors disabled:opacity-50 self-start sm:self-auto ${isDark
               ? "border-slate-700 text-slate-400 hover:bg-slate-800"
               : "border-slate-200 text-slate-500 hover:bg-slate-50"
-          }`}
+            }`}
         >
           <i className={`fa-solid fa-rotate-right text-xs ${loading ? "animate-spin" : ""}`} />
           Refresh
@@ -283,21 +280,19 @@ function Dashboard() {
 
       {/* Period Tab Bar */}
       <div
-        className={`inline-flex rounded-xl border p-1 gap-1 mb-6 ${
-          isDark ? "bg-slate-900/70 border-slate-800" : "bg-white border-slate-200"
-        }`}
+        className={`inline-flex rounded-xl border p-1 gap-1 mb-6 ${isDark ? "bg-slate-900/70 border-slate-800" : "bg-white border-slate-200"
+          }`}
       >
         {PERIODS.map(({ key, label }) => (
           <button
             key={key}
             onClick={() => setPeriod(key)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              period === key
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${period === key
                 ? "bg-teal-600 text-white"
                 : isDark
-                ? "text-slate-400 hover:text-white"
-                : "text-slate-500 hover:text-slate-800"
-            }`}
+                  ? "text-slate-400 hover:text-white"
+                  : "text-slate-500 hover:text-slate-800"
+              }`}
           >
             {label}
           </button>
@@ -311,11 +306,10 @@ function Dashboard() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm mb-5 border ${
-              isDark
+            className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm mb-5 border ${isDark
                 ? "bg-red-900/30 border-red-700/40 text-red-300"
                 : "bg-red-50 border-red-200 text-red-600"
-            }`}
+              }`}
           >
             <i className="fa-solid fa-triangle-exclamation text-xs" />
             {error}
@@ -379,9 +373,8 @@ function Dashboard() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className={`rounded-2xl border px-5 py-4 mb-7 flex flex-wrap items-center gap-4 ${
-            isDark ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
-          }`}
+          className={`rounded-2xl border px-5 py-4 mb-7 flex flex-wrap items-center gap-4 ${isDark ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
+            }`}
         >
           <div className={`text-xs font-semibold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-400"}`}>
             Today vs Yesterday
@@ -434,9 +427,8 @@ function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Sales Trend */}
         <div
-          className={`rounded-2xl p-5 border min-h-60 flex flex-col transition-colors duration-300 ${
-            isDark ? "bg-slate-900/70 border-slate-800" : "bg-white/80 border-slate-200/80"
-          }`}
+          className={`rounded-2xl p-5 border min-h-60 flex flex-col transition-colors duration-300 ${isDark ? "bg-slate-900/70 border-slate-800" : "bg-white/80 border-slate-200/80"
+            }`}
         >
           <h3 className={`text-sm font-semibold mb-4 ${isDark ? "text-slate-300" : "text-slate-700"}`}>
             Sales Trend
@@ -450,9 +442,8 @@ function Dashboard() {
 
         {/* Top Products */}
         <div
-          className={`rounded-2xl p-5 border min-h-60 flex flex-col transition-colors duration-300 ${
-            isDark ? "bg-slate-900/70 border-slate-800" : "bg-white/80 border-slate-200/80"
-          }`}
+          className={`rounded-2xl p-5 border min-h-60 flex flex-col transition-colors duration-300 ${isDark ? "bg-slate-900/70 border-slate-800" : "bg-white/80 border-slate-200/80"
+            }`}
         >
           <h3 className={`text-sm font-semibold mb-4 ${isDark ? "text-slate-300" : "text-slate-700"}`}>
             Top Products

@@ -42,9 +42,8 @@ function Field({
   return (
     <div>
       <label
-        className={`block text-xs font-semibold uppercase tracking-wider mb-1.5 ${
-          isDark ? "text-slate-500" : "text-slate-400"
-        }`}
+        className={`block text-xs font-semibold uppercase tracking-wider mb-1.5 ${isDark ? "text-slate-500" : "text-slate-400"
+          }`}
       >
         {label}
       </label>
@@ -55,15 +54,14 @@ function Field({
           disabled={disabled}
           placeholder={placeholder}
           rows={2}
-          className={`w-full rounded-xl px-3.5 py-2.5 text-sm border outline-none transition-all resize-none ${
-            disabled
+          className={`w-full rounded-xl px-3.5 py-2.5 text-sm border outline-none transition-all resize-none ${disabled
               ? isDark
                 ? "bg-slate-800/60 border-slate-700/60 text-slate-400 cursor-default"
                 : "bg-slate-50 border-slate-200 text-slate-500 cursor-default"
               : isDark
-              ? "bg-slate-800 border-slate-600 text-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
-              : "bg-white border-slate-300 text-slate-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
-          }`}
+                ? "bg-slate-800 border-slate-600 text-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
+                : "bg-white border-slate-300 text-slate-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
+            }`}
         />
       ) : (
         <input
@@ -72,15 +70,14 @@ function Field({
           onChange={(e) => onChange?.(e.target.value)}
           disabled={disabled}
           placeholder={placeholder}
-          className={`w-full rounded-xl px-3.5 py-2.5 text-sm border outline-none transition-all ${
-            disabled
+          className={`w-full rounded-xl px-3.5 py-2.5 text-sm border outline-none transition-all ${disabled
               ? isDark
                 ? "bg-slate-800/60 border-slate-700/60 text-slate-400 cursor-default"
                 : "bg-slate-50 border-slate-200 text-slate-500 cursor-default"
               : isDark
-              ? "bg-slate-800 border-slate-600 text-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
-              : "bg-white border-slate-300 text-slate-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
-          }`}
+                ? "bg-slate-800 border-slate-600 text-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
+                : "bg-white border-slate-300 text-slate-900 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10"
+            }`}
         />
       )}
       {hint && (
@@ -95,9 +92,8 @@ function Field({
 function InfoRow({ label, value, isDark }: { label: string; value: string; isDark: boolean }) {
   return (
     <div
-      className={`flex items-center justify-between py-3 border-b last:border-0 ${
-        isDark ? "border-slate-800" : "border-slate-100"
-      }`}
+      className={`flex items-center justify-between py-3 border-b last:border-0 ${isDark ? "border-slate-800" : "border-slate-100"
+        }`}
     >
       <span className={`text-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}>{label}</span>
       <span className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>{value}</span>
@@ -234,11 +230,10 @@ function POSTerminal() {
 
   return (
     <div
-      className={`min-h-full p-5 md:p-7 ${
-        isDark
+      className={`min-h-full p-5 md:p-7 ${isDark
           ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900"
           : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80"
-      }`}
+        }`}
     >
       {/* Toast */}
       <AnimatePresence>
@@ -247,15 +242,14 @@ function POSTerminal() {
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
-            className={`fixed top-5 right-5 z-70 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium shadow-lg ${
-              toast.ok
+            className={`fixed top-5 right-5 z-70 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium shadow-lg ${toast.ok
                 ? isDark
                   ? "bg-teal-900 text-teal-300 border border-teal-700"
                   : "bg-teal-50 text-teal-700 border border-teal-200"
                 : isDark
-                ? "bg-red-900/50 text-red-300 border border-red-700"
-                : "bg-red-50 text-red-600 border border-red-200"
-            }`}
+                  ? "bg-red-900/50 text-red-300 border border-red-700"
+                  : "bg-red-50 text-red-600 border border-red-200"
+              }`}
           >
             <i className={`fa-solid ${toast.ok ? "fa-check" : "fa-xmark"} text-xs`} />
             {toast.msg}
@@ -281,9 +275,8 @@ function POSTerminal() {
           {[...Array(3)].map((_, i) => (
             <div
               key={i}
-              className={`rounded-2xl border p-6 animate-pulse ${
-                isDark ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
-              }`}
+              className={`rounded-2xl border p-6 animate-pulse ${isDark ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
+                }`}
             >
               <div className={`h-4 w-32 rounded mb-4 ${isDark ? "bg-slate-800" : "bg-slate-100"}`} />
               <div className={`h-10 rounded-xl mb-3 ${isDark ? "bg-slate-800" : "bg-slate-100"}`} />
@@ -296,9 +289,8 @@ function POSTerminal() {
       {/* Fetch Error */}
       {!pageLoading && fetchError && (
         <div
-          className={`rounded-2xl border p-6 flex items-center gap-4 max-w-2xl ${
-            isDark ? "bg-red-500/5 border-red-500/20" : "bg-red-50 border-red-200"
-          }`}
+          className={`rounded-2xl border p-6 flex items-center gap-4 max-w-2xl ${isDark ? "bg-red-500/5 border-red-500/20" : "bg-red-50 border-red-200"
+            }`}
         >
           <i className={`fa-solid fa-triangle-exclamation text-lg ${isDark ? "text-red-400" : "text-red-500"}`} />
           <div className="flex-1">
@@ -306,9 +298,8 @@ function POSTerminal() {
           </div>
           <button
             onClick={loadSettings}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium border ${
-              isDark ? "border-red-700 text-red-300 hover:bg-red-500/10" : "border-red-300 text-red-600 hover:bg-red-100"
-            }`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium border ${isDark ? "border-red-700 text-red-300 hover:bg-red-500/10" : "border-red-300 text-red-600 hover:bg-red-100"
+              }`}
           >
             Retry
           </button>
@@ -322,14 +313,12 @@ function POSTerminal() {
           {/* Not configured yet — cashier view */}
           {!isSet && !isAdmin && (
             <div
-              className={`rounded-2xl border p-8 text-center ${
-                isDark ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
-              }`}
+              className={`rounded-2xl border p-8 text-center ${isDark ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
+                }`}
             >
               <div
-                className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4 ${
-                  isDark ? "bg-amber-500/10" : "bg-amber-50"
-                }`}
+                className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4 ${isDark ? "bg-amber-500/10" : "bg-amber-50"
+                  }`}
               >
                 <i className="fa-solid fa-cash-register text-amber-500 text-lg" />
               </div>
@@ -347,17 +336,15 @@ function POSTerminal() {
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`rounded-2xl border p-6 ${
-                isDark ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
-              }`}
+              className={`rounded-2xl border p-6 ${isDark ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
+                }`}
             >
               {/* Banner */}
               <div
-                className={`flex items-start gap-3 rounded-xl px-4 py-3 mb-5 text-sm ${
-                  isDark
+                className={`flex items-start gap-3 rounded-xl px-4 py-3 mb-5 text-sm ${isDark
                     ? "bg-amber-500/8 border border-amber-500/20 text-amber-300"
                     : "bg-amber-50 border border-amber-200 text-amber-700"
-                }`}
+                  }`}
               >
                 <i className="fa-solid fa-triangle-exclamation mt-0.5 shrink-0" />
                 <span>
@@ -442,9 +429,8 @@ function POSTerminal() {
             >
               {/* Status badge */}
               <div
-                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${
-                  isDark ? "bg-teal-500/10 text-teal-400 border border-teal-500/20" : "bg-teal-50 text-teal-700 border border-teal-200"
-                }`}
+                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${isDark ? "bg-teal-500/10 text-teal-400 border border-teal-500/20" : "bg-teal-50 text-teal-700 border border-teal-200"
+                  }`}
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-teal-500 inline-block" />
                 POS Configured &amp; Active
@@ -452,9 +438,8 @@ function POSTerminal() {
 
               {/* ── Tax & Discount ─── */}
               <div
-                className={`rounded-2xl border p-6 ${
-                  isDark ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
-                }`}
+                className={`rounded-2xl border p-6 ${isDark ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
+                  }`}
               >
                 <div className="flex items-center justify-between mb-5">
                   <div>
@@ -468,11 +453,10 @@ function POSTerminal() {
                   {isAdmin && !editing && (
                     <button
                       onClick={() => setEditing(true)}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                        isDark
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${isDark
                           ? "border-slate-700 text-slate-300 hover:bg-slate-800"
                           : "border-slate-200 text-slate-600 hover:bg-slate-50"
-                      }`}
+                        }`}
                     >
                       <i className="fa-solid fa-pen text-[10px]" />
                       Edit
@@ -523,11 +507,10 @@ function POSTerminal() {
                       <button
                         onClick={handleCancelEdit}
                         disabled={saving}
-                        className={`flex-1 py-2 rounded-xl text-sm font-medium border transition-colors ${
-                          isDark
+                        className={`flex-1 py-2 rounded-xl text-sm font-medium border transition-colors ${isDark
                             ? "border-slate-700 text-slate-300 hover:bg-slate-800"
                             : "border-slate-200 text-slate-600 hover:bg-slate-50"
-                        }`}
+                          }`}
                       >
                         Cancel
                       </button>
@@ -555,9 +538,8 @@ function POSTerminal() {
               {/* ── Receipt Settings ─── */}
               {!editing && (
                 <div
-                  className={`rounded-2xl border p-6 ${
-                    isDark ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
-                  }`}
+                  className={`rounded-2xl border p-6 ${isDark ? "bg-slate-900/60 border-slate-800" : "bg-white border-slate-200"
+                    }`}
                 >
                   <div className="mb-5">
                     <h2 className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
@@ -570,9 +552,8 @@ function POSTerminal() {
 
                   {/* Receipt Preview */}
                   <div
-                    className={`rounded-xl border-2 border-dashed p-5 font-mono text-sm text-center space-y-2 ${
-                      isDark ? "border-slate-700 bg-slate-800/50" : "border-slate-200 bg-slate-50"
-                    }`}
+                    className={`rounded-xl border-2 border-dashed p-5 font-mono text-sm text-center space-y-2 ${isDark ? "border-slate-700 bg-slate-800/50" : "border-slate-200 bg-slate-50"
+                      }`}
                   >
                     <p className={`font-bold text-base ${isDark ? "text-white" : "text-slate-900"}`}>
                       {settings.receipt_header}
