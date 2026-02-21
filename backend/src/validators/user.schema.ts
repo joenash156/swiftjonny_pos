@@ -17,28 +17,50 @@ const userBaseSchema = {
     .max(50)
     .transform(capitalizeName),
 
+  // OPTIONAL OTHER NAME
   othername: z.preprocess(
-    (val:string) => val.trim() === "" ? undefined : val, z
-    .string()
-    .trim()
-    .min(2, "Other name must be at least 2 characters")
-    .max(50)
-    .transform(capitalizeName)
-    .optional()
+    (val) =>
+      typeof val === "string" && val.trim() === ""
+        ? undefined
+        : val,
+    z
+      .string()
+      .trim()
+      .min(2, "Other name must be at least 2 characters")
+      .max(50)
+      .transform(capitalizeName)
+      .optional()
   ),
 
-  phone: z
-    .string()
-    .trim()
-    .regex(/^\+?[0-9]{9,15}$/, "Invalid phone number")
-    .optional(),
+  // PRIMARY PHONE (nullable)
+  phone: z.preprocess(
+    (val) =>
+      val === "" || val === undefined
+        ? null
+        : val,
+    z
+      .string()
+      .trim()
+      .regex(/^\+?[0-9]{9,15}$/, "Invalid phone number")
+      .nullable()
+      .optional()
+  ),
 
-  other_phone: z
-    .string()
-    .trim()
-    .regex(/^\+?[0-9]{9,15}$/, "Invalid phone number")
-    .optional(),
+  // SECONDARY PHONE (nullable)
+  other_phone: z.preprocess(
+    (val) =>
+      val === "" || val === undefined
+        ? null
+        : val,
+    z
+      .string()
+      .trim()
+      .regex(/^\+?[0-9]{9,15}$/, "Invalid phone number")
+      .nullable()
+      .optional()
+  )
 };
+
 
 
 export const createUserSchema = z.object({

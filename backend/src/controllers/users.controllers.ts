@@ -298,7 +298,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         is_email_verified: user.is_email_verified,
         phone: user.phone,
         other_phone: user.other_phone,
-        avatar_url: user.avatar_url,
+        avatar_url: `${process.env.BASE_URL}/uploads/avatars/${user.avatar_url}`,
         theme_preference: user.theme_preference,
         is_approved: user.is_approved,
         is_profile_complete: user.is_profile_complete,
@@ -356,7 +356,10 @@ export const getUserProfile = async (req: Request, res: Response): Promise<void>
     res.status(200).json({
       success: true,
       message: "User profile found!✅",
-      user: rows[0]
+      user: {
+        ...rows[0],
+        avatar_url: rows[0]!.avatar_url ? `${process.env.BASE_URL}/uploads/avatars/${rows[0]!.avatar_url}` : null
+      }
     })
     return;
 
@@ -400,7 +403,7 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
 
     // arrays for the dynamic fields and values
     const fields: string[] = [];
-    const values: (string | number)[] = [];
+    const values: (string | number | null)[] = [];
 
     if(firstname !== undefined) {
       fields.push("firstname = ?");
@@ -445,7 +448,10 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
     res.status(200).json({
       success: true,
       message: "User profile updated successfully!",
-      user: result[0]
+      user: {
+        ...result[0],
+        avatar_url: result[0]!.avatar_url ? `${process.env.BASE_URL}/uploads/avatars/${result[0]!.avatar_url}` : null
+      }
     });
     return;
 

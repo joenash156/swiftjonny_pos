@@ -8,6 +8,8 @@ import Register from "./pages/public/Register"
 import AppLayout from "./layouts/AppLayout"
 import Dashboard from "./pages/private/Dashboard"
 import Cashiers from "./pages/private/Cashiers"
+import Settings from "./pages/private/Settings"
+import POSTerminal from "./pages/private/POSTerminal"
 import VerifyEmail from "./pages/public/VerifyEmail"
 import EmailVerificationHandler from "./pages/public/EmailVerificationHandler"
 import ApprovalPending from "./pages/public/ApprovalPending"
@@ -41,7 +43,9 @@ function App() {
         {/* App layout (protected routes) */}
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/pos" element={<POSTerminal />} />
           <Route path="/cashiers" element={<Cashiers />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>
     </div>

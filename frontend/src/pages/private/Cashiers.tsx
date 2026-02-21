@@ -1,21 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { AxiosError } from "axios";
 import { useTheme } from "../../contexts/ThemeContext";
 import { adminService, type Cashier } from "../../services/adminService";
+import { formatDate } from "../../utils/formatDate";
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
 function getInitials(c: Cashier) {
   return `${c.firstname?.[0] ?? ""}${c.lastname?.[0] ?? ""}`.toUpperCase();
-}
-
-function formatDate(dateStr?: string | null) {
-  if (!dateStr) return "—";
-  return new Date(dateStr).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
 }
 
 // ─── Pending Action Types ────────────────────────────────────────────────────
@@ -176,8 +169,8 @@ function ConfirmDialog({
             onClick={onCancel}
             disabled={loading}
             className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors border ${isDark
-                ? "border-slate-700 text-slate-300 hover:bg-slate-800"
-                : "border-slate-200 text-slate-600 hover:bg-slate-50"
+              ? "border-slate-700 text-slate-300 hover:bg-slate-800"
+              : "border-slate-200 text-slate-600 hover:bg-slate-50"
               }`}
           >
             Cancel
@@ -302,7 +295,7 @@ function DetailModal({
                 </p>
                 <p
                   className={`${isDark ? "text-slate-200" : "text-slate-700"
-                    }`}
+                    } text-[12px] font-medium`}
                 >
                   {value}
                 </p>
@@ -329,8 +322,8 @@ function DetailModal({
                 }
               }}
               className={`w-full rounded-xl px-3 py-2 text-sm border transition-colors ${isDark
-                  ? "bg-slate-800 border-slate-700 text-white focus:border-teal-500"
-                  : "bg-white border-slate-200 text-slate-900 focus:border-teal-500"
+                ? "bg-slate-800 border-slate-700 text-white focus:border-teal-500"
+                : "bg-white border-slate-200 text-slate-900 focus:border-teal-500"
                 } outline-none`}
             >
               <option value="cashier">Cashier</option>
@@ -348,8 +341,8 @@ function DetailModal({
             <button
               onClick={() => onRequestAction({ type: "disable", cashier })}
               className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-medium border transition-colors ${isDark
-                  ? "border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
-                  : "border-amber-200 text-amber-600 hover:bg-amber-50"
+                ? "border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+                : "border-amber-200 text-amber-600 hover:bg-amber-50"
                 }`}
             >
               <i className="fa-solid fa-ban text-xs" />
@@ -359,8 +352,8 @@ function DetailModal({
             <button
               onClick={() => onRequestAction({ type: "approve", cashier })}
               className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-medium border transition-colors ${isDark
-                  ? "border-teal-500/30 text-teal-400 hover:bg-teal-500/10"
-                  : "border-teal-200 text-teal-600 hover:bg-teal-50"
+                ? "border-teal-500/30 text-teal-400 hover:bg-teal-500/10"
+                : "border-teal-200 text-teal-600 hover:bg-teal-50"
                 }`}
             >
               <i className="fa-solid fa-check text-xs" />
@@ -370,8 +363,8 @@ function DetailModal({
           <button
             onClick={() => onRequestAction({ type: "delete", cashier })}
             className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-medium border transition-colors ${isDark
-                ? "border-red-500/30 text-red-400 hover:bg-red-500/10"
-                : "border-red-200 text-red-500 hover:bg-red-50"
+              ? "border-red-500/30 text-red-400 hover:bg-red-500/10"
+              : "border-red-200 text-red-500 hover:bg-red-50"
               }`}
           >
             <i className="fa-solid fa-trash-can text-xs" />
@@ -392,6 +385,7 @@ function Cashiers() {
   const [cashiers, setCashiers] = useState<Cashier[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isUnauthorized, setIsUnauthorized] = useState(false);
   const [search, setSearch] = useState("");
   const [filterApproved, setFilterApproved] = useState<"all" | "active" | "pending">("all");
   const [selectedCashier, setSelectedCashier] = useState<Cashier | null>(null);
@@ -415,6 +409,7 @@ function Cashiers() {
   const fetchCashiers = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setIsUnauthorized(false);
     try {
       const params =
         filterApproved === "active"
@@ -424,8 +419,16 @@ function Cashiers() {
             : undefined;
       const res = await adminService.getCashiers(params);
       setCashiers(res.cashiers ?? []);
-    } catch {
-      setError("Failed to load cashiers. Please try again.");
+    } catch (err: unknown) {
+      if (err instanceof AxiosError && err.response?.status === 403) {
+        setIsUnauthorized(true);
+        setError(
+          err.response?.data?.error ||
+          "Administrator access required. Unauthorized users cannot access this."
+        );
+      } else {
+        setError("Failed to load cashiers. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -500,8 +503,8 @@ function Cashiers() {
           onClick={(e) => { e.stopPropagation(); setSelectedCashier(cashier); }}
           title="View details"
           className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors ${isDark
-              ? "text-slate-400 hover:bg-slate-700 hover:text-white"
-              : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+            ? "text-slate-400 hover:bg-slate-700 hover:text-white"
+            : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
             }`}
         >
           <i className="fa-solid fa-eye" />
@@ -580,8 +583,26 @@ function Cashiers() {
         </p>
       </div>
 
+      {/* Unauthorized — show API message, hide everything else */}
+      {isUnauthorized && error && (
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <div
+            className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 ${isDark ? "bg-red-500/10" : "bg-red-50"
+              }`}
+          >
+            <i className="fa-solid fa-shield-halved text-red-500 text-xl" />
+          </div>
+          <p className={`text-sm font-semibold mb-1.5 ${isDark ? "text-red-400" : "text-red-600"}`}>
+            Access Denied
+          </p>
+          <p className={`text-sm max-w-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+            {error}
+          </p>
+        </div>
+      )}
+
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      {!isUnauthorized && <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         {[
           {
             label: "Total",
@@ -638,195 +659,200 @@ function Cashiers() {
             </div>
           </div>
         ))}
-      </div>
+      </div>}
 
-      {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        {/* Search */}
-        <div className="relative flex-1">
-          <i
-            className={`fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs ${isDark ? "text-slate-500" : "text-slate-400"
-              }`}
-          />
-          <input
-            type="text"
-            placeholder="Search by name or email…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className={`w-full pl-8 pr-4 py-2.5 rounded-xl border text-sm transition-colors outline-none ${isDark
-              ? "bg-slate-900/70 border-slate-700 text-white placeholder-slate-500 focus:border-teal-500"
-              : "bg-white border-slate-200 text-slate-900 placeholder-slate-400 focus:border-teal-500"
-              }`}
-          />
-        </div>
+      {/* Toolbar + Content — hidden when unauthorized */}
+      {!isUnauthorized && <>
 
-        {/* Filter tabs */}
-        <div
-          className={`flex rounded-xl border p-1 gap-1 text-sm shrink-0 ${isDark ? "bg-slate-900/70 border-slate-700" : "bg-white border-slate-200"
-            }`}
-        >
-          {(["all", "active", "pending"] as const).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilterApproved(f)}
-              className={`px-3 py-1.5 rounded-lg font-medium capitalize transition-colors ${filterApproved === f
-                ? isDark
-                  ? "bg-teal-600 text-white"
-                  : "bg-teal-600 text-white"
-                : isDark
-                  ? "text-slate-400 hover:text-white"
-                  : "text-slate-500 hover:text-slate-800"
+        {/* Toolbar */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
+          {/* Search */}
+          <div className="relative flex-1">
+            <i
+              className={`fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs ${isDark ? "text-slate-500" : "text-slate-400"
                 }`}
-            >
-              {f}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Content */}
-      {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <i
-            className={`fa-solid fa-circle-notch animate-spin text-2xl ${isDark ? "text-slate-600" : "text-slate-400"
-              }`}
-          />
-        </div>
-      ) : error ? (
-        <div className={`text-center py-20 text-sm ${isDark ? "text-red-400" : "text-red-500"}`}>
-          <i className="fa-solid fa-circle-exclamation mb-2 text-xl block" />
-          {error}
-          <button
-            onClick={fetchCashiers}
-            className="mt-3 text-teal-500 hover:underline block mx-auto"
-          >
-            Retry
-          </button>
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className={`text-center py-20 text-sm ${isDark ? "text-slate-600" : "text-slate-400"}`}>
-          <i className="fa-solid fa-users-slash text-2xl block mb-2 opacity-40" />
-          {search ? "No cashiers match your search." : "No cashiers found."}
-        </div>
-      ) : (
-        <>
-          {/* ── Desktop Table ──────────────────────────────── */}
-          <div
-            className={`hidden md:block rounded-2xl border overflow-hidden ${isDark ? "border-slate-800" : "border-slate-200"
-              }`}
-          >
-            <table className="w-full text-sm">
-              <thead>
-                <tr
-                  className={`text-left text-xs font-semibold uppercase tracking-wider ${isDark
-                    ? "bg-slate-900/80 text-slate-500 border-b border-slate-800"
-                    : "bg-slate-50 text-slate-400 border-b border-slate-200"
-                    }`}
-                >
-                  <th className="px-5 py-3.5">Cashier</th>
-                  <th className="px-5 py-3.5">Email</th>
-                  <th className="px-5 py-3.5">Phone</th>
-                  <th className="px-5 py-3.5">Role</th>
-                  <th className="px-5 py-3.5">Status</th>
-                  <th className="px-5 py-3.5">Last Login</th>
-                  <th className="px-5 py-3.5">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((cashier, i) => (
-                  <tr
-                    key={cashier.id}
-                    onClick={() => setSelectedCashier(cashier)}
-                    className={`cursor-pointer transition-colors ${isDark
-                      ? `${i % 2 === 0 ? "bg-slate-900/40" : "bg-slate-900/70"} hover:bg-slate-800/80 border-b border-slate-800/60 text-slate-300`
-                      : `${i % 2 === 0 ? "bg-white" : "bg-slate-50/50"} hover:bg-slate-50 border-b border-slate-100 text-slate-700`
-                      }`}
-                  >
-                    <td className="px-5 py-3.5">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-teal-600 flex items-center justify-center text-white text-xs font-semibold shrink-0">
-                          {getInitials(cashier)}
-                        </div>
-                        <span className="font-medium">
-                          {cashier.firstname} {cashier.lastname}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3.5 font-mono text-xs opacity-80">
-                      {cashier.email}
-                    </td>
-                    <td className="px-5 py-3.5">{cashier.phone || "—"}</td>
-                    <td className="px-5 py-3.5 capitalize">{cashier.role}</td>
-                    <td className="px-5 py-3.5">
-                      <StatusBadge approved={Boolean(cashier.is_approved)} isDark={isDark} />
-                    </td>
-                    <td className="px-5 py-3.5 text-xs opacity-70">
-                      {formatDate(cashier.last_login_at)}
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <ActionCell cashier={cashier} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            />
+            <input
+              type="text"
+              placeholder="Search by name or email…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className={`w-full pl-8 pr-4 py-2.5 rounded-xl border text-sm transition-colors outline-none ${isDark
+                ? "bg-slate-900/70 border-slate-700 text-white placeholder-slate-500 focus:border-teal-500"
+                : "bg-white border-slate-200 text-slate-900 placeholder-slate-400 focus:border-teal-500"
+                }`}
+            />
           </div>
 
-          {/* ── Mobile Cards ───────────────────────────────── */}
-          <div className="md:hidden space-y-3">
-            {filtered.map((cashier) => (
-              <div
-                key={cashier.id}
-                onClick={() => setSelectedCashier(cashier)}
-                className={`rounded-2xl border p-4 cursor-pointer transition-colors ${isDark
-                  ? "bg-slate-900/70 border-slate-800 hover:bg-slate-800/80"
-                  : "bg-white border-slate-200 hover:bg-slate-50"
+          {/* Filter tabs */}
+          <div
+            className={`flex rounded-xl border p-1 gap-1 text-sm shrink-0 ${isDark ? "bg-slate-900/70 border-slate-700" : "bg-white border-slate-200"
+              }`}
+          >
+            {(["all", "active", "pending"] as const).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilterApproved(f)}
+                className={`px-3 py-1.5 rounded-lg font-medium capitalize transition-colors ${filterApproved === f
+                  ? isDark
+                    ? "bg-teal-600 text-white"
+                    : "bg-teal-600 text-white"
+                  : isDark
+                    ? "text-slate-400 hover:text-white"
+                    : "text-slate-500 hover:text-slate-800"
                   }`}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
-                      {getInitials(cashier)}
-                    </div>
-                    <div className="min-w-0">
-                      <p
-                        className={`font-semibold text-sm truncate ${isDark ? "text-white" : "text-slate-900"
-                          }`}
-                      >
-                        {cashier.firstname} {cashier.lastname}
-                      </p>
-                      <p
-                        className={`text-xs truncate mt-0.5 ${isDark ? "text-slate-400" : "text-slate-500"
-                          }`}
-                      >
-                        {cashier.email}
-                      </p>
-                    </div>
-                  </div>
-                  <StatusBadge approved={Boolean(cashier.is_approved)} isDark={isDark} />
-                </div>
-
-                <div
-                  className={`flex items-center justify-between mt-3 pt-3 border-t ${isDark ? "border-slate-700/60" : "border-slate-100"
-                    }`}
-                >
-                  <div className={`text-xs ${isDark ? "text-slate-500" : "text-slate-400"}`}>
-                    <i className="fa-solid fa-right-to-bracket mr-1 opacity-60" />
-                    {formatDate(cashier.last_login_at)}
-                  </div>
-                  <ActionCell cashier={cashier} />
-                </div>
-              </div>
+                {f}
+              </button>
             ))}
           </div>
+        </div>
 
-          {/* Count */}
-          <p className={`mt-4 text-xs ${isDark ? "text-slate-600" : "text-slate-400"}`}>
-            Showing {filtered.length} of {cashiers.length} cashier
-            {cashiers.length !== 1 ? "s" : ""}
-          </p>
-        </>
-      )}
+        {/* Content */}
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <i
+              className={`fa-solid fa-circle-notch animate-spin text-2xl ${isDark ? "text-slate-600" : "text-slate-400"
+                }`}
+            />
+          </div>
+        ) : error ? (
+          <div className={`text-center py-20 text-sm ${isDark ? "text-red-400" : "text-red-500"}`}>
+            <i className="fa-solid fa-circle-exclamation mb-2 text-xl block" />
+            {error}
+            <button
+              onClick={fetchCashiers}
+              className="mt-3 text-teal-500 hover:underline block mx-auto"
+            >
+              Retry
+            </button>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className={`text-center py-20 text-sm ${isDark ? "text-slate-600" : "text-slate-400"}`}>
+            <i className="fa-solid fa-users-slash text-2xl block mb-2 opacity-40" />
+            {search ? "No cashiers match your search." : "No cashiers found."}
+          </div>
+        ) : (
+          <>
+            {/* ── Desktop Table ──────────────────────────────── */}
+            <div
+              className={`hidden md:block rounded-2xl border overflow-hidden ${isDark ? "border-slate-800" : "border-slate-200"
+                }`}
+            >
+              <table className="w-full text-sm">
+                <thead>
+                  <tr
+                    className={`text-left text-xs font-semibold uppercase tracking-wider ${isDark
+                      ? "bg-slate-900/80 text-slate-500 border-b border-slate-800"
+                      : "bg-slate-50 text-slate-400 border-b border-slate-200"
+                      }`}
+                  >
+                    <th className="px-5 py-3.5">Cashier</th>
+                    <th className="px-5 py-3.5">Email</th>
+                    <th className="px-5 py-3.5">Phone</th>
+                    <th className="px-5 py-3.5">Role</th>
+                    <th className="px-5 py-3.5">Status</th>
+                    <th className="px-5 py-3.5">Last Login</th>
+                    <th className="px-5 py-3.5">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((cashier, i) => (
+                    <tr
+                      key={cashier.id}
+                      onClick={() => setSelectedCashier(cashier)}
+                      className={`cursor-pointer transition-colors ${isDark
+                        ? `${i % 2 === 0 ? "bg-slate-900/40" : "bg-slate-900/70"} hover:bg-slate-800/80 border-b border-slate-800/60 text-slate-300`
+                        : `${i % 2 === 0 ? "bg-white" : "bg-slate-50/50"} hover:bg-slate-50 border-b border-slate-100 text-slate-700`
+                        }`}
+                    >
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-teal-600 flex items-center justify-center text-white text-xs font-semibold shrink-0">
+                            {getInitials(cashier)}
+                          </div>
+                          <span className="font-medium">
+                            {cashier.firstname} {cashier.lastname}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5 font-mono text-xs opacity-80">
+                        {cashier.email}
+                      </td>
+                      <td className="px-5 py-3.5">{cashier.phone || "—"}</td>
+                      <td className="px-5 py-3.5 capitalize">{cashier.role}</td>
+                      <td className="px-5 py-3.5">
+                        <StatusBadge approved={Boolean(cashier.is_approved)} isDark={isDark} />
+                      </td>
+                      <td className="px-5 py-3.5 text-xs opacity-70">
+                        {formatDate(cashier.last_login_at)}
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <ActionCell cashier={cashier} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* ── Mobile Cards ───────────────────────────────── */}
+            <div className="md:hidden space-y-3">
+              {filtered.map((cashier) => (
+                <div
+                  key={cashier.id}
+                  onClick={() => setSelectedCashier(cashier)}
+                  className={`rounded-2xl border p-4 cursor-pointer transition-colors ${isDark
+                    ? "bg-slate-900/70 border-slate-800 hover:bg-slate-800/80"
+                    : "bg-white border-slate-200 hover:bg-slate-50"
+                    }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
+                        {getInitials(cashier)}
+                      </div>
+                      <div className="min-w-0">
+                        <p
+                          className={`font-semibold text-sm truncate ${isDark ? "text-white" : "text-slate-900"
+                            }`}
+                        >
+                          {cashier.firstname} {cashier.lastname}
+                        </p>
+                        <p
+                          className={`text-xs truncate mt-0.5 ${isDark ? "text-slate-400" : "text-slate-500"
+                            }`}
+                        >
+                          {cashier.email}
+                        </p>
+                      </div>
+                    </div>
+                    <StatusBadge approved={Boolean(cashier.is_approved)} isDark={isDark} />
+                  </div>
+
+                  <div
+                    className={`flex items-center justify-between mt-3 pt-3 border-t ${isDark ? "border-slate-700/60" : "border-slate-100"
+                      }`}
+                  >
+                    <div className={`text-xs ${isDark ? "text-slate-500" : "text-slate-400"}`}>
+                      <i className="fa-solid fa-right-to-bracket mr-1 opacity-60" />
+                      {formatDate(cashier.last_login_at)}
+                    </div>
+                    <ActionCell cashier={cashier} />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Count */}
+            <p className={`mt-4 text-xs ${isDark ? "text-slate-600" : "text-slate-400"}`}>
+              Showing {filtered.length} of {cashiers.length} cashier
+              {cashiers.length !== 1 ? "s" : ""}
+            </p>
+          </>
+        )}
+
+      </>}{/* end !isUnauthorized */}
 
       {/* Modals */}
       <AnimatePresence>

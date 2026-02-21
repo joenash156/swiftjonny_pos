@@ -18,6 +18,7 @@ export interface Cashier {
 export interface CashiersResponse {
   success: boolean;
   counts: number;
+  error: string;
   message: string;
   cashiers?: Cashier[];
 }

@@ -2,5 +2,44 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../Java_Lessons" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../Byte-Track/bytetrackapi" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../CrossAfrik-Project/crossafrik_web_app" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../Limb Project/limb-project" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../binbyte_website" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../foliony" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ngo-project/NGO-Help" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ngo-project/NGO-PROJECT" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ngo-project/NGO-PROJECT/DoNect_WebApp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../websites/my-react-app" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../websites/my-react-app/backend" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../websites/my-react-app/frontend" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../wopecar-3cx-zoho" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../OOP_lessons/class_java_lessons" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../OOP_lessons/java_class_projects/Bank_Account_Simulation_Application" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../OOP_lessons/java_class_projects/Group-3" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../OOP_lessons/java_class_projects/Lab1_Ashesi_Premier_League_98082028" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../OOP_lessons/java_class_projects/Lab2_Ashesi_Health_Kiosk_98082028" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../OOP_lessons/java_class_projects/Practice-01-Cohort-A" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../OOP_lessons/java_class_projects/Waste_Sorting_Simulator" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../OOP_lessons/java_class_projects/ZimStyle_Boutique" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../Other random projects/auth_lesson" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../Other random projects/dis_test/JEK-App" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../Other random projects/expenses_recorder" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../Other random projects/profile_website" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../Other random projects/test" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../Other random projects/zoho_crm" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../express js course/express-avatar-demo" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../forage/well_fargo/wells-fargo-task-2" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../git_and_github_lesson/git&amp;github-tutorials" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../git_and_github_lesson/git&amp;github-tutorials3" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../golang lessons/golang_lessons" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../html css lessons/file-upload-tutorial" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../javaScript rps" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../javascript-amazon-project" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../login pages" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../react_native_tutorial/tutorial_1/lesson_1/wallpaper_app" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../react_native_tutorial/tutorial_2/redit_app_clone" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../react_native_tutorial/tutorial_2/spotlight" vcs="Git" />
   </component>
 </project>

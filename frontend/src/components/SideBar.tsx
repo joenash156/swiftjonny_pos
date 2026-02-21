@@ -32,7 +32,7 @@ function SidebarContent() {
 
   const isDark = theme === "dark";
 
-  // console.log(user)
+  console.log(user)
 
   const handleLogout = async () => {
     await logout();
@@ -134,7 +134,7 @@ function SidebarContent() {
       </div>
 
       {/*  Navigation */}
-      <nav className="flex-1 overflow-y-auto px-3 space-y-0.5 pb-4 hide-scrollbar">
+      <nav className="flex-1 overflow-y-auto px-3 space-y-0.5 pt-2 pb-4 hide-scrollbar">
         {navItems
           .filter((item) => !item.adminOnly || user?.role === "admin")
           .map((item) => {
