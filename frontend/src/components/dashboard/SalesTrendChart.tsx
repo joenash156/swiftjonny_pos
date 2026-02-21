@@ -6,7 +6,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  type TooltipProps,
 } from "recharts";
 import type { SalesTrendPoint } from "../../services/dashboardService";
 
@@ -19,7 +18,14 @@ function formatCurrency(v: number) {
   return `GH₵ ${v.toFixed(2)}`;
 }
 
-function CustomTooltip({ active, payload, label, isDark }: TooltipProps<number, string> & { isDark: boolean }) {
+interface SalesTooltipProps {
+  active?: boolean;
+  payload?: Array<{ value: number; payload: SalesTrendPoint }>;
+  label?: string;
+  isDark: boolean;
+}
+
+function CustomTooltip({ active, payload, label, isDark }: SalesTooltipProps) {
   if (!active || !payload?.length) return null;
   return (
     <div
@@ -29,10 +35,10 @@ function CustomTooltip({ active, payload, label, isDark }: TooltipProps<number, 
         }`}
     >
       <p className={`mb-1 font-medium ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-        {formatShortDate(label as string)}
+        {label ? formatShortDate(label) : ""}
       </p>
       <p className="font-semibold text-teal-500">
-        {formatCurrency((payload[0] as any)?.value ?? 0)}
+        {formatCurrency(payload[0]?.value ?? 0)}
       </p>
     </div>
   );

@@ -7,7 +7,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
-  type TooltipProps,
 } from "recharts";
 import type { TopProduct } from "../../services/dashboardService";
 
@@ -17,14 +16,20 @@ function formatCurrency(v: number) {
 
 const BAR_COLORS = ["#14b8a6", "#3b82f6", "#a855f7", "#f59e0b", "#ef4444"];
 
-function CustomTooltip({ active, payload, isDark }: TooltipProps<number, string> & { isDark: boolean }) {
+interface TopTooltipProps {
+  active?: boolean;
+  payload?: Array<{ value: number; payload: TopProduct & { shortName: string } }>;
+  isDark: boolean;
+}
+
+function CustomTooltip({ active, payload, isDark }: TopTooltipProps) {
   if (!active || !payload?.length) return null;
-  const d = payload[0]?.payload as TopProduct;
+  const d = payload[0]?.payload;
   return (
     <div
       className={`rounded-xl px-3 py-2 text-xs shadow-lg border ${isDark
-          ? "bg-slate-800 border-slate-700 text-white"
-          : "bg-white border-slate-200 text-slate-900"
+        ? "bg-slate-800 border-slate-700 text-white"
+        : "bg-white border-slate-200 text-slate-900"
         }`}
     >
       <p className={`font-semibold mb-1 truncate max-w-40 ${isDark ? "text-white" : "text-slate-900"}`}>

@@ -51,12 +51,12 @@ export const salesService = {
     sortBy?: string;
     order?: "ASC" | "DESC";
   }): Promise<GetAllSalesResponse> => {
-    const { data } = await api.get<GetAllSalesResponse>("/api/sales/get_all", { params });
+    const { data } = await api.get<GetAllSalesResponse>("/api/sale/get_all", { params });
     return data;
   },
 
   getSaleDetails: async (publicId: string): Promise<GetSaleDetailsResponse> => {
-    const { data } = await api.get<GetSaleDetailsResponse>(`/api/sales/${publicId}/details`);
+    const { data } = await api.get<GetSaleDetailsResponse>(`/api/sale/${publicId}/details`);
     return data;
   },
 };

@@ -76,7 +76,7 @@ function Dashboard() {
   const fetchTransactions = useCallback(async () => {
     setTxLoading(true);
     try {
-      const res = await salesService.getAllSales({ limit: 10, order: "DESC" });
+      const res = await salesService.getAllSales({ limit: 5, order: "DESC" });
       setTransactions(res.sales ?? []);
     } catch {
       setTransactions([]);
@@ -156,36 +156,38 @@ function Dashboard() {
         </button>
       </div>
 
-      {/* Scope note */}
-      <div className={`inline-flex items-center gap-2 mb-5 md:mr-4 px-3 py-1.5 rounded-full text-xs font-medium border ${isAdmin
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+        {/* Scope note */}
+        <div className={`inline-flex items-center gap-2 mb-5 px-3 py-1.5 rounded-full text-xs font-medium border ${isAdmin
           ? isDark ? "bg-amber-500/8 border-amber-500/20 text-amber-300" : "bg-amber-50 border-amber-200 text-amber-700"
           : isDark ? "bg-blue-500/8 border-blue-500/20 text-blue-300" : "bg-blue-50 border-blue-200 text-blue-700"
-        }`}>
-        <i className={`fa-solid ${isAdmin ? "fa-users" : "fa-user"} text-[10px]`} />
-        {isAdmin
-          ? "Viewing activity across all cashiers & admins"
-          : "Viewing your personal transaction activity only"}
-      </div>
+          }`}>
+          <i className={`fa-solid ${isAdmin ? "fa-users" : "fa-user"} text-[10px]`} />
+          {isAdmin
+            ? "Viewing activity across all cashiers & admins"
+            : "Viewing your personal transaction activity only"}
+        </div>
 
-      {/* Period Tab Bar */}
-      <div
-        className={`inline-flex flex-wrap rounded-xl border p-1 gap-1 mb-6 ${isDark ? "bg-slate-900/70 border-slate-800" : "bg-white border-slate-200"
-          }`}
-      >
-        {PERIODS.map(({ key, label }) => (
-          <button
-            key={key}
-            onClick={() => setPeriod(key)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${period === key
-              ? "bg-teal-600 text-white"
-              : isDark
-                ? "text-slate-400 hover:text-white"
-                : "text-slate-500 hover:text-slate-800"
-              }`}
-          >
-            {label}
-          </button>
-        ))}
+        {/* Period Tab Bar */}
+        <div
+          className={`inline-flex flex-wrap justify-center rounded-xl border p-0.5 sm:p-1 gap-1 mb-6 ${isDark ? "bg-slate-900/70 border-slate-800" : "bg-white border-slate-200"
+            }`}
+        >
+          {PERIODS.map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setPeriod(key)}
+              className={`px-4 py-2 rounded-lg text-[10px] sm:text-sm font-medium transition-colors ${period === key
+                ? "bg-teal-600 text-white"
+                : isDark
+                  ? "text-slate-400 hover:text-white"
+                  : "text-slate-500 hover:text-slate-800"
+                }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Error Banner */}
@@ -410,8 +412,8 @@ function Dashboard() {
                       <button
                         onClick={() => setSelectedTxId(tx.public_id)}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors whitespace-nowrap ${isDark
-                            ? "border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white"
-                            : "border-slate-200 text-slate-600 hover:bg-slate-100"
+                          ? "border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white"
+                          : "border-slate-200 text-slate-600 hover:bg-slate-100"
                           }`}
                       >
                         <i className="fa-solid fa-eye text-[10px]" />
@@ -467,8 +469,8 @@ function Dashboard() {
                 <button
                   onClick={() => setSelectedTxId(tx.public_id)}
                   className={`w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-medium border transition-colors ${isDark
-                      ? "border-slate-700 text-slate-300 hover:bg-slate-700"
-                      : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                    ? "border-slate-700 text-slate-300 hover:bg-slate-700"
+                    : "border-slate-200 text-slate-600 hover:bg-slate-50"
                     }`}
                 >
                   <i className="fa-solid fa-eye text-[10px]" />
