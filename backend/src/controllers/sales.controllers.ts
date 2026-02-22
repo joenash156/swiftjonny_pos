@@ -303,60 +303,63 @@ export const getAllSales = async (req: Request, res: Response): Promise<void> =>
   try {
     // get user id and role
     const { id: userId, role }: User = req.user;
-     // get request query params
+    // get request query params
     const { search, sortBy, order, page, limit } = req.query;
 
-    let query =
-      role === "admin"
-      ? `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.id AS cashier_id, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
-         FROM sales s
-         JOIN users u ON u.id = s.user_id`
-      : `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.id AS cashier_id, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
-         FROM sales s
-         JOIN users u ON u.id = s.user_id
-         WHERE s.user_id = ?`;
+    // ── build WHERE clause dynamically so it's shared between COUNT + data queries ──
+    const whereParts: string[] = [];
+    const whereParams: (string | number)[] = [];
 
-    const params: (string | number)[] = [];
-
-    if(role !== "admin") {
-      params.push(userId)
+    // cashiers only see their own sales
+    if (role !== "admin") {
+      whereParts.push("s.user_id = ?");
+      whereParams.push(userId);
     }
 
     // search by cashier firstname (case-insensitive)
-    if (search && typeof search === "string") {
-      query += " LOWER(u.firstname) LIKE ?";
-      params.push(`%${search.toLowerCase()}%`);
+    if (search && typeof search === "string" && search.trim() !== "") {
+      whereParts.push("LOWER(u.firstname) LIKE ?");
+      whereParams.push(`%${search.toLowerCase().trim()}%`);
     }
 
-    // whitelist sorting columns
+    const baseFrom = `FROM sales s JOIN users u ON u.id = s.user_id`;
+    const whereClause = whereParts.length > 0 ? " WHERE " + whereParts.join(" AND ") : "";
+
+    // ── total count for pagination ──
+    const [[countRow]] = await db.query<RowDataPacket[]>(
+      `SELECT COUNT(*) AS total ${baseFrom}${whereClause}`,
+      whereParams
+    );
+    const totalCount: number = (countRow as RowDataPacket)?.total ?? 0;
+
+    // ── whitelist sorting columns ──
     let sortColumn = "s.created_at";
-
     if (sortBy === "cashier_firstname") sortColumn = "u.firstname";
-    if (sortBy === "cashier_lastname") sortColumn = "u.lastname";
-    if (sortBy === "total") sortColumn = "s.total";
+    if (sortBy === "cashier_lastname")  sortColumn = "u.lastname";
+    if (sortBy === "total")             sortColumn = "s.total";
 
-    // sorting order (ASC or DESC)
     const sortOrder =
-      typeof order === "string" && order.toUpperCase() === "DESC"
-        ? "DESC"
-        : "ASC";
+      typeof order === "string" && order.toUpperCase() === "DESC" ? "DESC" : "ASC";
 
-    query += ` ORDER BY ${sortColumn} ${sortOrder}`;
-
-    // pagination (page-based)
+    // ── pagination ──
     const pageNumber = typeof page === "string" && Number(page) > 0 ? Number(page) : 1;
-    const pageLimit = typeof limit === "string" && Number(limit) > 0 && Number(limit) <= 100 ? Number(limit) : 20;
-    const offset = (pageNumber - 1) * pageLimit;
+    const pageLimit  = typeof limit === "string" && Number(limit) > 0 && Number(limit) <= 100 ? Number(limit) : 20;
+    const offset     = (pageNumber - 1) * pageLimit;
 
-    query += " LIMIT ? OFFSET ?";
-    params.push(pageLimit, offset);
+    // ── data query ──
+    const dataQuery =
+      `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.id AS cashier_id, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
+       ${baseFrom}${whereClause}
+       ORDER BY ${sortColumn} ${sortOrder}
+       LIMIT ? OFFSET ?`;
 
-    const [saleRows] = await db.query<RowDataPacket[]>(query, params)
+    const [saleRows] = await db.query<RowDataPacket[]>(dataQuery, [...whereParams, pageLimit, offset]);
 
-    if(saleRows.length === 0) {
+    if (saleRows.length === 0) {
       res.status(200).json({
         success: true,
         counts: 0,
+        total: totalCount,
         message: "No sales found!",
         sales: []
       });
@@ -416,6 +419,7 @@ export const getAllSales = async (req: Request, res: Response): Promise<void> =>
     res.status(200).json({
       success: true,
       counts: saleRows.length,
+      total: totalCount,
       message: "Sales fetched successfully!✅",
       sales
     });

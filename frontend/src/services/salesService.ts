@@ -33,6 +33,7 @@ export interface Sale {
 export interface GetAllSalesResponse {
   success: boolean;
   counts: number;
+  total: number;
   message: string;
   sales: Sale[];
 }

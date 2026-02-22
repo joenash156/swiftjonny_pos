@@ -140,8 +140,8 @@ function VoidModal({ publicId, isDark, onClose, onVoided }: VoidModalProps) {
           onChange={(e) => setReason(e.target.value)}
           placeholder="Describe why this sale is being voided..."
           className={`w-full resize-none rounded-xl border px-3 py-2.5 text-sm outline-none transition-colors ${isDark
-              ? "bg-slate-800 border-slate-700 text-white placeholder-slate-600 focus:border-red-500/50"
-              : "bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 focus:border-red-400"
+            ? "bg-slate-800 border-slate-700 text-white placeholder-slate-600 focus:border-red-500/50"
+            : "bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 focus:border-red-400"
             }`}
         />
 
@@ -154,8 +154,8 @@ function VoidModal({ publicId, isDark, onClose, onVoided }: VoidModalProps) {
             onClick={onClose}
             disabled={loading}
             className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-colors ${isDark
-                ? "border-slate-700 text-slate-300 hover:bg-slate-800"
-                : "border-slate-200 text-slate-600 hover:bg-slate-50"
+              ? "border-slate-700 text-slate-300 hover:bg-slate-800"
+              : "border-slate-200 text-slate-600 hover:bg-slate-50"
               }`}
           >
             Cancel
@@ -179,7 +179,7 @@ function VoidModal({ publicId, isDark, onClose, onVoided }: VoidModalProps) {
 type SortBy = "created_at" | "total" | "cashier_firstname" | "cashier_lastname";
 type Order = "ASC" | "DESC";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 
 export default function Sales() {
   const { theme } = useTheme();
@@ -225,7 +225,7 @@ export default function Sales() {
         order,
       });
       setSales(res.sales ?? []);
-      setTotal(res.counts ?? 0);
+      setTotal(res.total ?? 0);
     } catch {
       setError("Failed to load sales. Please try again.");
       setSales([]);
@@ -361,8 +361,8 @@ export default function Sales() {
             setSortBy(col); setOrder(ord);
           }}
           className={`px-3 py-2.5 rounded-xl border text-sm outline-none cursor-pointer ${isDark
-              ? "bg-slate-800 border-slate-700 text-slate-300"
-              : "bg-slate-50 border-slate-200 text-slate-700"
+            ? "bg-slate-800 border-slate-700 text-slate-300"
+            : "bg-slate-50 border-slate-200 text-slate-700"
             }`}
         >
           <option value="created_at:DESC">Newest first</option>
@@ -413,7 +413,7 @@ export default function Sales() {
 
       {/* ── Desktop table ── */}
       {!loading && sales.length > 0 && (
-        <div className={`hidden md:block rounded-2xl border overflow-hidden mb-5 ${isDark ? "border-slate-800" : "border-slate-200"}`}>
+        <div className={`hidden lg:block rounded-2xl border overflow-hidden mb-5 ${isDark ? "border-slate-800" : "border-slate-200"}`}>
           <table className="w-full text-sm">
             <thead>
               <tr className={`border-b text-left ${isDark ? "bg-slate-800/50 border-slate-800" : "bg-slate-50 border-slate-200"}`}>
@@ -487,8 +487,8 @@ export default function Sales() {
                         onClick={() => setViewId(sale.public_id)}
                         title="View details"
                         className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors ${isDark
-                            ? "border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white"
-                            : "border-slate-200 text-slate-600 hover:bg-slate-100"
+                          ? "border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white"
+                          : "border-slate-200 text-slate-600 hover:bg-slate-100"
                           }`}
                       >
                         <i className="fa-solid fa-eye text-[10px]" />
@@ -500,8 +500,8 @@ export default function Sales() {
                           onClick={() => setVoidId(sale.public_id)}
                           title="Void sale"
                           className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors ${isDark
-                              ? "border-red-800/60 text-red-400 hover:bg-red-500/10"
-                              : "border-red-200 text-red-500 hover:bg-red-50"
+                            ? "border-red-800/60 text-red-400 hover:bg-red-500/10"
+                            : "border-red-200 text-red-500 hover:bg-red-50"
                             }`}
                         >
                           <i className="fa-solid fa-ban text-[10px]" />
@@ -519,7 +519,7 @@ export default function Sales() {
 
       {/* ── Mobile cards ── */}
       {!loading && sales.length > 0 && (
-        <div className="md:hidden space-y-3 mb-5">
+        <div className="lg:hidden space-y-3 mb-5">
           {sales.map((sale) => (
             <div
               key={sale.public_id}
@@ -605,10 +605,10 @@ export default function Sales() {
                   key={p}
                   onClick={() => setPage(p)}
                   className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-medium border transition-colors ${p === page
-                      ? "border-teal-500 bg-teal-500 text-white"
-                      : isDark
-                        ? "border-slate-700 text-slate-400 hover:bg-slate-800"
-                        : "border-slate-200 text-slate-500 hover:bg-slate-50"
+                    ? "border-teal-500 bg-teal-500 text-white"
+                    : isDark
+                      ? "border-slate-700 text-slate-400 hover:bg-slate-800"
+                      : "border-slate-200 text-slate-500 hover:bg-slate-50"
                     }`}
                 >
                   {p}
