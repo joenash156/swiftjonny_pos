@@ -32,7 +32,7 @@ function SidebarContent() {
 
   const isDark = theme === "dark";
 
-  console.log(user)
+  // console.log(user)
 
   const handleLogout = async () => {
     await logout();

@@ -4,7 +4,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { TailSpin } from "react-loader-spinner";
 import Swal from "sweetalert2";
 import type { SweetAlertIcon } from "sweetalert2";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
 function VerifyEmail() {
@@ -293,14 +293,14 @@ function VerifyEmail() {
           className={`text-center mt-6 text-xs sm:text-sm ${theme === "dark" ? "text-slate-500" : "text-slate-500"
             }`}
         >
-          Need help?{" "}
-          <a
-            href="mailto:support@swiftjonny.com"
+          Need help?{" "} Visit{" "}
+          <Link
+            to="/help"
             className={`${theme === "dark" ? "text-teal-400 hover:text-teal-300" : "text-teal-600 hover:text-teal-700"
               } transition-colors duration-200`}
           >
-            Contact Support
-          </a>
+            Help & Support
+          </Link>
         </motion.p>
       </div>
     </div>

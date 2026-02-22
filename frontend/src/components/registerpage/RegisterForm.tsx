@@ -119,8 +119,8 @@ function RegisterForm() {
   return (
     <div
       className={`w-full h-screen lg:h-full flex flex-col px-6 sm:px-10 lg:px-12 xl:px-16 py-8 lg:py-10 overflow-y-auto hide-scrollbar transition-[background] duration-300 ease-in-out ${theme === "dark"
-          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
-          : "bg-gradient-to-br from-teal-50/40 via-slate-50 to-purple-100/40"
+        ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+        : "bg-gradient-to-br from-teal-50/40 via-slate-50 to-purple-100/40"
         }`}
     >
       {/* Theme Toggler */}
@@ -401,6 +401,22 @@ function RegisterForm() {
             <Link to="/terms" className={`${theme === "dark" ? "hover:text-slate-300" : "hover:text-slate-600"} transition-colors`}>
               Terms of Service
             </Link>
+            <span className="hidden sm:inline">•</span>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className={`text-center text-xs ${theme === "dark" ? "text-slate-500" : "text-slate-500"
+                }`}
+            >
+              <Link
+                to="/help"
+                className={`${theme === "dark" ? "text-teal-400 hover:text-teal-300" : "text-teal-600 hover:text-teal-700"
+                  } transition-colors duration-200`}
+              >
+                Help & Support
+              </Link>
+            </motion.p>
           </div>
         </div>
       </motion.footer>

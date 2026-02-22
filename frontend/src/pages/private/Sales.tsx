@@ -179,7 +179,7 @@ function VoidModal({ publicId, isDark, onClose, onVoided }: VoidModalProps) {
 type SortBy = "created_at" | "total" | "cashier_firstname" | "cashier_lastname";
 type Order = "ASC" | "DESC";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 export default function Sales() {
   const { theme } = useTheme();

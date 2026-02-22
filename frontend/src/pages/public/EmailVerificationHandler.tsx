@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { TailSpin, ThreeDots } from "react-loader-spinner";
 import { AxiosError } from "axios";
 import { useAuth } from "../../contexts/AuthContext";
@@ -238,16 +238,16 @@ function EmailVerificationHandler() {
           className={`text-center mt-6 text-xs sm:text-sm ${theme === "dark" ? "text-slate-500" : "text-slate-500"
             }`}
         >
-          Need help?{" "}
-          <a
-            href="mailto:support@swiftjonny.com"
+          Need help?{" "} Visit{" "}
+          <Link
+            to="/help"
             className={`${theme === "dark"
               ? "text-teal-400 hover:text-teal-300"
               : "text-teal-600 hover:text-teal-700"
               } transition-colors duration-200`}
           >
-            Contact Support
-          </a>
+            Help & Support
+          </Link>
         </motion.p>
       </div>
     </div>
