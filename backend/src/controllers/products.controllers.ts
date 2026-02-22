@@ -163,7 +163,8 @@ export const getAllProducts = async (req: Request, res: Response): Promise<void>
     // sanitize the products (eg. not to get the number in string)
     const sanitizedProducts = products.map((product) => ({
         ...product,
-        price: Number(product.price)
+        price: Number(product.price),
+        image_url: product.image_url ? `${process.env.BASE_URL}/uploads/products/${product.image_url}` : null
     }))
 
     res.status(200).json({
@@ -208,7 +209,8 @@ export const getProductById = async (req: Request, res: Response): Promise<void>
       count: 1,
       product: {
         ...rows[0],
-        price: Number(rows[0]!.price)
+        price: Number(rows[0]!.price),
+        image_url: rows[0]!.image_url ? `${process.env.BASE_URL}/uploads/products/${rows[0]!.image_url}` : null
       }
     });
     return;

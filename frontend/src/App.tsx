@@ -11,6 +11,7 @@ import Sales from "./pages/private/Sales"
 import Cashiers from "./pages/private/Cashiers"
 import Settings from "./pages/private/Settings"
 import POSTerminal from "./pages/private/POSTerminal"
+import POSSettings from "./pages/private/POSSettings"
 import VerifyEmail from "./pages/public/VerifyEmail"
 import EmailVerificationHandler from "./pages/public/EmailVerificationHandler"
 import ApprovalPending from "./pages/public/ApprovalPending"
@@ -47,6 +48,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/sales" element={<Sales />} />
           <Route path="/pos" element={<POSTerminal />} />
+          <Route path="/pos-settings" element={<POSSettings />} />
           <Route path="/cashiers" element={<Cashiers />} />
           <Route path="/settings" element={<Settings />} />
         </Route>

@@ -52,6 +52,32 @@ export interface GetSaleDetailsResponse {
   sale: Sale;
 }
 
+export interface CreateSaleItem {
+  product_id: string;
+  quantity: number;
+}
+
+export interface CreatedSale {
+  public_id: string;
+  subtotal: number;
+  tax_amount: number;
+  discount_amount: number;
+  total: number;
+  payment_method: string;
+  status: string;
+  cashier: SaleCashier;
+  items: SaleItem[];
+  receipt_header: string;
+  receipt_footer: string;
+  created_at: string;
+}
+
+export interface CreateSaleResponse {
+  success: boolean;
+  message: string;
+  sale: CreatedSale;
+}
+
 export const salesService = {
   getAllSales: async (params?: {
     page?: number;
@@ -66,6 +92,14 @@ export const salesService = {
 
   getSaleDetails: async (publicId: string): Promise<GetSaleDetailsResponse> => {
     const { data } = await api.get<GetSaleDetailsResponse>(`/api/sale/${publicId}/details`);
+    return data;
+  },
+
+  createSale: async (payload: {
+    payment_method: "cash" | "card" | "mobile";
+    items: CreateSaleItem[];
+  }): Promise<CreateSaleResponse> => {
+    const { data } = await api.post<CreateSaleResponse>("/api/sale/create", payload);
     return data;
   },
 };

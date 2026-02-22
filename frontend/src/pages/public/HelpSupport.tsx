@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import ThemeToggler from "../../components/ThemeToggler";
@@ -67,8 +68,8 @@ export default function HelpSupport() {
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${isDark
-          ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900 text-white"
-          : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80 text-slate-900"
+        ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900 text-white"
+        : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80 text-slate-900"
         }`}
     >
       {/* Minimal top bar */}
@@ -106,7 +107,12 @@ export default function HelpSupport() {
       </header>
 
       {/* Content */}
-      <main className="max-w-3xl mx-auto px-5 py-12 space-y-10">
+      <motion.main
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.22, ease: "easeOut" }}
+        className="max-w-3xl mx-auto px-5 py-12 space-y-10"
+      >
 
         {/* Hero */}
         <div className="text-center">
@@ -143,8 +149,8 @@ export default function HelpSupport() {
             <a
               href={`tel:${SUPPORT_PHONE}`}
               className={`flex flex-col items-center gap-3 rounded-2xl border p-5 text-center transition-colors group ${isDark
-                  ? "bg-slate-800/60 border-slate-700 hover:border-teal-500/40 hover:bg-slate-800"
-                  : "bg-white border-slate-200 hover:border-teal-400 hover:shadow-sm"
+                ? "bg-slate-800/60 border-slate-700 hover:border-teal-500/40 hover:bg-slate-800"
+                : "bg-white border-slate-200 hover:border-teal-400 hover:shadow-sm"
                 }`}
             >
               <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${isDark ? "bg-teal-500/10" : "bg-teal-50"}`}>
@@ -165,8 +171,8 @@ export default function HelpSupport() {
               target="_blank"
               rel="noopener noreferrer"
               className={`flex flex-col items-center gap-3 rounded-2xl border p-5 text-center transition-colors group ${isDark
-                  ? "bg-slate-800/60 border-slate-700 hover:border-green-500/40 hover:bg-slate-800"
-                  : "bg-white border-slate-200 hover:border-green-400 hover:shadow-sm"
+                ? "bg-slate-800/60 border-slate-700 hover:border-green-500/40 hover:bg-slate-800"
+                : "bg-white border-slate-200 hover:border-green-400 hover:shadow-sm"
                 }`}
             >
               <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${isDark ? "bg-green-500/10" : "bg-green-50"}`}>
@@ -185,8 +191,8 @@ export default function HelpSupport() {
             <a
               href={`mailto:${SUPPORT_EMAIL}?subject=SwiftJonny%20POS%20Support%20Request`}
               className={`flex flex-col items-center gap-3 rounded-2xl border p-5 text-center transition-colors group ${isDark
-                  ? "bg-slate-800/60 border-slate-700 hover:border-blue-500/40 hover:bg-slate-800"
-                  : "bg-white border-slate-200 hover:border-blue-400 hover:shadow-sm"
+                ? "bg-slate-800/60 border-slate-700 hover:border-blue-500/40 hover:bg-slate-800"
+                : "bg-white border-slate-200 hover:border-blue-400 hover:shadow-sm"
                 }`}
             >
               <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${isDark ? "bg-blue-500/10" : "bg-blue-50"}`}>
@@ -246,7 +252,7 @@ export default function HelpSupport() {
             </p>
           )}
         </div>
-      </main>
+      </motion.main>
     </div>
   );
 }

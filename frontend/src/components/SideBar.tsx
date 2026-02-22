@@ -14,11 +14,12 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "Dashboard", path: "/dashboard", icon: "fa-solid fa-gauge" },
+  { label: "POS Terminal", path: "/pos", icon: "fa-solid fa-cash-register" },
   { label: "Sales / Transactions", path: "/sales", icon: "fa-solid fa-receipt" },
   { label: "Products", path: "/products", icon: "fa-solid fa-box" },
   { label: "Categories", path: "/categories", icon: "fa-solid fa-tags" },
   { label: "Inventory", path: "/inventory", icon: "fa-solid fa-warehouse" },
-  { label: "POS Terminal", path: "/pos", icon: "fa-solid fa-cash-register" },
+  { label: "POS Settings", path: "/pos-settings", icon: "fa-solid fa-sliders", adminOnly: true },
   { label: "Cashiers", path: "/cashiers", icon: "fa-solid fa-users", adminOnly: true },
   { label: "Analytics", path: "/analytics", icon: "fa-solid fa-chart-bar" },
   { label: "Settings", path: "/settings", icon: "fa-solid fa-gear" },
