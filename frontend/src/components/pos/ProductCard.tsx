@@ -65,7 +65,7 @@ export function ProductCard({ product, cartQty, isDark, onAdd }: ProductCardProp
           {product.category_name}
         </p>
 
-        <div className="flex items-center justify-between mt-auto pt-2">
+        <div className="flex flex-col space-y-1 items-center justify-between mt-auto pt-2">
           <span
             className={`text-sm font-bold ${isDark ? "text-teal-400" : "text-teal-600"
               }`}

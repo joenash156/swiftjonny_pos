@@ -5,6 +5,7 @@ import { createProduct, deleteProduct, getAllProducts, getProductById, updatePro
 import { validateUUID } from "../middlewares/uuidValidation.middleware";
 import { requireUploadType } from "../middlewares/requireUploadType.middleware";
 import upload from "../middlewares/uploads.middleware";
+import { productSearchLimiter } from "../configs/rateLimiter";
 
 const router: Router = express.Router();
 
@@ -12,7 +13,7 @@ const router: Router = express.Router();
 router.post("/create", requireAuth, requireAdmin, requireUploadType("product"), upload.single("product"), createProduct);
 
 // router to get all products
-router.get("/get_all", requireAuth, getAllProducts);
+router.get("/get_all", requireAuth, productSearchLimiter, getAllProducts);
 
 // router to get a product by id
 router.get("/:id", requireAuth, validateUUID, getProductById);

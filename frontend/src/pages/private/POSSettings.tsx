@@ -132,7 +132,7 @@ function POSSettingsPage() {
     : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80";
 
   return (
-    <PageTransition className={`min-h-full p-5 md:p-7 ${bg}`}>
+    <PageTransition className={`min-h-screen p-5 md:p-7 ${bg}`}>
       {/* Toast */}
       <AnimatePresence>
         {toast && (

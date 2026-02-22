@@ -217,7 +217,11 @@ interface SuccessModalProps {
 function SuccessModal({ isDark, sale, onClose, onPrintAgain }: SuccessModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <motion.div
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -225,6 +229,13 @@ function SuccessModal({ isDark, sale, onClose, onPrintAgain }: SuccessModalProps
         transition={{ duration: 0.25, ease: "easeOut" }}
         className={`relative w-full max-w-sm rounded-2xl shadow-2xl p-8 text-center ${isDark ? "bg-slate-900 border border-slate-800" : "bg-white border border-slate-200"}`}
       >
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className={`absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg transition-colors ${isDark ? "text-slate-500 hover:bg-slate-800 hover:text-white" : "text-slate-400 hover:bg-slate-100 hover:text-slate-700"}`}
+        >
+          <i className="fa-solid fa-xmark text-sm" />
+        </button>
         <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${isDark ? "bg-teal-500/10" : "bg-teal-50"}`}>
           <i className="fa-solid fa-circle-check text-teal-500 text-3xl" />
         </div>
@@ -253,6 +264,10 @@ function POSTerminal() {
   const { user } = useAuth();
   const isDark = theme === "dark";
 
+  // Per-user localStorage key so different cashiers on the same machine
+  // each have their own independent cart.
+  const cartKey = `pos_cart_${user?.id ?? "guest"}`;
+
   const [products, setProducts] = useState<Product[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
   const [settings, setSettings] = useState<POSSettings | null>(null);
@@ -260,7 +275,18 @@ function POSTerminal() {
   const [settingsConfigured, setSettingsConfigured] = useState(false);
 
   const [search, setSearch] = useState("");
-  const [cart, setCart] = useState<CartEntry[]>([]);
+  // Initialize cart from localStorage.
+  const [cart, setCart] = useState<CartEntry[]>(() => {
+    try {
+      // Read the user ID from localStorage directly (AuthContext seeds it there)
+      const stored = localStorage.getItem(
+        `pos_cart_${(JSON.parse(localStorage.getItem("user") ?? "null") as { id?: string } | null)?.id ?? "guest"}`
+      );
+      return stored ? (JSON.parse(stored) as CartEntry[]) : [];
+    } catch {
+      return [];
+    }
+  });
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
   const [printReceipt, setPrintReceipt] = useState(false);
 
@@ -301,6 +327,13 @@ function POSTerminal() {
 
   useEffect(() => { loadSettings(); loadProducts(); }, [loadSettings, loadProducts]);
 
+  // Persist cart to localStorage whenever it changes.
+  useEffect(() => {
+    try {
+      localStorage.setItem(cartKey, JSON.stringify(cart));
+    } catch { /* storage full or unavailable — fail silently */ }
+  }, [cart, cartKey]);
+
   // debounced product search
   useEffect(() => {
     const t = setTimeout(() => loadProducts(search), 300);
@@ -330,7 +363,10 @@ function POSTerminal() {
   };
 
   const removeFromCart = (productId: string) => setCart((prev) => prev.filter((e) => e.product.id !== productId));
-  const clearCart = () => setCart([]);
+  const clearCart = () => {
+    setCart([]);
+    try { localStorage.removeItem(cartKey); } catch { /* storage unavailable */ }
+  };
 
   // totals
   const subtotal = cart.reduce((s, e) => s + e.product.price * e.quantity, 0);
@@ -391,7 +427,7 @@ function POSTerminal() {
   const isLoading = productsLoading || settingsLoading;
 
   return (
-    <PageTransition className={`min-h-full flex flex-col ${bg}`}>
+    <PageTransition className={`min-h-screen flex flex-col ${bg}`}>
 
       {/* Top bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 pt-5 pb-0">

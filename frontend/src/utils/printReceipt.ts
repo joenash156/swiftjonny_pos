@@ -52,7 +52,7 @@ export function printSaleReceipt(receipt: ReceiptData): void {
   <title>Receipt #${receipt.public_id}</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #111; background: #fff; padding: 16px; max-width: 320px; margin: 0 auto; }
+    body { font-family: 'Courier New', Courier, monospace; font-size: 12px; color: #111; background: #fff; padding: 16px; max-width: 320px; margin: 0 auto; }
     h2 { font-size: 16px; text-align: center; margin-bottom: 4px; }
     .sub { text-align: center; font-size: 12px; color: #555; margin-bottom: 10px; }
     hr { border: none; border-top: 1px dashed #aaa; margin: 8px 0; }
@@ -60,13 +60,13 @@ export function printSaleReceipt(receipt: ReceiptData): void {
     th { font-size: 11px; text-transform: uppercase; color: #777; padding: 2px 0; }
     .totals td { padding: 2px 0; }
     .totals .label { color: #555; }
-    .grand { font-weight: bold; font-size: 15px; }
+    .grand { font-weight: bold; font-size: 14px; }
     .footer { text-align: center; font-size: 12px; color: #555; margin-top: 10px; }
     @media print { body { padding: 0; } }
   </style>
 </head><body>
   <h2>${receipt.receipt_header}</h2>
-  <div class="sub">Receipt #${receipt.public_id.slice(0, 12).toUpperCase()}</div>
+  <div class="sub">Receipt #${receipt.public_id}</div>
   <div class="sub">${fmtDate(receipt.created_at)}</div>
   <div class="sub">Cashier: ${receipt.cashier_name}</div>
   <hr/>

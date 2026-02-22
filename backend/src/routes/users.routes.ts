@@ -1,6 +1,7 @@
 import express, { Router } from "express";
 import { changePassword, changeThemePreference, createUser, deleteUser, forgotPassword, generateNewAccessToken, getUserProfile, loginUser, logoutUser, removeAvatar, resendVerificationEmail, resetPassword, updateAvatar, updateUserProfile, verifyEmail } from "../controllers/users.controllers";
 import { requireAuth } from "../middlewares/auth.middleware";
+import { authLimiter } from "../configs/rateLimiter";
 import upload from "../middlewares/uploads.middleware";
 import { requireUploadType } from "../middlewares/requireUploadType.middleware";
 
@@ -8,16 +9,16 @@ import { requireUploadType } from "../middlewares/requireUploadType.middleware";
 const router: Router = express.Router();
 
 // router to register user
-router.post("/signup", createUser);
+router.post("/signup", authLimiter, createUser);
 
 // router to verify email
 router.get("/verify_email", verifyEmail)
 
 // router to resend verification email
-router.post("/resend_verification_email", resendVerificationEmail)
+router.post("/resend_verification_email", authLimiter, resendVerificationEmail)
 
 // router to login in user
-router.post("/login", loginUser);
+router.post("/login", authLimiter, loginUser);
 
 // router to get user profile only when logged in (protected route)
 router.get("/profile", requireAuth, getUserProfile);
@@ -29,10 +30,10 @@ router.patch("/update_profile", requireAuth, updateUserProfile);
 router.patch("/change_password", requireAuth, changePassword);
 
 // router for forgot password
-router.post("/forgot_password", forgotPassword)
+router.post("/forgot_password", authLimiter, forgotPassword)
 
 // router to reset user password
-router.post("/reset_password", resetPassword)
+router.post("/reset_password", authLimiter, resetPassword)
 
 // router to update/change user theme preference when logged in (protected router)
 router.patch("/change_theme_preference", requireAuth, changeThemePreference);
