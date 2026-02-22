@@ -1,13 +1,13 @@
 import { useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "../contexts/AuthContext";
 import { useSidebar } from "../contexts/SidebarContext";
 import ThemeToggler from "./ThemeToggler";
+import { useThemeSync } from "../hooks/useThemeSync";
 
 function Header() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useThemeSync();
   const { user, logout } = useAuth();
   const { toggleOpen } = useSidebar();
   const navigate = useNavigate();
@@ -44,8 +44,8 @@ function Header() {
         ? "bg-amber-400/15 text-amber-300 border border-amber-400/20"
         : "bg-amber-50 text-amber-600 border border-amber-200"
       : isDark
-      ? "bg-teal-400/10 text-teal-300 border border-teal-400/20"
-      : "bg-teal-50 text-teal-600 border border-teal-200";
+        ? "bg-teal-400/10 text-teal-300 border border-teal-400/20"
+        : "bg-teal-50 text-teal-600 border border-teal-200";
 
   const userInitials = user
     ? `${user.firstname?.[0] ?? ""}${user.lastname?.[0] ?? ""}`.toUpperCase()
@@ -125,9 +125,8 @@ function Header() {
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setMenuOpen((prev) => !prev)}
-            className={`flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors duration-200 ${
-              isDark ? "hover:bg-slate-800" : "hover:bg-slate-100"
-            } ${menuOpen ? (isDark ? "bg-slate-800" : "bg-slate-100") : ""}`}
+            className={`flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors duration-200 ${isDark ? "hover:bg-slate-800" : "hover:bg-slate-100"
+              } ${menuOpen ? (isDark ? "bg-slate-800" : "bg-slate-100") : ""}`}
             aria-label="User menu"
           >
             <div className="w-7 h-7 rounded-full bg-teal-600 flex items-center justify-center text-white text-xs font-bold shrink-0 overflow-hidden">
@@ -138,16 +137,14 @@ function Header() {
               )}
             </div>
             <span
-              className={`hidden sm:block text-sm font-medium max-w-30 truncate ${
-                isDark ? "text-slate-200" : "text-slate-700"
-              }`}
+              className={`hidden sm:block text-sm font-medium max-w-30 truncate ${isDark ? "text-slate-200" : "text-slate-700"
+                }`}
             >
               {user?.firstname} {user?.lastname}
             </span>
             <i
-              className={`fa-solid fa-chevron-down text-[10px] hidden sm:block transition-transform duration-200 ${
-                isDark ? "text-slate-500" : "text-slate-400"
-              } ${menuOpen ? "rotate-180" : ""}`}
+              className={`fa-solid fa-chevron-down text-[10px] hidden sm:block transition-transform duration-200 ${isDark ? "text-slate-500" : "text-slate-400"
+                } ${menuOpen ? "rotate-180" : ""}`}
             />
           </button>
 
@@ -159,16 +156,14 @@ function Header() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -6, scale: 0.97 }}
                 transition={{ duration: 0.15, ease: "easeOut" }}
-                className={`absolute right-0 top-full mt-2 w-64 rounded-2xl border shadow-xl z-50 overflow-hidden ${
-                  isDark
+                className={`absolute right-0 top-full mt-2 w-64 rounded-2xl border shadow-xl z-50 overflow-hidden ${isDark
                     ? "bg-slate-900 border-slate-700 shadow-black/40"
                     : "bg-white border-slate-200 shadow-slate-200/60"
-                }`}
+                  }`}
               >
                 {/* User info block */}
-                <div className={`px-4 py-4 border-b ${
-                  isDark ? "border-slate-700/60" : "border-slate-100"
-                }`}>
+                <div className={`px-4 py-4 border-b ${isDark ? "border-slate-700/60" : "border-slate-100"
+                  }`}>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white text-sm font-bold shrink-0 overflow-hidden">
                       {user?.avatar_url ? (
@@ -178,14 +173,12 @@ function Header() {
                       )}
                     </div>
                     <div className="min-w-0">
-                      <p className={`text-sm font-semibold truncate ${
-                        isDark ? "text-white" : "text-slate-900"
-                      }`}>
+                      <p className={`text-sm font-semibold truncate ${isDark ? "text-white" : "text-slate-900"
+                        }`}>
                         {user?.firstname} {user?.lastname}
                       </p>
-                      <p className={`text-xs truncate mt-0.5 ${
-                        isDark ? "text-slate-400" : "text-slate-500"
-                      }`}>
+                      <p className={`text-xs truncate mt-0.5 ${isDark ? "text-slate-400" : "text-slate-500"
+                        }`}>
                         {user?.email}
                       </p>
                       <span className={`inline-block mt-1.5 text-[10px] font-semibold px-2 py-0.5 rounded-full ${roleBadgeClass}`}>
@@ -198,40 +191,36 @@ function Header() {
                 {/* Nav links */}
                 <div className="py-1.5">
                   {[
-                    { icon: "fa-solid fa-user",            label: "My Profile",        to: "/settings" },
+                    { icon: "fa-solid fa-user", label: "My Profile", to: "/settings" },
                     // { icon: "fa-solid fa-shield-halved",   label: "Account & Security", to: "/settings/security" },
                     // { icon: "fa-solid fa-gear",            label: "Settings",           to: "/settings" },
-                    { icon: "fa-solid fa-circle-question", label: "Help & Support",     to: "/help" },
+                    { icon: "fa-solid fa-circle-question", label: "Help & Support", to: "/help" },
                   ].map((item) => (
                     <Link
                       key={item.to}
                       to={item.to}
                       onClick={() => setMenuOpen(false)}
-                      className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-150 ${
-                        isDark
+                      className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-150 ${isDark
                           ? "text-slate-300 hover:bg-slate-800 hover:text-white"
                           : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                      }`}
+                        }`}
                     >
-                      <i className={`${item.icon} w-4 text-center text-xs ${
-                        isDark ? "text-slate-500" : "text-slate-400"
-                      }`} />
+                      <i className={`${item.icon} w-4 text-center text-xs ${isDark ? "text-slate-500" : "text-slate-400"
+                        }`} />
                       {item.label}
                     </Link>
                   ))}
                 </div>
 
                 {/* Logout */}
-                <div className={`border-t py-1.5 ${
-                  isDark ? "border-slate-700/60" : "border-slate-100"
-                }`}>
+                <div className={`border-t py-1.5 ${isDark ? "border-slate-700/60" : "border-slate-100"
+                  }`}>
                   <button
                     onClick={handleLogout}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-150 ${
-                      isDark
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-150 ${isDark
                         ? "text-red-400 hover:bg-red-500/10 hover:text-red-300"
                         : "text-red-500 hover:bg-red-50 hover:text-red-600"
-                    }`}
+                      }`}
                   >
                     <i className="fa-solid fa-arrow-right-from-bracket w-4 text-center text-xs" />
                     Logout

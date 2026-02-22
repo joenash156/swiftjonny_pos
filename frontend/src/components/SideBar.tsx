@@ -14,7 +14,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "Dashboard", path: "/dashboard", icon: "fa-solid fa-gauge" },
-  { label: "Sales", path: "/sales", icon: "fa-solid fa-receipt" },
+  { label: "Sales / Transactions", path: "/sales", icon: "fa-solid fa-receipt" },
   { label: "Products", path: "/products", icon: "fa-solid fa-box" },
   { label: "Categories", path: "/categories", icon: "fa-solid fa-tags" },
   { label: "Inventory", path: "/inventory", icon: "fa-solid fa-warehouse" },

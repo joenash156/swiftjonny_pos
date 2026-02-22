@@ -251,10 +251,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      await api.patch("/api/user/theme", { theme });
+      await api.patch("/api/user/change_theme_preference", { theme_preference: theme });
 
-      // Update local user state
-      const updatedUser = { ...user, theme };
+      // Update local user state with the correct field name
+      const updatedUser = { ...user, theme_preference: theme };
       setUser(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));
     } catch (error) {

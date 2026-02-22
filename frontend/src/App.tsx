@@ -7,6 +7,7 @@ import Homepage from "./pages/public/Homepage"
 import Register from "./pages/public/Register"
 import AppLayout from "./layouts/AppLayout"
 import Dashboard from "./pages/private/Dashboard"
+import Sales from "./pages/private/Sales"
 import Cashiers from "./pages/private/Cashiers"
 import Settings from "./pages/private/Settings"
 import POSTerminal from "./pages/private/POSTerminal"
@@ -44,6 +45,7 @@ function App() {
         {/* App layout (protected routes) */}
         <Route element={<AppLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/sales" element={<Sales />} />
           <Route path="/pos" element={<POSTerminal />} />
           <Route path="/cashiers" element={<Cashiers />} />
           <Route path="/settings" element={<Settings />} />
