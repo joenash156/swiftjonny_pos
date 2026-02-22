@@ -27,13 +27,16 @@ export const createCategory = async (req: Request, res: Response): Promise<void>
     // insert category into database since it does not exist
     await db.query<ResultSetHeader>("INSERT INTO categories (name, description) VALUES (?, ?)", [name, description || null]);
 
+    // fetch the newly created category to return full details (including id and created_at)
+    const [createdRows] = await db.query<RowDataPacket[]>(
+      "SELECT id, name, description, created_at, updated_at FROM categories WHERE LOWER(name) = LOWER(?) ORDER BY created_at DESC LIMIT 1",
+      [name]
+    );
+
     res.status(201).json({
       success: true,
       message: "Category created successfully!✅",
-      category: {
-        name,
-        description
-      }
+      category: createdRows[0]
     });
     return;
 
@@ -61,41 +64,59 @@ export const getAllCategories = async (req: Request, res: Response): Promise<voi
   try {
     const { search, sortBy, limitTo, offsetTo } = req.query;
 
-    let query = `SELECT id, name, description, created_at, updated_at FROM categories`;
-
+    const whereClause: string[] = [];
     const params: (string | number)[] = [];
 
     if (search && typeof search === "string") {
-      query += " WHERE LOWER(name) LIKE LOWER(?)";
-      const searchPattern = `%${search}%`;
-      params.push(searchPattern);
+      whereClause.push("LOWER(c.name) LIKE LOWER(?)");
+      params.push(`%${search}%`);
     }
 
-    const sortColumn = typeof sortBy === "string" && sortBy === "name" ? "name" : "created_at";
-    query += ` ORDER BY ${sortColumn} ASC`;
+    const whereStr = whereClause.length > 0 ? ` WHERE ${whereClause.join(" AND ")}` : "";
 
-    const limit = limitTo ? Number(limitTo) : 20;
-    const offset = offsetTo ? Number(offsetTo) : 0;
-    query += " LIMIT ? OFFSET ?";
-    params.push(limit, offset);
+    // get real total count for the current filter
+    const [countRows] = await db.query<RowDataPacket[]>(
+      `SELECT COUNT(*) as total FROM categories c${whereStr}`,
+      params
+    );
+    const totalCount = Number(countRows[0]?.total ?? 0);
 
-
-    const [categories] = await db.query<RowDataPacket[]>(query, params);
-
-    if(categories.length === 0) {
-       res.status(200).json({
+    if (totalCount === 0) {
+      res.status(200).json({
         success: true,
         counts: 0,
-        message: "No categories found"
+        message: "No categories found",
+        categories: [],
       });
       return;
     }
 
+    const sortColumn = typeof sortBy === "string" && sortBy === "name" ? "c.name" : "c.created_at";
+    const pageLimit = limitTo ? Number(limitTo) : 20;
+    const offset = offsetTo ? Number(offsetTo) : 0;
+
+    const [categories] = await db.query<RowDataPacket[]>(
+      `SELECT c.id, c.name, c.description, c.created_at, c.updated_at,
+              COUNT(p.id) AS product_count
+       FROM categories c
+       LEFT JOIN products p ON p.category_id = c.id
+       ${whereStr}
+       GROUP BY c.id
+       ORDER BY ${sortColumn} ASC
+       LIMIT ? OFFSET ?`,
+      [...params, pageLimit, offset]
+    );
+
+    const sanitizedCategories = categories.map(c => ({
+      ...c,
+      product_count: Number(c.product_count),
+    }));
+
     res.status(200).json({
       success: true,
-      counts: categories.length,
+      counts: totalCount,
       message: "Categories fetched successfully!✅",
-      categories
+      categories: sanitizedCategories
     });
     return;
 

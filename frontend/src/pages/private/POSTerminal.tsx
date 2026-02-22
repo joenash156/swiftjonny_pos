@@ -443,13 +443,13 @@ function POSTerminal() {
         {!settingsLoading && !settingsConfigured && (
           <div className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium border ${isDark ? "bg-amber-500/5 border-amber-500/20 text-amber-400" : "bg-amber-50 border-amber-200 text-amber-700"}`}>
             <i className="fa-solid fa-triangle-exclamation text-[11px]" />
-            POS not configured â€” contact your admin
+            POS not configured contact your admin
           </div>
         )}
         {!settingsLoading && settingsConfigured && settings && (
           <div className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium border ${isDark ? "bg-teal-500/5 border-teal-500/20 text-teal-400" : "bg-teal-50 border-teal-200 text-teal-700"}`}>
             <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
-            Tax {settings.tax_percent}% Â· Discount {settings.discount_percent}%
+            Tax {settings.tax_percent}% <span className="w-1.5 h-1.5 rounded-full bg-teal-500" /> Discount {settings.discount_percent}%
           </div>
         )}
       </div>

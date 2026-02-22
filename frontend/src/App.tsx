@@ -12,6 +12,8 @@ import Cashiers from "./pages/private/Cashiers"
 import Settings from "./pages/private/Settings"
 import POSTerminal from "./pages/private/POSTerminal"
 import POSSettings from "./pages/private/POSSettings"
+import Products from "./pages/private/Products"
+import Categories from "./pages/private/Categories"
 import VerifyEmail from "./pages/public/VerifyEmail"
 import EmailVerificationHandler from "./pages/public/EmailVerificationHandler"
 import ApprovalPending from "./pages/public/ApprovalPending"
@@ -50,6 +52,8 @@ function App() {
           <Route path="/pos" element={<POSTerminal />} />
           <Route path="/pos-settings" element={<POSSettings />} />
           <Route path="/cashiers" element={<Cashiers />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/categories" element={<Categories />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
 

@@ -55,17 +55,16 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
     // insert product into the database
     await db.query<ResultSetHeader>("INSERT INTO products (name, price, category_id, description, stock, image_url) VALUES (?, ?, ?, ?, ?, ?)", [name, price, category_id, description || null, stock, imageUrl || null]);
 
+    // fetch the created product with all details
+    const [createdProduct] = await db.query<RowDataPacket[]>("SELECT p.id, p.name, p.price, p.stock, p.description, p.image_url, p.created_at, p.updated_at, c.id AS category_id, c.name AS category_name FROM products p JOIN categories c ON p.category_id = c.id WHERE LOWER(p.name) = LOWER(?) AND p.category_id = ? ORDER BY p.created_at DESC LIMIT 1", [name, category_id]);
+
     res.status(201).json({
       success: true,
       message: "Product created successfully!✅",
       product: {
-        category_id,
-        name,
-        description,
-        price: Number(price),
-        stock,
-        category_name: categoryRows[0]!.name,
-        image_url: `${process.env.BASE_URL}/uploads/products/${imageUrl}` || null,
+        ...createdProduct[0],
+        price: Number(createdProduct[0]!.price),
+        image_url: createdProduct[0]!.image_url ? `${process.env.BASE_URL}/uploads/products/${createdProduct[0]!.image_url}` : null,
       }
     });
     return;
@@ -101,8 +100,63 @@ export const getAllProducts = async (req: Request, res: Response): Promise<void>
     // get request query params
     const { search, sortBy, order, page, limit } = req.query;
 
-    // base query with join to fetch category details
-    let query = `
+    // build WHERE clause separately so it can be reused in count query
+    const whereClause: string[] = [];
+    const whereParams: (string | number)[] = [];
+
+    // search by product name (case-insensitive)
+    if (search && typeof search === "string") {
+      whereClause.push("LOWER(p.name) LIKE LOWER(?)");
+      whereParams.push(`%${search}%`);
+    }
+
+    const whereStr = whereClause.length > 0 ? ` WHERE ${whereClause.join(" AND ")}` : "";
+
+    // run aggregate count query (returns true total, in_stock and out_of_stock for current filter)
+    const [countRows] = await db.query<RowDataPacket[]>(
+      `SELECT
+        COUNT(*) AS total,
+        SUM(CASE WHEN p.stock > 0 THEN 1 ELSE 0 END) AS in_stock_count,
+        SUM(CASE WHEN p.stock = 0 THEN 1 ELSE 0 END) AS out_of_stock_count
+      FROM products p
+      JOIN categories c ON p.category_id = c.id${whereStr}`,
+      whereParams
+    );
+
+    const totalCount = Number(countRows[0]?.total ?? 0);
+    const inStockCount = Number(countRows[0]?.in_stock_count ?? 0);
+    const outOfStockCount = Number(countRows[0]?.out_of_stock_count ?? 0);
+
+    if (totalCount === 0) {
+      res.status(200).json({
+        success: true,
+        counts: 0,
+        in_stock_count: 0,
+        out_of_stock_count: 0,
+        message: "No products found",
+        products: [],
+      });
+      return;
+    }
+
+    // whitelist sorting columns
+    let sortColumn = "p.created_at";
+    if (sortBy === "name") sortColumn = "p.name";
+    if (sortBy === "price") sortColumn = "p.price";
+    if (sortBy === "stock") sortColumn = "p.stock";
+
+    // sorting order (ASC or DESC)
+    const sortOrder =
+      typeof order === "string" && order.toUpperCase() === "DESC"
+        ? "DESC"
+        : "ASC";
+
+    // pagination (page-based)
+    const pageNumber = typeof page === "string" && Number(page) > 0 ? Number(page) : 1;
+    const pageLimit = typeof limit === "string" && Number(limit) > 0 && Number(limit) <= 100 ? Number(limit) : 20;
+    const offset = (pageNumber - 1) * pageLimit;
+
+    const query = `
       SELECT 
         p.id,
         p.name,
@@ -114,51 +168,13 @@ export const getAllProducts = async (req: Request, res: Response): Promise<void>
         c.name AS category_name
       FROM products p
       JOIN categories c ON p.category_id = c.id
+      ${whereStr}
+      ORDER BY ${sortColumn} ${sortOrder}
+      LIMIT ? OFFSET ?
     `;
 
-    const params: (string | number)[] = [];
-
-    // search by product name (case-insensitive)
-    if (search && typeof search === "string") {
-      query += " WHERE LOWER(p.name) LIKE LOWER(?)";
-      params.push(`%${search}%`);
-    }
-
-    // whitelist sorting columns
-    let sortColumn = "p.created_at";
-
-    if (sortBy === "name") sortColumn = "p.name";
-    if (sortBy === "price") sortColumn = "p.price";
-    if (sortBy === "stock") sortColumn = "p.stock";
-
-    // sorting order (ASC or DESC)
-    const sortOrder =
-      typeof order === "string" && order.toUpperCase() === "DESC"
-        ? "DESC"
-        : "ASC";
-
-    query += ` ORDER BY ${sortColumn} ${sortOrder}`;
-
-    // pagination (page-based)
-    const pageNumber = typeof page === "string" && Number(page) > 0 ? Number(page) : 1;
-    const pageLimit = typeof limit === "string" && Number(limit) > 0 && Number(limit) <= 100 ? Number(limit) : 20;
-    const offset = (pageNumber - 1) * pageLimit;
-
-    query += " LIMIT ? OFFSET ?";
-    params.push(pageLimit, offset);
-
-    // execute query
-    const [products] = await db.query<RowDataPacket[]>(query, params);
-
-    if (products.length === 0) {
-      res.status(200).json({
-        success: true,
-        counts: 0,
-        message: "No products found",
-        products: [],
-      });
-      return;
-    }
+    // execute paginated query
+    const [products] = await db.query<RowDataPacket[]>(query, [...whereParams, pageLimit, offset]);
 
     // sanitize the products (eg. not to get the number in string)
     const sanitizedProducts = products.map((product) => ({
@@ -169,7 +185,9 @@ export const getAllProducts = async (req: Request, res: Response): Promise<void>
 
     res.status(200).json({
       success: true,
-      counts: products.length,
+      counts: totalCount,
+      in_stock_count: inStockCount,
+      out_of_stock_count: outOfStockCount,
       page: pageNumber,
       limit: pageLimit,
       message: "Products fetched successfully!✅",
@@ -346,7 +364,7 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
       product: {
         ...updatedProduct[0],
         price: Number(updatedProduct[0]!.price),
-        image_url: `${process.env.BASE_URL}/uploads/products/${updatedProduct[0]!.image_url}` || null,
+        image_url: updatedProduct[0]!.image_url ? `${process.env.BASE_URL}/uploads/products/${updatedProduct[0]!.image_url}` : null,
       }
     });
     return;
