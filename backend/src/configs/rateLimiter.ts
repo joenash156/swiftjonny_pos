@@ -9,13 +9,7 @@ const buildMessage = (detail?: string) => ({
   error: detail ?? "Too many requests, please try again later.",
 });
 
-/**
- * Key generator for authenticated routes.
- * Uses the user's UUID as the counter key so every cashier on the same
- * network has their own independent limit.
- * Falls back to ipKeyGenerator (the express-rate-limit v8 helper that
- * correctly normalises IPv6 addresses) for any unauthenticated requests.
- */
+
 const perUserKey = (req: Request): string =>
   (req as any).user?.id ?? ipKeyGenerator(req.ip ?? "0.0.0.0");
 

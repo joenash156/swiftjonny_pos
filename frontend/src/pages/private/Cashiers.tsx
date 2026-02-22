@@ -222,7 +222,7 @@ function Cashiers() {
 
   return (
     <div
-      className={`min-h-full p-5 md:p-7 ${isDark
+      className={`min-h-screen p-5 md:p-7 ${isDark
         ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900"
         : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80"
         }`}
