@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
-import { salesService, type Sale } from "../../services/salesService";
+import { salesService, type Sale, type SalesStats } from "../../services/salesService";
 import { SaleDetailModal } from "../../components/sales/SaleDetailModal";
 import api from "../../services/api";
 
@@ -179,7 +179,7 @@ function VoidModal({ publicId, isDark, onClose, onVoided }: VoidModalProps) {
 type SortBy = "created_at" | "total" | "cashier_firstname" | "cashier_lastname";
 type Order = "ASC" | "DESC";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 export default function Sales() {
   const { theme } = useTheme();
@@ -190,6 +190,12 @@ export default function Sales() {
   // ── data state ──
   const [sales, setSales] = useState<Sale[]>([]);
   const [total, setTotal] = useState(0);
+  const [stats, setStats] = useState<SalesStats>({
+    completed_count: 0,
+    voided_count: 0,
+    total_revenue: 0,
+    total_items_sold: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -226,6 +232,7 @@ export default function Sales() {
       });
       setSales(res.sales ?? []);
       setTotal(res.total ?? 0);
+      if (res.stats) setStats(res.stats);
     } catch {
       setError("Failed to load sales. Please try again.");
       setSales([]);
@@ -236,12 +243,8 @@ export default function Sales() {
 
   useEffect(() => { fetchSales(); }, [fetchSales]);
 
-  // ── derived stats ──
-  const completedSales = sales.filter((s) => s.status !== "voided");
-  const voidedSales = sales.filter((s) => s.status === "voided");
-  const totalRevenue = completedSales.reduce((sum, s) => sum + s.total, 0);
-  const avgOrder = completedSales.length > 0 ? totalRevenue / completedSales.length : 0;
-  const totalItems = completedSales.reduce((sum, s) => sum + s.items.length, 0);
+  // ── derived stats (from backend aggregates, not page rows) ──
+  const avgOrder = stats.completed_count > 0 ? stats.total_revenue / stats.completed_count : 0;
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
@@ -300,15 +303,15 @@ export default function Sales() {
         <SalesStatCard
           icon="fa-solid fa-receipt"
           label="Completed Sales"
-          value={loading ? "—" : String(completedSales.length)}
-          sub={`of ${total} this page`}
+          value={loading ? "—" : String(stats.completed_count)}
+          sub={`${total} total matching filter`}
           color="teal"
           isDark={isDark}
         />
         <SalesStatCard
           icon="fa-solid fa-coins"
           label="Total Revenue"
-          value={loading ? "—" : fmtCurrency(totalRevenue)}
+          value={loading ? "—" : fmtCurrency(stats.total_revenue)}
           sub="Completed sales only"
           color="blue"
           isDark={isDark}
@@ -317,14 +320,14 @@ export default function Sales() {
           icon="fa-solid fa-chart-line"
           label="Avg. Order Value"
           value={loading ? "—" : fmtCurrency(avgOrder)}
-          sub={`${totalItems} items sold`}
+          sub={`${stats.total_items_sold} items sold`}
           color="purple"
           isDark={isDark}
         />
         <SalesStatCard
           icon="fa-solid fa-ban"
           label="Voided Sales"
-          value={loading ? "—" : String(voidedSales.length)}
+          value={loading ? "—" : String(stats.voided_count)}
           sub="Revenue not counted"
           color="red"
           isDark={isDark}
@@ -519,7 +522,11 @@ export default function Sales() {
 
       {/* ── Mobile cards ── */}
       {!loading && sales.length > 0 && (
-        <div className="lg:hidden space-y-3 mb-5">
+        <div
+          className={`lg:hidden grid grid-cols-1 md:grid-cols-2 gap-3 mb-5 overflow-y-auto pr-1 ${isDark ? "[scrollbar-color:var(--color-slate-700)_transparent]" : "[scrollbar-color:var(--color-slate-300)_transparent]"
+            }`}
+          style={{ maxHeight: "70vh" }}
+        >
           {sales.map((sale) => (
             <div
               key={sale.public_id}

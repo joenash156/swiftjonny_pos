@@ -30,10 +30,18 @@ export interface Sale {
   created_at: string;
 }
 
+export interface SalesStats {
+  completed_count: number;
+  voided_count: number;
+  total_revenue: number;
+  total_items_sold: number;
+}
+
 export interface GetAllSalesResponse {
   success: boolean;
   counts: number;
   total: number;
+  stats: SalesStats;
   message: string;
   sales: Sale[];
 }

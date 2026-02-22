@@ -332,6 +332,36 @@ export const getAllSales = async (req: Request, res: Response): Promise<void> =>
     );
     const totalCount: number = (countRow as RowDataPacket)?.total ?? 0;
 
+    // ── aggregated KPI stats (full filtered dataset, no pagination) ──
+    const [[statsRow]] = await db.query<RowDataPacket[]>(
+      `SELECT
+         COUNT(CASE WHEN s.status != 'voided' THEN 1 END)                            AS completed_count,
+         COUNT(CASE WHEN s.status = 'voided'  THEN 1 END)                            AS voided_count,
+         COALESCE(SUM(CASE WHEN s.status != 'voided' THEN s.total    ELSE 0 END), 0) AS total_revenue
+       ${baseFrom}${whereClause}`,
+      whereParams
+    );
+
+    // items sold requires a join with sale_items — only count completed sales
+    const itemsWhereClause = whereClause
+      ? whereClause + " AND s.status != 'voided'"
+      : " WHERE s.status != 'voided'";
+    const [[itemsRow]] = await db.query<RowDataPacket[]>(
+      `SELECT COALESCE(SUM(si.quantity), 0) AS total_items_sold
+       FROM sales s
+       JOIN users u ON u.id = s.user_id
+       JOIN sale_items si ON si.sale_id = s.id
+       ${itemsWhereClause}`,
+      whereParams
+    );
+
+    const stats = {
+      completed_count: Number(statsRow?.completed_count ?? 0),
+      voided_count:    Number(statsRow?.voided_count    ?? 0),
+      total_revenue:   Number(statsRow?.total_revenue   ?? 0),
+      total_items_sold: Number(itemsRow?.total_items_sold ?? 0),
+    };
+
     // ── whitelist sorting columns ──
     let sortColumn = "s.created_at";
     if (sortBy === "cashier_firstname") sortColumn = "u.firstname";
@@ -360,6 +390,7 @@ export const getAllSales = async (req: Request, res: Response): Promise<void> =>
         success: true,
         counts: 0,
         total: totalCount,
+        stats,
         message: "No sales found!",
         sales: []
       });
@@ -420,6 +451,7 @@ export const getAllSales = async (req: Request, res: Response): Promise<void> =>
       success: true,
       counts: saleRows.length,
       total: totalCount,
+      stats,
       message: "Sales fetched successfully!✅",
       sales
     });
