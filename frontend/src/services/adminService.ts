@@ -7,6 +7,7 @@ export interface Cashier {
   othername?: string;
   email: string;
   phone?: string | null;
+  avatar_url?: string | null;
   other_phone?: string | null;
   is_approved: number | boolean;
   role: string;

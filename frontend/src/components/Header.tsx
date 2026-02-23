@@ -199,7 +199,7 @@ function Header() {
                   {[
                     { icon: "fa-solid fa-user", label: "My Profile", to: "/settings" },
                     // { icon: "fa-solid fa-shield-halved",   label: "Account & Security", to: "/settings/security" },
-                    // { icon: "fa-solid fa-gear",            label: "Settings",           to: "/settings" },
+                    { icon: "fa-solid fa-home",            label: "Home",           to: "/" },
                     { icon: "fa-solid fa-circle-question", label: "Help & Support", to: "/help" },
                   ].map((item) => (
                     <Link

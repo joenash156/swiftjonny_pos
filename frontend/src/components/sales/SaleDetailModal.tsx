@@ -252,13 +252,30 @@ export function SaleDetailModal({ publicId, isDark, onClose }: SaleDetailModalPr
                   </div>
                 </div>
 
-                {/* Void reason */}
-                {sale.status === "voided" && sale.void_reason && (
-                  <div className={`rounded-xl p-3.5 border ${isDark ? "bg-red-500/5 border-red-500/20" : "bg-red-50 border-red-200"}`}>
-                    <p className={`text-xs font-semibold uppercase tracking-wider mb-1 ${isDark ? "text-red-400" : "text-red-600"}`}>
-                      Void Reason
+                {/* Void details */}
+                {sale.status === "voided" && (
+                  <div className={`rounded-xl p-3.5 border space-y-3 ${isDark ? "bg-red-500/5 border-red-500/20" : "bg-red-50 border-red-200"}`}>
+                    <p className={`text-xs font-semibold uppercase tracking-wider ${isDark ? "text-red-400" : "text-red-600"}`}>
+                      Void Details
                     </p>
-                    <p className={`text-sm ${isDark ? "text-red-300" : "text-red-700"}`}>{sale.void_reason}</p>
+                    {sale.voided_at && (
+                      <div className="flex justify-between items-center">
+                        <span className={`text-xs ${isDark ? "text-red-400/70" : "text-red-500"}`}>Voided on</span>
+                        <span className={`text-xs font-medium ${isDark ? "text-red-300" : "text-red-700"}`}>{formatDateTime(sale.voided_at)}</span>
+                      </div>
+                    )}
+                    {sale.voided_by_name && (
+                      <div className="flex justify-between items-center">
+                        <span className={`text-xs ${isDark ? "text-red-400/70" : "text-red-500"}`}>Voided by</span>
+                        <span className={`text-xs font-medium ${isDark ? "text-red-300" : "text-red-700"}`}>{sale.voided_by_name}</span>
+                      </div>
+                    )}
+                    {sale.void_reason && (
+                      <div>
+                        <span className={`text-xs ${isDark ? "text-red-400/70" : "text-red-500"}`}>Reason</span>
+                        <p className={`text-sm mt-0.5 ${isDark ? "text-red-300" : "text-red-700"}`}>{sale.void_reason}</p>
+                      </div>
+                    )}
                   </div>
                 )}
               </>)}

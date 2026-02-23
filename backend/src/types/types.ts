@@ -24,9 +24,10 @@ export type SaleReceipt = {
   total: number;
   payment_method: string;
   status: string;
-  voided_at: Date;
-  voided_by: string;
-  void_reason: string;
+  voided_at: Date | null;
+  voided_by: string | null;
+  voided_by_name: string | null;
+  void_reason: string | null;
   cashier: {
     id: string;
     name: string;

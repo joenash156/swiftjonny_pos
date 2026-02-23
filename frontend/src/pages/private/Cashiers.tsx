@@ -412,7 +412,7 @@ function Cashiers() {
           <>
             {/* Desktop Table */}
             <div
-              className={`hidden md:block rounded-2xl border overflow-hidden ${isDark ? "border-slate-800" : "border-slate-200"
+              className={`hidden lg:block rounded-2xl border overflow-hidden ${isDark ? "border-slate-800" : "border-slate-200"
                 }`}
             >
               <table className="w-full text-sm">
@@ -444,9 +444,17 @@ function Cashiers() {
                     >
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-teal-600 flex items-center justify-center text-white text-xs font-semibold shrink-0">
-                            {getInitials(cashier)}
-                          </div>
+                          {cashier.avatar_url ? (
+                            <img
+                              src={cashier.avatar_url}
+                              alt={`${cashier.firstname} ${cashier.lastname}`}
+                              className="w-8 h-8 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-8 h-8 rounded-full bg-teal-600 flex items-center justify-center text-white text-xs font-semibold shrink-0">
+                              {getInitials(cashier)}
+                            </div>
+                          )}
                           <span className="font-medium">
                             {cashier.firstname} {cashier.lastname}
                           </span>
@@ -455,9 +463,9 @@ function Cashiers() {
                       <td className="px-5 py-3.5 font-mono text-xs opacity-80">
                         {cashier.email}
                       </td>
-                      <td className="px-5 py-3.5">{cashier.phone || "—"}</td>
-                      <td className="px-5 py-3.5 capitalize">{cashier.role}</td>
-                      <td className="px-5 py-3.5">
+                      <td className="px-5 py-3.5 lg:text-xs">{cashier.phone || "—"}</td>
+                      <td className="px-5 py-3.5 capitalize lg:text-xs">{cashier.role}</td>
+                      <td className="px-5 py-3.5 lg:text-xs">
                         <StatusBadge approved={Boolean(cashier.is_approved)} isDark={isDark} />
                       </td>
                       <td className="px-5 py-3.5 text-xs opacity-70">
@@ -473,7 +481,7 @@ function Cashiers() {
             </div>
 
             {/* Mobile Cards */}
-            <div className="md:hidden space-y-3">
+            <div className="lg:hidden space-y-3">
               {filtered.map((cashier) => (
                 <div
                   key={cashier.id}
@@ -485,9 +493,17 @@ function Cashiers() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
-                        {getInitials(cashier)}
-                      </div>
+                      {cashier.avatar_url ? (
+                        <img
+                          src={cashier.avatar_url}
+                          alt={`${cashier.firstname} ${cashier.lastname}`}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
+                          {getInitials(cashier)}
+                        </div>
+                      )}
                       <div className="min-w-0">
                         <p
                           className={`font-semibold text-sm truncate ${isDark ? "text-white" : "text-slate-900"

@@ -378,8 +378,10 @@ export const getAllSales = async (req: Request, res: Response): Promise<void> =>
 
     // ── data query ──
     const dataQuery =
-      `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.id AS cashier_id, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
-       ${baseFrom}${whereClause}
+      `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at,
+              u.id AS cashier_id, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone,
+              vu.firstname AS voided_by_firstname, vu.lastname AS voided_by_lastname
+       ${baseFrom} LEFT JOIN users vu ON vu.id = s.voided_by${whereClause}
        ORDER BY ${sortColumn} ${sortOrder}
        LIMIT ? OFFSET ?`;
 
@@ -435,9 +437,12 @@ export const getAllSales = async (req: Request, res: Response): Promise<void> =>
       total: Number(sale.total),
       payment_method: sale.payment_method,
       status: sale.status,
-      voided_at: sale.voided_at,
-      voided_by: sale.voided_by,
-      void_reason: sale.void_reason,
+      voided_at: sale.voided_at ?? null,
+      voided_by: sale.voided_by ?? null,
+      voided_by_name: sale.voided_by
+        ? `${sale.voided_by_firstname ?? ""} ${sale.voided_by_lastname ?? ""}`.trim() || null
+        : null,
+      void_reason: sale.void_reason ?? null,
       cashier: {
         id: sale.cashier_id,
         name: `${sale.cashier_firstname} ${sale.cashier_lastname}`,

@@ -24,6 +24,7 @@ export interface Sale {
   status: string;
   voided_at: string | null;
   voided_by: string | null;
+  voided_by_name: string | null;
   void_reason: string | null;
   cashier: SaleCashier;
   items: SaleItem[];

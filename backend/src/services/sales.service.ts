@@ -15,13 +15,19 @@ export async function getSaleReceiptData(executor: Executor, public_id: string, 
   // fetch the sale
   const saleQuery =
     role === "admin"
-      ? `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.id AS cashier_id, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
+      ? `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at,
+              u.id AS cashier_id, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone,
+              vu.firstname AS voided_by_firstname, vu.lastname AS voided_by_lastname
          FROM sales s
          JOIN users u ON u.id = s.user_id
+         LEFT JOIN users vu ON vu.id = s.voided_by
          WHERE s.public_id = ?`
-      : `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at, u.id AS cashier_id, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone
+      : `SELECT s.id, s.public_id, s.subtotal, s.tax_amount, s.discount_amount, s.total, s.payment_method, s.status, s.voided_at, s.voided_by, s.void_reason, s.created_at,
+              u.id AS cashier_id, u.firstname AS cashier_firstname, u.lastname AS cashier_lastname, u.phone AS cashier_phone,
+              vu.firstname AS voided_by_firstname, vu.lastname AS voided_by_lastname
          FROM sales s
          JOIN users u ON u.id = s.user_id
+         LEFT JOIN users vu ON vu.id = s.voided_by
          WHERE s.public_id = ? AND s.user_id = ?`;
 
   const saleParams = role === "admin" ? [public_id] : [public_id, userId];
@@ -61,9 +67,12 @@ export async function getSaleReceiptData(executor: Executor, public_id: string, 
     total: Number(saleRow.total),
     payment_method: saleRow.payment_method,
     status: saleRow.status,
-    voided_at: saleRow.voided_at,
-    voided_by: saleRow.voided_by,
-    void_reason: saleRow.void_reason,
+    voided_at: saleRow.voided_at ?? null,
+    voided_by: saleRow.voided_by ?? null,
+    voided_by_name: saleRow.voided_by
+      ? `${saleRow.voided_by_firstname ?? ""} ${saleRow.voided_by_lastname ?? ""}`.trim() || null
+      : null,
+    void_reason: saleRow.void_reason ?? null,
     cashier: {
       id: saleRow.cashier_id,
       name: `${saleRow.cashier_firstname} ${saleRow.cashier_lastname}`,
