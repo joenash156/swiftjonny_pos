@@ -51,7 +51,7 @@ function AppLayout() {
           <Header />
 
           {/* Page content */}
-          <main className="flex-1 overflow-y-auto">
+          <main id="main-scroll" className="flex-1 overflow-y-auto">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={location.pathname}

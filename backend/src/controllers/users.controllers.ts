@@ -579,7 +579,7 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
     if (rows.length === 0) {
       res.status(200).json({
         success: true,
-        message: "If this email exists, a reset link has been sent✅.",
+        message: "If this email exists, a reset link has been sent.",
       });
       return;
     }
@@ -597,7 +597,7 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
 
     res.status(200).json({
       success: true,
-      message: "If this email exists, a reset link has been sent✅.",
+      message: "If this email exists, a reset link has been sent.",
     });
 
   } catch(err: unknown) {
@@ -663,7 +663,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
 
     res.status(200).json({
       success: true,
-      message: "Password reset successful✅. You can now log in."
+      message: "Password reset successful. You can now log in."
     });
 
 
@@ -716,7 +716,7 @@ export const changeThemePreference = async (req: Request, res: Response): Promis
 
     res.status(200).json({
       success: true,
-      message: "Theme preference changed successfully!✅",
+      message: "Theme preference changed successfully!",
       user: {
         id: userId,
         theme_preference

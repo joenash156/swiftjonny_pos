@@ -5,6 +5,8 @@ import AuthPagesLayout from "./layouts/AuthPagesLayout"
 import Login from "./pages/public/Login"
 import Homepage from "./pages/public/Homepage"
 import Register from "./pages/public/Register"
+import ForgotPassword from "./pages/public/ForgotPassword"
+import ResetPassword from "./pages/public/ResetPassword"
 import AppLayout from "./layouts/AppLayout"
 import Dashboard from "./pages/private/Dashboard"
 import Sales from "./pages/private/Sales"
@@ -47,6 +49,8 @@ function App() {
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/email/verify" element={<EmailVerificationHandler />} />
           <Route path="/approval-pending" element={<ApprovalPending />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
 
         {/* App layout (protected routes) */}

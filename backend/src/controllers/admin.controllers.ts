@@ -10,7 +10,7 @@ export const getAllCashiers = async (req: Request, res: Response): Promise<void>
   try {
     const { is_approved, search, sortBy } = req.query;
 
-    let query = `SELECT id, firstname, lastname, othername, email, phone, other_phone, is_approved, role, last_login_at, is_profile_complete, created_at FROM users WHERE role = ?`;
+    let query = `SELECT id, firstname, lastname, othername, email, phone, other_phone, avatar_url, is_approved, role, last_login_at, is_profile_complete, created_at FROM users WHERE role = ?`;
 
     const params: (string | number)[] = ["cashier"];
 
@@ -43,7 +43,10 @@ export const getAllCashiers = async (req: Request, res: Response): Promise<void>
       success: true,
       counts: cashiers.length,
       message: "Cashiers fetched successfully!✅",
-      cashiers
+      cashiers: cashiers.map(c => ({
+        ...c,
+        avatar_url: c.avatar_url ? `${process.env.BASE_URL}/uploads/avatars/${c.avatar_url}` : null,
+      }))
     });
     return;
 
@@ -63,7 +66,7 @@ export const getCashierById = async (req: Request, res: Response): Promise<void>
     const  { id } = req.params;
 
     // get user details from the database
-    const [rows] = await db.query<RowDataPacket[]>("SELECT id, firstname, lastname, othername, email, phone, other_phone, is_approved, role, last_login_at, is_profile_complete, created_at FROM users WHERE id = ? AND role = ?", [id, "cashier"]);
+    const [rows] = await db.query<RowDataPacket[]>("SELECT id, firstname, lastname, othername, email, phone, other_phone, avatar_url,  is_approved, role, last_login_at, is_profile_complete, created_at FROM users WHERE id = ? AND role = ?", [id, "cashier"]);
 
     if(rows.length === 0) {
       res.status(404).json({
@@ -76,7 +79,10 @@ export const getCashierById = async (req: Request, res: Response): Promise<void>
     res.status(200).json({
       success: true,
       message: "Cashier found!✅",
-      cashier: rows[0]
+      cashier: {
+        ...rows[0],
+        avatar_url: rows[0]!.avatar_url ? `${process.env.BASE_URL}/uploads/avatars/${rows[0]!.avatar_url}` : null
+      }
     });
     return;    
 

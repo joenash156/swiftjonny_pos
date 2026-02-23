@@ -69,6 +69,8 @@ function Settings() {
   const [deletePassword, setDeletePassword] = useState("");
   const [showDeletePw, setShowDeletePw] = useState(false);
 
+  const [avatarErrorUrl, setAvatarErrorUrl] = useState<string | null>(null);
+
   // Toast helper
   const showToast = (msg: string, ok: boolean) => {
     setToast({ msg, ok });
@@ -366,11 +368,12 @@ function Settings() {
                 <div className="relative shrink-0">
                   <div className="w-18 h-18 rounded-full overflow-hidden bg-teal-600 flex items-center justify-center text-white text-xl font-bold select-none"
                     style={{ width: 72, height: 72 }}>
-                    {displayAvatarSrc ? (
+                    {user?.avatar_url && user.avatar_url !== avatarErrorUrl ? (
                       <img
-                        src={displayAvatarSrc!}
+                        src={user.avatar_url || displayAvatarSrc || undefined}
                         alt="Avatar"
                         className="w-full h-full object-cover"
+                        onError={() => setAvatarErrorUrl(user.avatar_url ?? null)}
                       />
                     ) : (
                       initials
