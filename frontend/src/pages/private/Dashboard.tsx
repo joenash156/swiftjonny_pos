@@ -369,7 +369,7 @@ function Dashboard() {
             <table className="w-full text-sm">
               <thead>
                 <tr className={`border-b text-left ${isDark ? "bg-slate-800/50 border-slate-800" : "bg-slate-50 border-slate-200"}`}>
-                  {["Transaction ID", "Cashier", "Items", "Total", "Payment", "Status", "Date", ""].map((h) => (
+                  {["Transaction ID", "Cashier", "Items", "Total", "Payment", "Status", "Date", "View"].map((h) => (
                     <th
                       key={h}
                       className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap ${isDark ? "text-slate-500" : "text-slate-400"}`}
@@ -387,7 +387,7 @@ function Dashboard() {
                   >
                     <td className="px-4 py-3.5">
                       <span className={`font-mono text-xs ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-                        #{tx.public_id.slice(0, 12)}&hellip;
+                        #{tx.public_id.slice(0, 14)}&hellip;
                       </span>
                     </td>
                     <td className="px-4 py-3.5">

@@ -265,7 +265,7 @@ export default function Categories() {
             Categories
           </h1>
           <p className={`text-sm mt-1 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-            {isAdmin ? "Organise your products into categories." : "Browse product categories."}
+            {isAdmin ? "Organize your products into categories." : "Browse product categories."}
           </p>
         </div>
         <div className="flex items-center gap-2">

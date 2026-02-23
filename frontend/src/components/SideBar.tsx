@@ -18,8 +18,8 @@ const navItems: NavItem[] = [
   { label: "Sales / Transactions", path: "/sales", icon: "fa-solid fa-receipt" },
   { label: "Products", path: "/products", icon: "fa-solid fa-box" },
   { label: "Categories", path: "/categories", icon: "fa-solid fa-tags" },
-  { label: "Inventory", path: "/inventory", icon: "fa-solid fa-warehouse" },
-  { label: "POS Settings", path: "/pos-settings", icon: "fa-solid fa-sliders", adminOnly: true },
+  { label: "Inventory", path: "/inventory", icon: "fa-solid fa-warehouse", adminOnly: true },
+  { label: "POS Settings", path: "/pos-settings", icon: "fa-solid fa-sliders" },
   { label: "Cashiers", path: "/cashiers", icon: "fa-solid fa-users", adminOnly: true },
   { label: "Analytics", path: "/analytics", icon: "fa-solid fa-chart-bar" },
   { label: "Settings", path: "/settings", icon: "fa-solid fa-gear" },
@@ -222,7 +222,7 @@ function Sidebar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            className="fixed backdrop-blur-xs inset-0 bg-black/50 z-40 md:hidden"
             onClick={closeSidebar}
           />
         )}
@@ -235,7 +235,7 @@ function Sidebar() {
         animate={{ x: isOpen ? 0 : "-100%" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className="fixed top-0 left-0 h-full z-50 md:hidden"
-        style={{ width: 260 }}
+        style={{ width: 270 }}
       >
         <SidebarContent />
       </motion.div>

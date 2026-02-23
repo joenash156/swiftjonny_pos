@@ -511,7 +511,7 @@ export default function Products() {
                     </td>
                     <td className="px-5 py-3.5 font-semibold whitespace-nowrap">{fmtCurrency(product.price)}</td>
                     <td className="px-5 py-3.5 whitespace-nowrap">{stockBadge(product.stock)}</td>
-                    <td className="px-5 py-3.5 text-xs opacity-70">{formatDate(product.created_at)}</td>
+                    <td className="px-5 py-3.5 text-[11px] opacity-70">{formatDate(product.created_at)}</td>
                     {isAdmin && (
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-1.5">
@@ -559,6 +559,7 @@ export default function Products() {
                       <span className={`text-sm font-bold ${isDark ? "text-teal-400" : "text-teal-600"}`}>{fmtCurrency(product.price)}</span>
                       {stockBadge(product.stock)}
                     </div>
+                    <p className={`text-xs mt-1 ${isDark ? "text-slate-500" : "text-slate-400"}`}>{formatDate(product.created_at)}</p>
                   </div>
                 </div>
                 {isAdmin && (

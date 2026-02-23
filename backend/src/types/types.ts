@@ -59,3 +59,9 @@ export type StockProduct = {
   unit_price: number;
   total_value: number;
 };
+
+export type StockAdjustment = {
+  type: "add" | "remove";
+  quantity: number;
+  reason?: string;
+};

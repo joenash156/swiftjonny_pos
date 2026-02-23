@@ -175,7 +175,7 @@ function POSSettingsPage() {
           <p className={`text-sm ml-10.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
             {isAdmin
               ? "Manage tax, discounts, and receipt templates for all transactions."
-              : "View your store's current POS configuration."}
+              : "View the store's current POS configuration."}
           </p>
         </div>
 
