@@ -28,7 +28,7 @@ export async function getAnalyticsSummary({ startDate, endDate, userId }: Analyt
   const itemsParams:(Date | string)[] = [startDate, endDate];
 
   if(userId) {
-    query += " AND s.user_id = ?";
+    itemsQuery += " AND s.user_id = ?";
     itemsParams.push(userId);
   }
 

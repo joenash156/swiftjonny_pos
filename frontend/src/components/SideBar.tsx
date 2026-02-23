@@ -4,6 +4,7 @@ import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "../contexts/AuthContext";
 import { useSidebar } from "../contexts/SidebarContext";
 import Logo from "../assets/logo.png";
+import { useState } from "react";
 
 interface NavItem {
   label: string;
@@ -29,6 +30,7 @@ function SidebarContent() {
   const { theme } = useTheme();
   const { user, logout } = useAuth();
   const { isCollapsed, toggleCollapsed, closeSidebar } = useSidebar();
+  const [avatarErrorUrl, setAvatarErrorUrl] = useState<string | null>(null);
   const location = useLocation();
 
   const isDark = theme === "dark";
@@ -93,11 +95,12 @@ function SidebarContent() {
             }`}
         >
           <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-sm shrink-0">
-            {user?.avatar_url ? (
+            {user?.avatar_url && user.avatar_url !== avatarErrorUrl ? (
               <img
                 src={user.avatar_url}
                 alt="avatar"
                 className="w-full h-full rounded-full object-cover"
+                onError={() => setAvatarErrorUrl(user.avatar_url ?? null)}
               />
             ) : (
               <span>{userInitials}</span>

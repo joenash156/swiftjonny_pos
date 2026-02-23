@@ -276,7 +276,7 @@ function Dashboard() {
             { label: "New Sale", icon: "fa-solid fa-cash-register", color: "bg-teal-600 hover:bg-teal-700", path: "/pos" },
             { label: "Add Product", icon: "fa-solid fa-plus", color: "bg-blue-600 hover:bg-blue-700", path: "/products" },
             { label: "View Reports", icon: "fa-solid fa-chart-bar", color: "bg-purple-600 hover:bg-purple-700", path: "/analytics" },
-          ].map((a) => (
+          ].filter(a => a.label !== "Add Product" || user?.role === "admin").map((a) => (
             <button
               onClick={() => router(a.path)}
               key={a.label}

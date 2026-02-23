@@ -172,7 +172,7 @@ function Header() {
                   }`}>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center text-white text-sm font-bold shrink-0 overflow-hidden">
-                      {user?.avatar_url ? (
+                      {user?.avatar_url && user.avatar_url !== avatarErrorUrl ? (
                         <img src={user.avatar_url} alt="avatar" className="w-full h-full object-cover" />
                       ) : (
                         <span>{userInitials}</span>

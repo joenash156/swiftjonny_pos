@@ -375,7 +375,6 @@ function LoginForm() {
                 </Link>
               </motion.p>
             </div>
-            {/* <span className="hidden sm:inline">•</span> */}
           </div>
         </div>
       </motion.footer>

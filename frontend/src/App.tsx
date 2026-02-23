@@ -20,6 +20,7 @@ import VerifyEmail from "./pages/public/VerifyEmail"
 import EmailVerificationHandler from "./pages/public/EmailVerificationHandler"
 import ApprovalPending from "./pages/public/ApprovalPending"
 import HelpSupport from "./pages/public/HelpSupport"
+import ScrollTop from "./components/ScrollTop"
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -36,6 +37,7 @@ function App() {
 
   return (
     <div>
+      <ScrollTop />
       <Routes>
         {/* Auth pages layout (unprotected routes) */}
         <Route element={<AuthPagesLayout />}>

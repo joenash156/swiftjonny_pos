@@ -25,7 +25,7 @@ import {
   type DateRangeParams,
 } from "../../services/analyticsService";
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────
 
 function fmtCurrency(v: number) {
   return `GH₵ ${v.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -77,7 +77,7 @@ function presetToRange(preset: Preset): DateRangeParams {
   }
 }
 
-// ─── Custom Recharts Tooltip ──────────────────────────────────────────────────
+// ─── Custom Recharts Tooltip 
 
 interface ChartTooltipProps {
   active?: boolean;
@@ -95,7 +95,7 @@ function ChartTooltip({ active, payload, label, isDark }: ChartTooltipProps) {
   );
 }
 
-// ─── Stat Card ────────────────────────────────────────────────────────────────
+// ─── Stat Card ─────────────────
 
 interface StatCardProps {
   label: string;
@@ -129,7 +129,7 @@ function StatCard({ label, value, icon, iconColor, bg, valueColor, delta, deltaU
   );
 }
 
-// ─── Revenue Comparison Card ──────────────────────────────────────────────────
+// ─── Revenue Comparison Card ───
 
 function RevenueCompCard({ data, loading, isDark }: { data: RevenueComparison | null; loading: boolean; isDark: boolean }) {
   const up = (data?.difference ?? 0) >= 0;
@@ -173,7 +173,7 @@ function RevenueCompCard({ data, loading, isDark }: { data: RevenueComparison | 
   );
 }
 
-// ─── Top Products Chart ───────────────────────────────────────────────────────
+// ─── Top Products Chart ────────
 
 function TopProductsPanel({ products, loading, isDark }: { products: TopProduct[]; loading: boolean; isDark: boolean }) {
   const max = Math.max(...products.map(p => p.total_quantity_sold), 1);
@@ -248,7 +248,7 @@ function TopProductsPanel({ products, loading, isDark }: { products: TopProduct[
   );
 }
 
-// ─── Cashier Performance Table ────────────────────────────────────────────────
+// ─── Cashier Performance Table ─
 
 function CashierPerfPanel({ cashiers, loading, isDark }: { cashiers: CashierPerf[]; loading: boolean; isDark: boolean }) {
   const medals = ["fa-solid fa-trophy", "fa-solid fa-medal", "fa-solid fa-award"];
@@ -353,7 +353,7 @@ function CashierPerfPanel({ cashiers, loading, isDark }: { cashiers: CashierPerf
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// ─── Main Page ─────────────────
 
 export default function Analytics() {
   const { theme } = useTheme();
