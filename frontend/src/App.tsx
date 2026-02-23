@@ -15,6 +15,7 @@ import POSSettings from "./pages/private/POSSettings"
 import Products from "./pages/private/Products"
 import Categories from "./pages/private/Categories"
 import Inventory from "./pages/private/Inventory"
+import Analytics from "./pages/private/Analytics"
 import VerifyEmail from "./pages/public/VerifyEmail"
 import EmailVerificationHandler from "./pages/public/EmailVerificationHandler"
 import ApprovalPending from "./pages/public/ApprovalPending"
@@ -56,6 +57,7 @@ function App() {
           <Route path="/products" element={<Products />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/inventory" element={<Inventory />} />
+          <Route path="/analytics" element={<Analytics />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
 

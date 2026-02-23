@@ -16,6 +16,7 @@ import { SalesTrendChart } from "../../components/dashboard/SalesTrendChart";
 import { TopProductsChart } from "../../components/dashboard/TopProductsChart";
 import { RevenueComparisonBanner } from "../../components/dashboard/RevenueComparisonBanner";
 import { SaleDetailModal } from "../../components/sales/SaleDetailModal";
+import { useNavigate } from "react-router-dom";
 
 function formatCurrency(v: number) {
   return `GH₵ ${v.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -33,6 +34,7 @@ function Dashboard() {
   const { user } = useAuth();
   const isDark = theme === "dark";
   const isAdmin = user?.role === "admin";
+  const router = useNavigate();
 
   const [period, setPeriod] = useState<PeriodPreset>("today");
   const [loading, setLoading] = useState(true);
@@ -156,7 +158,7 @@ function Dashboard() {
         </button>
       </div>
 
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col items-start lg:flex-row lg:items-center lg:justify-between">
         {/* Scope note */}
         <div className={`inline-flex items-center gap-2 mb-5 px-3 py-1.5 rounded-full text-xs font-medium border ${isAdmin
           ? isDark ? "bg-amber-500/8 border-amber-500/20 text-amber-300" : "bg-amber-50 border-amber-200 text-amber-700"
@@ -271,11 +273,12 @@ function Dashboard() {
         </h2>
         <div className="flex flex-wrap gap-3">
           {[
-            { label: "New Sale", icon: "fa-solid fa-cash-register", color: "bg-teal-600 hover:bg-teal-700" },
-            { label: "Add Product", icon: "fa-solid fa-plus", color: "bg-blue-600 hover:bg-blue-700" },
-            { label: "View Reports", icon: "fa-solid fa-chart-bar", color: "bg-purple-600 hover:bg-purple-700" },
+            { label: "New Sale", icon: "fa-solid fa-cash-register", color: "bg-teal-600 hover:bg-teal-700", path: "/pos" },
+            { label: "Add Product", icon: "fa-solid fa-plus", color: "bg-blue-600 hover:bg-blue-700", path: "/products" },
+            { label: "View Reports", icon: "fa-solid fa-chart-bar", color: "bg-purple-600 hover:bg-purple-700", path: "/analytics" },
           ].map((a) => (
             <button
+              onClick={() => router(a.path)}
               key={a.label}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-medium transition-all duration-200 shadow-sm ${a.color}`}
             >

@@ -27,6 +27,65 @@ export function SaleDetailModal({ publicId, isDark, onClose }: SaleDetailModalPr
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const handlePrint = () => {
+    if (!sale) return;
+    const win = window.open("", "_blank", "width=400,height=650");
+    if (!win) return;
+    win.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Receipt — #${sale.public_id.slice(0, 14)}</title>
+        <style>
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body { font-family: 'Courier New', monospace; font-size: 12px; color: #000; padding: 16px; width: 320px; }
+          .center { text-align: center; }
+          .bold { font-weight: bold; }
+          .divider { border-top: 1px dashed #000; margin: 8px 0; }
+          .row { display: flex; justify-content: space-between; margin: 3px 0; }
+          .store-name { font-size: 18px; font-weight: bold; margin-bottom: 2px; }
+          .total-row { font-size: 14px; font-weight: bold; }
+          .footer { margin-top: 12px; font-size: 11px; }
+        </style>
+      </head>
+      <body>
+        <div class="center">
+          <div class="store-name">SwiftJonny POS</div>
+          <div>${formatDateTime(sale.created_at)}</div>
+          <div style="font-size:10px;margin-top:2px">#${sale.public_id}</div>
+        </div>
+        <div class="divider"></div>
+        <div class="row"><span>Cashier:</span><span>${sale.cashier.name}</span></div>
+        <div class="row"><span>Payment:</span><span style="text-transform:capitalize">${sale.payment_method}</span></div>
+        <div class="divider"></div>
+        ${sale.items.map(item => `
+          <div class="row">
+            <span style="max-width:180px">${item.product_name}</span>
+            <span>GH₵ ${item.price.toLocaleString('en-GH', { minimumFractionDigits: 2 })}</span>
+          </div>
+          <div style="font-size:11px;color:#444;margin-bottom:4px">
+            ${item.quantity} × GH₵ ${item.product_price.toLocaleString('en-GH', { minimumFractionDigits: 2 })}
+          </div>
+        `).join('')}
+        <div class="divider"></div>
+        <div class="row"><span>Subtotal</span><span>GH₵ ${sale.subtotal.toLocaleString('en-GH', { minimumFractionDigits: 2 })}</span></div>
+        <div class="row"><span>Tax</span><span>GH₵ ${sale.tax_amount.toLocaleString('en-GH', { minimumFractionDigits: 2 })}</span></div>
+        <div class="row"><span>Discount</span><span>−GH₵ ${sale.discount_amount.toLocaleString('en-GH', { minimumFractionDigits: 2 })}</span></div>
+        <div class="divider"></div>
+        <div class="row total-row"><span>TOTAL</span><span>GH₵ ${sale.total.toLocaleString('en-GH', { minimumFractionDigits: 2 })}</span></div>
+        <div class="divider"></div>
+        <div class="center footer">
+          <div>Thank you for your purchase!</div>
+          <div style="margin-top:4px">Powered by SwiftJonny POS</div>
+        </div>
+      </body>
+      </html>
+    `);
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 250);
+  };
+
   useEffect(() => {
     let cancelled = false;
     salesService
@@ -202,9 +261,21 @@ export function SaleDetailModal({ publicId, isDark, onClose }: SaleDetailModalPr
                     <p className={`text-sm ${isDark ? "text-red-300" : "text-red-700"}`}>{sale.void_reason}</p>
                   </div>
                 )}
-              </>
-            )}
+              </>)}
           </div>
+
+          {/* Footer: Print Receipt */}
+          {sale && !loading && sale.status !== "voided" && (
+            <div className={`px-5 py-4 border-t shrink-0 ${isDark ? "border-slate-700/60" : "border-slate-100"}`}>
+              <button
+                onClick={handlePrint}
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white rounded-xl text-sm font-semibold transition-colors"
+              >
+                <i className="fa-solid fa-print text-xs" />
+                Print Receipt
+              </button>
+            </div>
+          )}
         </motion.div>
       </motion.div>
     </AnimatePresence>

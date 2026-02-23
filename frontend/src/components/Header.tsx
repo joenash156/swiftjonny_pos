@@ -13,6 +13,7 @@ function Header() {
   const navigate = useNavigate();
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [avatarErrorUrl, setAvatarErrorUrl] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown on outside click
@@ -130,8 +131,13 @@ function Header() {
             aria-label="User menu"
           >
             <div className="w-7 h-7 rounded-full bg-teal-600 flex items-center justify-center text-white text-xs font-bold shrink-0 overflow-hidden">
-              {user?.avatar_url ? (
-                <img src={user.avatar_url} alt="avatar" className="w-full h-full object-cover" />
+              {user?.avatar_url && user.avatar_url !== avatarErrorUrl ? (
+                <img
+                  src={user.avatar_url}
+                  alt="avatar"
+                  className="w-full h-full object-cover"
+                  onError={() => setAvatarErrorUrl(user.avatar_url ?? null)}
+                />
               ) : (
                 <span>{userInitials}</span>
               )}
@@ -157,8 +163,8 @@ function Header() {
                 exit={{ opacity: 0, y: -6, scale: 0.97 }}
                 transition={{ duration: 0.15, ease: "easeOut" }}
                 className={`absolute right-0 top-full mt-2 w-64 rounded-2xl border shadow-xl z-50 overflow-hidden ${isDark
-                    ? "bg-slate-900 border-slate-700 shadow-black/40"
-                    : "bg-white border-slate-200 shadow-slate-200/60"
+                  ? "bg-slate-900 border-slate-700 shadow-black/40"
+                  : "bg-white border-slate-200 shadow-slate-200/60"
                   }`}
               >
                 {/* User info block */}
@@ -201,8 +207,8 @@ function Header() {
                       to={item.to}
                       onClick={() => setMenuOpen(false)}
                       className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-150 ${isDark
-                          ? "text-slate-300 hover:bg-slate-800 hover:text-white"
-                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                        ? "text-slate-300 hover:bg-slate-800 hover:text-white"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                         }`}
                     >
                       <i className={`${item.icon} w-4 text-center text-xs ${isDark ? "text-slate-500" : "text-slate-400"
@@ -218,8 +224,8 @@ function Header() {
                   <button
                     onClick={handleLogout}
                     className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-150 ${isDark
-                        ? "text-red-400 hover:bg-red-500/10 hover:text-red-300"
-                        : "text-red-500 hover:bg-red-50 hover:text-red-600"
+                      ? "text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                      : "text-red-500 hover:bg-red-50 hover:text-red-600"
                       }`}
                   >
                     <i className="fa-solid fa-arrow-right-from-bracket w-4 text-center text-xs" />
