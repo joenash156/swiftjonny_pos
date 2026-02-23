@@ -24,7 +24,7 @@ export default function ForgotPassword() {
     setError(null);
     setLoading(true);
     try {
-      await api.post("/api/users/forgot_password", { email });
+      await api.post("/api/user/forgot_password", { email });
       setSent(true);
       setEmail("");
     } catch (err) {
@@ -38,8 +38,8 @@ export default function ForgotPassword() {
   return (
     <div
       className={`min-h-screen flex flex-col transition-colors duration-300 ${isDark
-          ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900 text-white"
-          : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80 text-slate-900"
+        ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900 text-white"
+        : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80 text-slate-900"
         }`}
     >
       {/* Header */}
@@ -60,8 +60,8 @@ export default function ForgotPassword() {
           <Link
             to="/login"
             className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${isDark
-                ? "border-slate-700 text-slate-300 hover:bg-slate-800"
-                : "border-slate-200 text-slate-600 hover:bg-white"
+              ? "border-slate-700 text-slate-300 hover:bg-slate-800"
+              : "border-slate-200 text-slate-600 hover:bg-white"
               }`}
           >
             <i className="fa-solid fa-arrow-left text-[10px] group-hover:-translate-x-0.5 transition-transform duration-200" />
@@ -126,8 +126,8 @@ export default function ForgotPassword() {
                       placeholder="you@example.com"
                       required
                       className={`w-full h-11 pl-10 pr-4 rounded-xl border text-sm transition-all duration-200 focus:outline-none focus:ring-2 ${isDark
-                          ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-teal-400 focus:ring-teal-400/20"
-                          : "bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:ring-teal-500/20"
+                        ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-teal-400 focus:ring-teal-400/20"
+                        : "bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:ring-teal-500/20"
                         }`}
                     />
                   </div>
@@ -169,17 +169,17 @@ export default function ForgotPassword() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.2 }}
             >
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-4 ${isDark ? "bg-teal-500/10" : "bg-teal-50"}`}>
+              <div className={`w-10 mx-auto text-center h-10 rounded-full flex items-center justify-center mb-4 ${isDark ? "bg-teal-500/10" : "bg-teal-50"}`}>
                 <i className="fa-solid fa-circle-check text-teal-500 text-lg" />
               </div>
-              <h2 className={`text-lg font-bold mb-2 ${isDark ? "text-white" : "text-slate-900"}`}>
+              <h2 className={`text-lg mx-auto text-center font-bold mb-2 ${isDark ? "text-white" : "text-slate-900"}`}>
                 Check your inbox
               </h2>
-              <p className={`text-sm leading-relaxed mb-6 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+              <p className={`text-sm mx-auto text-center leading-relaxed mb-6 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                 If <span className={`font-medium ${isDark ? "text-slate-200" : "text-slate-800"}`}>{email}</span> is
                 registered, you'll receive a password reset link shortly. The link expires in 15 minutes.
               </p>
-              <p className={`text-xs mb-5 ${isDark ? "text-slate-500" : "text-slate-400"}`}>
+              <p className={`text-xs mx-auto text-center mb-5 ${isDark ? "text-slate-500" : "text-slate-400"}`}>
                 Didn't receive it? Check your spam folder, or{" "}
                 <button
                   onClick={() => { setSent(false); setEmail(""); }}
@@ -192,8 +192,8 @@ export default function ForgotPassword() {
               <Link
                 to="/login"
                 className={`flex items-center justify-center gap-2 w-full h-11 rounded-xl border text-sm font-medium transition-colors ${isDark
-                    ? "border-slate-700 text-slate-300 hover:bg-slate-800"
-                    : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                  ? "border-slate-700 text-slate-300 hover:bg-slate-800"
+                  : "border-slate-200 text-slate-700 hover:bg-slate-50"
                   }`}
               >
                 <i className="fa-solid fa-arrow-left text-xs" />

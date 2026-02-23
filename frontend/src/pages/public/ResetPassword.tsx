@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -36,24 +36,23 @@ export default function ResetPassword() {
     return () => clearTimeout(t);
   }, [success, navigate]);
 
-  const passwordStrength = (p: string) => {
-    if (p.length === 0) return null;
-    const score = [p.length >= 8, /[A-Z]/.test(p), /[0-9]/.test(p), /[^A-Za-z0-9]/.test(p)].filter(Boolean).length;
-    if (score <= 1) return { label: "Weak", color: "bg-red-500", textColor: isDark ? "text-red-400" : "text-red-600" };
-    if (score === 2) return { label: "Fair", color: "bg-amber-500", textColor: isDark ? "text-amber-400" : "text-amber-600" };
-    if (score === 3) return { label: "Good", color: "bg-blue-500", textColor: isDark ? "text-blue-400" : "text-blue-600" };
-    return { label: "Strong", color: "bg-teal-500", textColor: isDark ? "text-teal-400" : "text-teal-600" };
-  };
+  const passwordRequirements = useMemo(() => [
+    { label: "At least one uppercase letter", met: /[A-Z]/.test(newPassword) },
+    { label: "At least one lowercase letter", met: /[a-z]/.test(newPassword) },
+    { label: "At least one number", met: /[0-9]/.test(newPassword) },
+    { label: "At least 8 characters", met: newPassword.length >= 8 },
+    { label: "At least one special character", met: /[!@#$%^&*(),.?":{}|<>]/.test(newPassword) },
+  ], [newPassword]);
 
-  const strength = passwordStrength(newPassword);
+  const allRequirementsMet = passwordRequirements.every((r) => r.met);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setFieldError(null);
 
-    if (newPassword.length < 8) {
-      setFieldError("Password must be at least 8 characters.");
+    if (!allRequirementsMet) {
+      setFieldError("Please meet all password requirements.");
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -63,7 +62,7 @@ export default function ResetPassword() {
 
     setLoading(true);
     try {
-      await api.post(`/api/users/reset_password?token=${encodeURIComponent(token)}`, {
+      await api.post(`/api/user/reset_password?token=${encodeURIComponent(token)}`, {
         new_password: newPassword,
       });
       setSuccess(true);
@@ -80,8 +79,8 @@ export default function ResetPassword() {
     return (
       <div
         className={`min-h-screen flex flex-col transition-colors duration-300 ${isDark
-            ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900 text-white"
-            : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80 text-slate-900"
+          ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900 text-white"
+          : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80 text-slate-900"
           }`}
       >
         <header
@@ -120,8 +119,8 @@ export default function ResetPassword() {
   return (
     <div
       className={`min-h-screen flex flex-col transition-colors duration-300 ${isDark
-          ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900 text-white"
-          : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80 text-slate-900"
+        ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900 text-white"
+        : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80 text-slate-900"
         }`}
     >
       {/* Header */}
@@ -205,8 +204,8 @@ export default function ResetPassword() {
                       placeholder="New password"
                       required
                       className={`w-full h-11 pl-10 pr-11 rounded-xl border text-sm transition-all duration-200 focus:outline-none focus:ring-2 ${isDark
-                          ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-teal-400 focus:ring-teal-400/20"
-                          : "bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:ring-teal-500/20"
+                        ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-teal-400 focus:ring-teal-400/20"
+                        : "bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:ring-teal-500/20"
                         }`}
                     />
                     <button
@@ -218,21 +217,19 @@ export default function ResetPassword() {
                     </button>
                   </div>
 
-                  {/* Strength bar */}
-                  {newPassword && strength && (
-                    <div className="mt-2 space-y-1">
-                      <div className="flex gap-1">
-                        {["Weak", "Fair", "Good", "Strong"].map((level, idx) => (
-                          <div
-                            key={level}
-                            className={`h-1 flex-1 rounded-full transition-all duration-300 ${["Weak", "Fair", "Good", "Strong"].indexOf(strength.label) >= idx
-                                ? strength.color
-                                : isDark ? "bg-slate-700" : "bg-slate-200"
-                              }`}
-                          />
-                        ))}
-                      </div>
-                      <p className={`text-xs ${strength.textColor}`}>{strength.label} password</p>
+                  {/* Password requirements checklist */}
+                  {newPassword && (
+                    <div className={`mt-2.5 p-3 rounded-lg space-y-1.5 ${isDark ? "bg-slate-800/50" : "bg-slate-100/50"}`}>
+                      {passwordRequirements.map((req, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <span className={`text-xs ${req.met ? "text-teal-500" : isDark ? "text-slate-500" : "text-slate-400"}`}>
+                            {req.met ? <i className="fa-solid fa-check" /> : <i className="fa-solid fa-xmark" />}
+                          </span>
+                          <span className={`text-xs ${req.met ? "text-teal-500" : isDark ? "text-slate-400" : "text-slate-500"}`}>
+                            {req.label}
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -254,8 +251,8 @@ export default function ResetPassword() {
                       placeholder="Confirm new password"
                       required
                       className={`w-full h-11 pl-10 pr-11 rounded-xl border text-sm transition-all duration-200 focus:outline-none focus:ring-2 ${isDark
-                          ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-teal-400 focus:ring-teal-400/20"
-                          : "bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:ring-teal-500/20"
+                        ? "bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-teal-400 focus:ring-teal-400/20"
+                        : "bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:ring-teal-500/20"
                         } ${confirmPassword && newPassword !== confirmPassword ? (isDark ? "border-red-500/60" : "border-red-400") : ""}`}
                     />
                     <button
