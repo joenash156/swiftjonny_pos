@@ -346,35 +346,30 @@ function LoginForm() {
       >
         <div className={`flex flex-col items-center justify-between gap-2 text-xs ${theme === "dark" ? "text-slate-500" : "text-slate-400"}`}>
           <p>© 2026 SwiftJonny POS. All rights reserved.</p>
-          <div className="grid grid-cols-2 gap-3 lg:gap-6">
-            <div className="flex flex-col space-y-1">
-              <Link to="/privacy" className={`${theme === "dark" ? "hover:text-slate-300" : "hover:text-slate-600"} transition-colors`}>
-                Privacy Policy
-              </Link>
-              <Link to="/terms" className={`${theme === "dark" ? "hover:text-slate-300" : "hover:text-slate-600"} transition-colors`}>
-                Terms of Service
-              </Link>
-            </div>
-            <div className="flex flex-col space-y-1">
-              <Link to="/" className={`${theme === "dark" ? "hover:text-slate-300" : "hover:text-slate-600"} transition-colors`}>
-                Home
-              </Link>
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className={`text-xs ${theme === "dark" ? "text-slate-500" : "text-slate-500"
-                  }`}
+          <div className="flex items-center gap-4">
+            <Link to="/privacy" className={`${theme === "dark" ? "hover:text-slate-300" : "hover:text-slate-600"} transition-colors`}>
+              Privacy Policy
+            </Link>
+            <span className="hidden sm:inline">•</span>
+            <Link to="/terms" className={`${theme === "dark" ? "hover:text-slate-300" : "hover:text-slate-600"} transition-colors`}>
+              Terms of Service
+            </Link>
+            <span className="hidden sm:inline">•</span>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className={`text-center text-xs ${theme === "dark" ? "text-slate-500" : "text-slate-500"
+                }`}
+            >
+              <Link
+                to="/help"
+                className={`${theme === "dark" ? "text-teal-400 hover:text-teal-300" : "text-teal-600 hover:text-teal-700"
+                  } transition-colors duration-200`}
               >
-                <Link
-                  to="/help"
-                  className={`${theme === "dark" ? "text-teal-400 hover:text-teal-300" : "text-teal-600 hover:text-teal-700"
-                    } transition-colors duration-200`}
-                >
-                  Help & Support
-                </Link>
-              </motion.p>
-            </div>
+                Help & Support
+              </Link>
+            </motion.p>
           </div>
         </div>
       </motion.footer>

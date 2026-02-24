@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
 import { useSidebar } from "../contexts/SidebarContext";
@@ -10,7 +10,7 @@ function Header() {
   const { theme, toggleTheme } = useThemeSync();
   const { user, logout } = useAuth();
   const { toggleOpen } = useSidebar();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [avatarErrorUrl, setAvatarErrorUrl] = useState<string | null>(null);
@@ -30,7 +30,7 @@ function Header() {
   const handleLogout = async () => {
     setMenuOpen(false);
     await logout();
-    navigate("/login");
+    window.location.href = "/login";
   };
 
   const isDark = theme === "dark";

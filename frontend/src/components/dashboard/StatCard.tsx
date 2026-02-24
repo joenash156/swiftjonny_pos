@@ -42,7 +42,7 @@ export function StatCard({
             }`}
         />
       ) : (
-        <p className={`text-2xl font-bold ${isDark ? "text-white" : "text-slate-900"}`}>
+        <p className={`text-2xl lg:text-xl font-bold ${isDark ? "text-white" : "text-slate-900"}`}>
           {value}
         </p>
       )}

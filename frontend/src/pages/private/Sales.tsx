@@ -55,7 +55,7 @@ function SalesStatCard({ icon, label, value, sub, color, isDark }: StatCardProps
         </div>
       </div>
       <div>
-        <p className={`text-2xl font-bold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>{value}</p>
+        <p className={`text-2xl lg:text-xl font-bold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>{value}</p>
         {sub && <p className={`text-xs mt-1 ${isDark ? "text-slate-500" : "text-slate-400"}`}>{sub}</p>}
       </div>
     </div>
@@ -179,7 +179,7 @@ function VoidModal({ publicId, isDark, onClose, onVoided }: VoidModalProps) {
 type SortBy = "created_at" | "total" | "cashier_firstname" | "cashier_lastname";
 type Order = "ASC" | "DESC";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 
 export default function Sales() {
   const { theme } = useTheme();
@@ -419,71 +419,71 @@ export default function Sales() {
         <div className={`hidden lg:block rounded-2xl border overflow-hidden mb-5 ${isDark ? "border-slate-800" : "border-slate-200"}`}>
           <table className="w-full text-sm">
             <thead>
-              <tr className={`border-b text-left ${isDark ? "bg-slate-800/50 border-slate-800" : "bg-slate-50 border-slate-200"}`}>
+              <tr className={`border-b text-center ${isDark ? "bg-slate-800/50 border-slate-800" : "bg-slate-50 border-slate-200"}`}>
                 {/* Transaction ID */}
-                <th className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap ${isDark ? "text-slate-500" : "text-slate-400"}`}>
+                <th className={`px-2 py-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap ${isDark ? "text-slate-500" : "text-slate-400"}`}>
                   Transaction ID
                 </th>
                 {/* Cashier — admin only */}
                 {isAdmin && (
                   <th
-                    className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider cursor-pointer select-none ${isDark ? "text-slate-500 hover:text-slate-300" : "text-slate-400 hover:text-slate-700"}`}
+                    className={`px-2 py-3 text-xs font-semibold uppercase tracking-wider cursor-pointer select-none ${isDark ? "text-slate-500 hover:text-slate-300" : "text-slate-400 hover:text-slate-700"}`}
                     onClick={() => handleSort("cashier_firstname")}
                   >
                     Cashier <SortIcon col="cashier_firstname" />
                   </th>
                 )}
-                <th className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-400"}`}>Items</th>
+                <th className={`px-2 py-3 text-xs font-semibold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-400"}`}>Items</th>
                 <th
-                  className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider cursor-pointer select-none ${isDark ? "text-slate-500 hover:text-slate-300" : "text-slate-400 hover:text-slate-700"}`}
+                  className={`px-2 py-3 text-xs font-semibold uppercase tracking-wider cursor-pointer select-none ${isDark ? "text-slate-500 hover:text-slate-300" : "text-slate-400 hover:text-slate-700"}`}
                   onClick={() => handleSort("total")}
                 >
                   Total <SortIcon col="total" />
                 </th>
-                <th className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-400"}`}>Payment</th>
-                <th className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-400"}`}>Status</th>
+                <th className={`px-2 py-3 text-xs font-semibold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-400"}`}>Payment</th>
+                <th className={`px-2 py-3 text-xs font-semibold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-400"}`}>Status</th>
                 <th
-                  className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider cursor-pointer select-none ${isDark ? "text-slate-500 hover:text-slate-300" : "text-slate-400 hover:text-slate-700"}`}
+                  className={`px-2 py-3 text-xs font-semibold uppercase tracking-wider cursor-pointer select-none ${isDark ? "text-slate-500 hover:text-slate-300" : "text-slate-400 hover:text-slate-700"}`}
                   onClick={() => handleSort("created_at")}
                 >
                   Date <SortIcon col="created_at" />
                 </th>
-                <th className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-400"}`}>Actions</th>
+                <th className={`px-2 py-3 text-xs font-semibold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-400"}`}>Actions</th>
               </tr>
             </thead>
-            <tbody className={`divide-y ${isDark ? "divide-slate-800" : "divide-slate-100"}`}>
+            <tbody className={`divide-y text-center ${isDark ? "divide-slate-800" : "divide-slate-100"}`}>
               {sales.map((sale) => (
                 <tr
                   key={sale.public_id}
                   className={`transition-colors ${isDark ? "bg-slate-900/60 hover:bg-slate-800/60" : "bg-white hover:bg-slate-50/80"}`}
                 >
-                  <td className="px-4 py-3.5">
+                  <td className="px-2 py-3.5">
                     <span className={`font-mono text-xs ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                       #{sale.public_id.slice(0, 14)}&hellip;
                     </span>
                   </td>
                   {isAdmin && (
-                    <td className="px-4 py-3.5">
+                    <td className="px-2 py-3.5">
                       <div>
-                        <p className={`text-sm font-medium ${isDark ? "text-slate-200" : "text-slate-800"}`}>{sale.cashier.name}</p>
+                        <p className={`text-sm whitespace-nowrap font-medium ${isDark ? "text-slate-200" : "text-slate-800"}`}>{sale.cashier.name}</p>
                         <p className={`text-xs mt-0.5 ${isDark ? "text-slate-600" : "text-slate-400"}`}>{sale.cashier.phone}</p>
                       </div>
                     </td>
                   )}
-                  <td className="px-4 py-3.5">
-                    <span className={`text-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+                  <td className="px-2 py-3.5">
+                    <span className={`text-sm whitespace-nowrap ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                       {sale.items.length} item{sale.items.length !== 1 ? "s" : ""}
                     </span>
                   </td>
-                  <td className="px-4 py-3.5">
-                    <span className={`text-sm font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>{fmtCurrency(sale.total)}</span>
+                  <td className="px-2 py-3.5">
+                    <span className={`text-sm lg:text-xs whitespace-nowrap font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>{fmtCurrency(sale.total)}</span>
                   </td>
-                  <td className="px-4 py-3.5">{payBadge(sale.payment_method)}</td>
-                  <td className="px-4 py-3.5">{statusBadge(sale.status)}</td>
-                  <td className="px-4 py-3.5">
-                    <span className={`text-xs whitespace-nowrap ${isDark ? "text-slate-500" : "text-slate-400"}`}>{fmtDate(sale.created_at)}</span>
+                  <td className="px-2 py-3.5 lg:text-xs">{payBadge(sale.payment_method)}</td>
+                  <td className="px-2 py-3.5 lg:text-xs">{statusBadge(sale.status)}</td>
+                  <td className="px-2 py-3.5">
+                    <span className={`text-xs lg:text-[11px] whitespace-nowrap ${isDark ? "text-slate-500" : "text-slate-400"}`}>{fmtDate(sale.created_at)}</span>
                   </td>
-                  <td className="px-4 py-3.5">
+                  <td className="px-2 py-3.5">
                     <div className="flex items-center gap-1.5">
                       {/* View */}
                       <button
@@ -497,8 +497,8 @@ export default function Sales() {
                         <i className="fa-solid fa-eye text-[10px]" />
                         View
                       </button>
-                      {/* Void — only completed + admin */}
-                      {isAdmin && sale.status !== "voided" && (
+                      {/* Void — only completed */}
+                      {sale.status !== "voided" && (
                         <button
                           onClick={() => setVoidId(sale.public_id)}
                           title="Void sale"
@@ -572,7 +572,7 @@ export default function Sales() {
                   <i className="fa-solid fa-eye text-[10px]" />
                   View
                 </button>
-                {isAdmin && sale.status !== "voided" && (
+                {sale.status !== "voided" && (
                   <button
                     onClick={() => setVoidId(sale.public_id)}
                     className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium border transition-colors ${isDark ? "border-red-800/60 text-red-400 hover:bg-red-500/10" : "border-red-200 text-red-500 hover:bg-red-50"

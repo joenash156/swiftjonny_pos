@@ -67,7 +67,7 @@ export default function HelpSupport() {
 
   return (
     <div
-      className={`font-kumbh min-h-screen transition-colors duration-300 ${isDark
+      className={`overflow-y-auto h-screen font-kumbh min-h-screen transition-colors duration-300 ${isDark
         ? "bg-linear-to-br from-slate-950 via-slate-900 to-slate-900 text-white"
         : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/80 text-slate-900"
         }`}

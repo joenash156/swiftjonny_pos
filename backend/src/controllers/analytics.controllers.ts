@@ -149,8 +149,6 @@ export const getMySalesTrend = async (req: Request, res: Response): Promise<void
   }
 };
 
-// ─── Top Products ──────────────────────────────────────────────────────────────
-
 // controller to get top-selling products (admin)
 export const getTopProductsSummary = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -202,15 +200,13 @@ export const getMyTopProducts = async (req: Request, res: Response): Promise<voi
   }
 };
 
-// ─── Revenue Comparison ────────────────────────────────────────────────────────
-
 // controller to get general revenue comparison today vs yesterday (admin)
 export const getRevenueComparisonSummary = async (_req: Request, res: Response): Promise<void> => {
   try {
     const comparison = await getRevenueComparison({});
     res.status(200).json({
       success: true,
-      message: "Revenue comparison fetched successfully!✅",
+      message: "Revenue comparison fetched successfully!",
       comparison
     });
   } catch (err: unknown) {

@@ -149,7 +149,7 @@ export default function ResetPassword() {
             }`}
         >
           {/* Icon */}
-          <div className={`w-12 h-12 text-center rounded-2xl flex items-center justify-center mx-auto mb-5 ${isDark ? "bg-teal-500/10" : "bg-teal-50"}`}>
+          <div className={`w-12 h-12 text-center mx-auto rounded-2xl flex items-center justify-center mb-5 ${isDark ? "bg-teal-500/10" : "bg-teal-50"}`}>
             <i className="fa-solid fa-lock-open text-teal-500 text-lg" />
           </div>
 
@@ -264,13 +264,13 @@ export default function ResetPassword() {
                     </button>
                   </div>
                   {confirmPassword && newPassword !== confirmPassword && (
-                    <p className={`text-xs mt-1 ${isDark ? "text-red-400" : "text-red-500"}`}>Passwords do not match</p>
+                    <p className={`text-xs mt-1 text-center mx-auto ${isDark ? "text-red-400" : "text-red-500"}`}>Passwords do not match</p>
                   )}
                 </div>
 
                 {/* Field error */}
                 {fieldError && (
-                  <p className={`text-sm ${isDark ? "text-red-400" : "text-red-600"}`}>
+                  <p className={`text-sm text-center mx-auto ${isDark ? "text-red-400" : "text-red-600"}`}>
                     <i className="fa-solid fa-circle-exclamation mr-1.5" />
                     {fieldError}
                   </p>
@@ -302,16 +302,16 @@ export default function ResetPassword() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.2 }}
             >
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-4 ${isDark ? "bg-teal-500/10" : "bg-teal-50"}`}>
+              <div className={`w-10 h-10 text-center mx-auto rounded-full flex items-center justify-center mb-4 ${isDark ? "bg-teal-500/10" : "bg-teal-50"}`}>
                 <i className="fa-solid fa-circle-check text-teal-500 text-xl" />
               </div>
-              <h2 className={`text-lg font-bold mb-2 ${isDark ? "text-white" : "text-slate-900"}`}>
+              <h2 className={`text-lg font-bold text-center mx-auto mb-2 ${isDark ? "text-white" : "text-slate-900"}`}>
                 Password reset!
               </h2>
-              <p className={`text-sm leading-relaxed mb-1 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+              <p className={`text-sm leading-relaxed text-center mx-auto mb-1 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                 Your password has been updated successfully. A confirmation email has been sent to your inbox.
               </p>
-              <p className={`text-xs mb-6 ${isDark ? "text-slate-600" : "text-slate-400"}`}>
+              <p className={`text-xs text-center mx-auto mb-6 ${isDark ? "text-slate-600" : "text-slate-400"}`}>
                 Redirecting you to login in a moment...
               </p>
               <Link

@@ -145,6 +145,90 @@ function CategoryModal({ isDark, editing, onClose, onSaved }: CategoryModalProps
   );
 }
 
+// ─── Category View Modal ───────────────────────────────────────────────────────
+
+interface CategoryViewModalProps {
+  isDark: boolean;
+  category: Category;
+  onClose: () => void;
+}
+
+function CategoryViewModal({ isDark, category: initial, onClose }: CategoryViewModalProps) {
+  const [data, setData] = useState<Category>(initial);
+  const [fetching, setFetching] = useState(true);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  useEffect(() => {
+    categoryService.getCategoryById(initial.id)
+      .then(res => { if (res.category) setData(res.category); })
+      .catch(() => { })
+      .finally(() => setFetching(false));
+  }, [initial.id]);
+
+  const row = (label: string, value: React.ReactNode) => (
+    <div className={`flex items-start gap-3 py-3 border-b last:border-0 ${isDark ? "border-slate-700/60" : "border-slate-100"}`}>
+      <span className={`text-xs font-medium w-24 shrink-0 mt-0.5 ${isDark ? "text-slate-500" : "text-slate-400"}`}>{label}</span>
+      <span className={`text-sm flex-1 ${isDark ? "text-slate-200" : "text-slate-800"}`}>{value}</span>
+    </div>
+  );
+
+  const productCount = data.product_count ?? 0;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 8 }}
+        transition={{ duration: 0.2 }}
+        className={`relative w-full max-w-md rounded-2xl border shadow-2xl p-6 ${isDark ? "bg-slate-900 border-slate-700" : "bg-white border-slate-200"}`}
+      >
+        <div className="flex items-center gap-3 mb-5">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isDark ? "bg-purple-500/10" : "bg-purple-50"}`}>
+            <i className="fa-solid fa-tag text-purple-500 text-sm" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className={`text-base font-semibold truncate ${isDark ? "text-white" : "text-slate-900"}`}>{data.name}</h2>
+            <p className={`text-xs mt-0.5 ${isDark ? "text-slate-500" : "text-slate-400"}`}>Category details</p>
+          </div>
+          <button onClick={onClose} className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${isDark ? "text-slate-500 hover:bg-slate-800 hover:text-white" : "text-slate-400 hover:bg-slate-100 hover:text-slate-700"}`}>
+            <i className="fa-solid fa-xmark text-sm" />
+          </button>
+        </div>
+
+        {fetching ? (
+          <div className="flex items-center justify-center py-10">
+            <i className={`fa-solid fa-circle-notch animate-spin text-xl ${isDark ? "text-slate-600" : "text-slate-400"}`} />
+          </div>
+        ) : (
+          <div>
+            {row("Name", <span className="font-semibold">{data.name}</span>)}
+            {row("Description", data.description || <span className={`italic text-xs ${isDark ? "text-slate-600" : "text-slate-400"}`}>No description</span>)}
+            {row("Products", (
+              <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${productCount > 0 ? isDark ? "bg-teal-500/10 text-teal-400" : "bg-teal-50 text-teal-700" : isDark ? "bg-slate-700/60 text-slate-500" : "bg-slate-100 text-slate-400"}`}>
+                <i className="fa-solid fa-box text-[9px]" />
+                {productCount} product{productCount !== 1 ? "s" : ""}
+              </span>
+            ))}
+            {row("Created", formatDate(data.created_at))}
+            {row("Updated", formatDate(data.updated_at))}
+          </div>
+        )}
+
+        <button onClick={onClose} className={`mt-5 w-full py-2.5 rounded-xl text-sm font-medium border transition-colors ${isDark ? "border-slate-700 text-slate-300 hover:bg-slate-800" : "border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+          Close
+        </button>
+      </motion.div>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function Categories() {
@@ -162,6 +246,7 @@ export default function Categories() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [sortBy, setSortBy] = useState<"name" | "created_at">("created_at");
 
+  const [viewingCategory, setViewingCategory] = useState<Category | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Category | null>(null);
@@ -368,7 +453,7 @@ export default function Categories() {
                   <th className="px-5 py-3.5">Description</th>
                   <th className="px-5 py-3.5">Products</th>
                   <th className="px-5 py-3.5">Created</th>
-                  {isAdmin && <th className="px-5 py-3.5">Actions</th>}
+                  <th className="px-5 py-3.5">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -406,26 +491,35 @@ export default function Categories() {
                         </span>
                       </td>
                       <td className="px-5 py-3.5 text-xs opacity-70">{formatDate(category.created_at)}</td>
-                      {isAdmin && (
-                        <td className="px-5 py-3.5">
-                          <div className="flex items-center gap-1.5">
-                            <button
-                              onClick={() => { setEditingCategory(category); setShowModal(true); }}
-                              title="Edit"
-                              className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors ${isDark ? "text-blue-400 hover:bg-blue-500/10" : "text-blue-600 hover:bg-blue-50"}`}
-                            >
-                              <i className="fa-solid fa-pen" />
-                            </button>
-                            <button
-                              onClick={() => setPendingDelete(category)}
-                              title="Delete"
-                              className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors ${isDark ? "text-red-400 hover:bg-red-500/10" : "text-red-500 hover:bg-red-50"}`}
-                            >
-                              <i className="fa-solid fa-trash-can" />
-                            </button>
-                          </div>
-                        </td>
-                      )}
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => setViewingCategory(category)}
+                            title="View"
+                            className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors ${isDark ? "text-slate-400 hover:bg-slate-700/60" : "text-slate-500 hover:bg-slate-100"}`}
+                          >
+                            <i className="fa-solid fa-eye" />
+                          </button>
+                          {isAdmin && (
+                            <>
+                              <button
+                                onClick={() => { setEditingCategory(category); setShowModal(true); }}
+                                title="Edit"
+                                className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors ${isDark ? "text-blue-400 hover:bg-blue-500/10" : "text-blue-600 hover:bg-blue-50"}`}
+                              >
+                                <i className="fa-solid fa-pen" />
+                              </button>
+                              <button
+                                onClick={() => setPendingDelete(category)}
+                                title="Delete"
+                                className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs transition-colors ${isDark ? "text-red-400 hover:bg-red-500/10" : "text-red-500 hover:bg-red-50"}`}
+                              >
+                                <i className="fa-solid fa-trash-can" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
                     </tr>
                   );
                 })}
@@ -463,22 +557,30 @@ export default function Categories() {
                       </div>
                     </div>
                   </div>
-                  {isAdmin && (
-                    <div className={`flex gap-2 mt-3 pt-3 border-t ${isDark ? "border-slate-700/60" : "border-slate-100"}`}>
-                      <button
-                        onClick={() => { setEditingCategory(category); setShowModal(true); }}
-                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium border transition-colors ${isDark ? "border-slate-700 text-blue-400 hover:bg-slate-800" : "border-slate-200 text-blue-600 hover:bg-slate-50"}`}
-                      >
-                        <i className="fa-solid fa-pen text-[10px]" /> Edit
-                      </button>
-                      <button
-                        onClick={() => setPendingDelete(category)}
-                        className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium border transition-colors ${isDark ? "border-slate-700 text-red-400 hover:bg-slate-800" : "border-slate-200 text-red-500 hover:bg-slate-50"}`}
-                      >
-                        <i className="fa-solid fa-trash-can text-[10px]" /> Delete
-                      </button>
-                    </div>
-                  )}
+                  <div className={`flex gap-2 mt-3 pt-3 border-t ${isDark ? "border-slate-700/60" : "border-slate-100"}`}>
+                    <button
+                      onClick={() => setViewingCategory(category)}
+                      className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium border transition-colors ${isDark ? "border-slate-700 text-slate-400 hover:bg-slate-800" : "border-slate-200 text-slate-500 hover:bg-slate-50"}`}
+                    >
+                      <i className="fa-solid fa-eye text-[10px]" /> View
+                    </button>
+                    {isAdmin && (
+                      <>
+                        <button
+                          onClick={() => { setEditingCategory(category); setShowModal(true); }}
+                          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium border transition-colors ${isDark ? "border-slate-700 text-blue-400 hover:bg-slate-800" : "border-slate-200 text-blue-600 hover:bg-slate-50"}`}
+                        >
+                          <i className="fa-solid fa-pen text-[10px]" /> Edit
+                        </button>
+                        <button
+                          onClick={() => setPendingDelete(category)}
+                          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium border transition-colors ${isDark ? "border-slate-700 text-red-400 hover:bg-slate-800" : "border-slate-200 text-red-500 hover:bg-slate-50"}`}
+                        >
+                          <i className="fa-solid fa-trash-can text-[10px]" /> Delete
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
               );
             })}
@@ -498,6 +600,17 @@ export default function Categories() {
             editing={editingCategory}
             onClose={() => { setShowModal(false); setEditingCategory(null); }}
             onSaved={handleSaved}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* View Modal */}
+      <AnimatePresence>
+        {viewingCategory && (
+          <CategoryViewModal
+            isDark={isDark}
+            category={viewingCategory}
+            onClose={() => setViewingCategory(null)}
           />
         )}
       </AnimatePresence>
