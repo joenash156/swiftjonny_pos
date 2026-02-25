@@ -549,13 +549,13 @@ export default function Categories() {
                       {category.description && (
                         <p className={`text-xs mt-0.5 line-clamp-2 ${isDark ? "text-slate-500" : "text-slate-400"}`}>{category.description}</p>
                       )}
-                      <div className="flex items-center gap-2 mt-2">
+                      <div className="flex flex-col mt-2 space-y-0.5">
                         <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${productCount > 0
                           ? isDark ? "bg-teal-500/10 text-teal-400" : "bg-teal-50 text-teal-700"
                           : isDark ? "bg-slate-700/60 text-slate-500" : "bg-slate-100 text-slate-400"
                           }`}>
                           <i className="fa-solid fa-box text-[9px]" />
-                          {productCount} product{productCount !== 1 ? "s" : ""}
+                          <span>{productCount} product{productCount !== 1 ? "s" : ""}</span>
                         </span>
                         <span className={`text-[11px] ${isDark ? "text-slate-600" : "text-slate-400"}`}>{formatDate(category.created_at)}</span>
                       </div>
