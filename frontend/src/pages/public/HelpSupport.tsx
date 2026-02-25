@@ -239,18 +239,21 @@ export default function HelpSupport() {
         </section>
 
         {/* Footer note */}
-        <div className="text-center pb-4">
+        <div className={`text-center pb-4 pt-2 border-t ${isDark ? "border-slate-800" : "border-slate-200"}`}>
           <p className={`text-xs ${isDark ? "text-slate-600" : "text-slate-400"}`}>
             SwiftJonny POS · Support Center · All communications are kept confidential
           </p>
-          {!isLoggedIn && (
-            <p className={`text-xs mt-1.5 ${isDark ? "text-slate-600" : "text-slate-400"}`}>
-              Already have an account?{" "}
-              <Link to="/login" className="text-teal-500 hover:underline font-medium">
-                Sign in here
-              </Link>
-            </p>
-          )}
+          <div className={`flex items-center justify-center gap-4 mt-3 text-xs ${isDark ? "text-slate-600" : "text-slate-400"}`}>
+            <Link to="/privacy" className="hover:text-teal-500 transition-colors">Privacy Policy</Link>
+            <span>·</span>
+            <Link to="/terms" className="hover:text-teal-500 transition-colors">Terms of Service</Link>
+            {!isLoggedIn && (
+              <>
+                <span>·</span>
+                <Link to="/login" className="hover:text-teal-500 transition-colors">Sign In</Link>
+              </>
+            )}
+          </div>
         </div>
       </motion.main>
     </div>

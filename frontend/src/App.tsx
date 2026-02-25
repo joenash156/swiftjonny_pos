@@ -22,6 +22,8 @@ import VerifyEmail from "./pages/public/VerifyEmail"
 import EmailVerificationHandler from "./pages/public/EmailVerificationHandler"
 import ApprovalPending from "./pages/public/ApprovalPending"
 import HelpSupport from "./pages/public/HelpSupport"
+import PrivacyPolicy from "./pages/public/PrivacyPolicy"
+import TermsOfService from "./pages/public/TermsOfService"
 import ScrollTop from "./components/ScrollTop"
 
 function App() {
@@ -69,6 +71,8 @@ function App() {
 
         {/* Standalone pages (no layout) */}
         <Route path="/help" element={<HelpSupport />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
       </Routes>
     </div>
   )
