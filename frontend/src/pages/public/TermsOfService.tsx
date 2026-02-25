@@ -133,7 +133,7 @@ export default function TermsOfService() {
             By registering for, accessing, or using SwiftJonny POS ("the Service"), you agree to comply with and be bound by these Terms of Service. If you do not agree to these terms, you must not use the Service.
           </p>
           <p>
-            These terms apply to all users, including administrators and cashiers. Your use of the Service on behalf of an organisation means that organisation also agrees to these terms.
+            These terms apply to all users, including administrators and cashiers. Your use of the Service on behalf of an organization means that organization also agrees to these terms.
           </p>
         </Section>
 
@@ -178,12 +178,12 @@ export default function TermsOfService() {
               "You will verify your email address as required before accessing the platform",
               "Your account must be approved by an administrator before full access is granted",
               "You are responsible for maintaining the confidentiality of your password",
-              "You will notify support immediately if you suspect unauthorised access to your account",
+              "You will notify support immediately if you suspect unauthorized access to your account",
               "One user may not share account credentials with another person",
             ]}
           />
           <p>
-            Administrators are responsible for managing the cashier accounts under their organisation. Admins must ensure only authorised personnel are granted access.
+            Administrators are responsible for managing the cashier accounts under their organization. Admins must ensure only authorized personnel are granted access.
           </p>
         </Section>
 
@@ -330,7 +330,7 @@ export default function TermsOfService() {
             items={[
               "Loss of business, revenue, or data resulting from use or inability to use the Service",
               "Errors or inaccuracies in sales reports or analytics",
-              "Unauthorised access to your account resulting from your failure to protect credentials",
+              "Unauthorized access to your account resulting from your failure to protect credentials",
               "Downtime, maintenance windows, or service interruptions",
             ]}
           />
