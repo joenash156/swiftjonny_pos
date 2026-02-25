@@ -131,30 +131,18 @@ function LoginForm() {
         : "bg-linear-to-br from-teal-50/40 via-slate-50 to-purple-100/40"
         }`}
     >
-      {/* Theme Toggler */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="flex justify-end mb-6"
-      >
-        <ThemeToggler theme={theme} onToggle={toggleTheme} />
-      </motion.div>
+      <div>
+        {/* Theme Toggler */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex justify-end mb-6"
+        >
+          <ThemeToggler theme={theme} onToggle={toggleTheme} />
+        </motion.div>
+      </div>
 
-      {/* Mobile Logo - Only visible on mobile */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="hidden items-center gap-3 mb-8"
-      >
-        <div className="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center shadow-lg">
-          <i className="fa-solid fa-bolt text-white text-lg"></i>
-        </div>
-        <span className={`${theme === "dark" ? "text-white" : "text-slate-800"} font-bold text-xl tracking-wide`}>
-          SwiftJonny
-        </span>
-      </motion.div>
 
       {/* Form Container */}
       <div className="flex-1 flex flex-col lg:justify-center max-w-md mx-auto w-full pb-8">

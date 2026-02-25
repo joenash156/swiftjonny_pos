@@ -24,7 +24,7 @@ const FAQS: FaqItem[] = [
     a: "Email us at joenash156@gmail.com with your transaction ID, the date it occurred, and a brief description. We'll investigate and respond within 24 hours.",
   },
   {
-    q: "I'm a cashier — who should I contact for help?",
+    q: "I'm a cashier, who should I contact for help?",
     a: "Cashiers should first reach out to their store administrator. Your admin has elevated access to manage accounts and settings. If your admin cannot resolve the issue, they may escalate it to the support center.",
   },
   {

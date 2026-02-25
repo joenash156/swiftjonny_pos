@@ -75,7 +75,7 @@ export default function ForgotPassword() {
       </header>
 
       {/* Content */}
-      <main className="flex-1 flex items-center justify-center px-5 py-12">
+      <main className="flex-1 flex items-center justify-center px-1 md:px-5 py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
