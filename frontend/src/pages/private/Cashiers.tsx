@@ -69,6 +69,10 @@ function Cashiers() {
   const [actionLoading, setActionLoading] = useState(false);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
+  useEffect(() => {
+    document.title = "Cashiers | SwiftJonny POS";
+  }, []);
+
   // Derived stats
   const stats = {
     total: cashiers.length,

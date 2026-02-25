@@ -49,6 +49,10 @@ function Dashboard() {
   const [txLoading, setTxLoading] = useState(true);
   const [selectedTxId, setSelectedTxId] = useState<string | null>(null);
 
+  useEffect(() => {
+    document.title = "Dashboard | SwiftJonny POS";
+  }, []);
+
   const greeting = () => {
     const h = new Date().getHours();
     if (h < 12) return "Good morning";

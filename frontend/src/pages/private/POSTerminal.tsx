@@ -297,6 +297,10 @@ function POSTerminal() {
 
   const searchRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    document.title = "POS Terminal | SwiftJonny POS";
+  }, []);
+
   const loadProducts = useCallback(async (q?: string) => {
     setProductsLoading(true);
     try {

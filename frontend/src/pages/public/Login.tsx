@@ -1,9 +1,14 @@
+import { useEffect } from "react";
 import AuthHero from "../../components/AuthHero";
 import LoginForm from "../../components/loginpage/LoginForm";
 import { useTheme } from "../../contexts/ThemeContext";
 
 function Login() {
   const { theme } = useTheme();
+
+  useEffect(() => {
+    document.title = "Login | SwiftJonny POS";
+  }, []);
 
   return (
     <div

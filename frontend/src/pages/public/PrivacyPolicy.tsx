@@ -53,6 +53,10 @@ export default function PrivacyPolicy() {
   const isLoggedIn = !!user;
 
   useEffect(() => {
+    document.title = "Privacy Policy | SwiftJonny POS";
+  }, []);
+
+  useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
   }, [isDark]);
 

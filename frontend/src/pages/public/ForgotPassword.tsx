@@ -16,6 +16,10 @@ export default function ForgotPassword() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    document.title = "Forgot Password | SwiftJonny POS";
+  }, []);
+
+  useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
   }, [isDark]);
 

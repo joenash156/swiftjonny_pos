@@ -16,8 +16,10 @@ function EmailVerificationHandler() {
   const [message, setMessage] = useState("");
   const hasSucceededRef = useRef(false);
 
-  // We deliberately exclude verifyYourEmail from deps to avoid double-calling
-  // when the auth context re-renders.
+  useEffect(() => {
+    document.title = "Email Verification | SwiftJonny POS";
+  }, []);
+
   useEffect(() => {
     const verifyEmail = async () => {
       const token = searchParams.get("token");

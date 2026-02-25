@@ -26,6 +26,10 @@ export default function ResetPassword() {
   const [fieldError, setFieldError] = useState<string | null>(null);
 
   useEffect(() => {
+    document.title = "Reset Password | SwiftJonny POS";
+  }, []);
+
+  useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
   }, [isDark]);
 

@@ -60,6 +60,10 @@ export default function HelpSupport() {
   const isLoggedIn = !!user;
   const isCashier = user?.role === "cashier";
 
+  useEffect(() => {
+    document.title = "Help & Support | SwiftJonny POS";
+  }, []);
+
   // Sync theme class on <html>
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);

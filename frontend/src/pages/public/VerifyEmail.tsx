@@ -15,6 +15,10 @@ function VerifyEmail() {
   const [isSending, setIsSending] = useState(false);
   const { resendVerification } = useAuth();
 
+  useEffect(() => {
+    document.title = "Verify Email | SwiftJonny POS";
+  }, []);
+
   // Get email from navigation state or localStorage (for page reloads)
   const email = location.state?.email || localStorage.getItem("pending_verification_email") || null;
 

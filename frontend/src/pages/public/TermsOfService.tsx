@@ -53,6 +53,10 @@ export default function TermsOfService() {
   const isLoggedIn = !!user;
 
   useEffect(() => {
+    document.title = "Terms of Service | SwiftJonny POS";
+  }, []);
+
+  useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
   }, [isDark]);
 

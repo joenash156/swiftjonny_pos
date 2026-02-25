@@ -254,6 +254,10 @@ export default function Categories() {
 
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
+  useEffect(() => {
+    document.title = "Categories | SwiftJonny POS";
+  }, []);
+
   const showToast = (msg: string, ok: boolean) => {
     setToast({ msg, ok });
     setTimeout(() => setToast(null), 3000);

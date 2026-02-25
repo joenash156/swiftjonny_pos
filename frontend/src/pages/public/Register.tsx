@@ -1,9 +1,14 @@
+import { useEffect } from "react";
 import AuthHero from "../../components/AuthHero";
 import RegisterForm from "../../components/registerpage/RegisterForm";
 import { useTheme } from "../../contexts/ThemeContext";
 
 function Register() {
   const { theme } = useTheme();
+  
+  useEffect(() => {
+    document.title = "Register | SwiftJonny POS";
+  }, []);
 
   return (
     <div

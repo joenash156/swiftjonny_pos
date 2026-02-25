@@ -383,6 +383,10 @@ export default function Analytics() {
   // Abort controller ref — cancels previous in-flight requests when a new fetch starts
   const abortRef = useRef<AbortController | null>(null);
 
+  useEffect(() => {
+    document.title = "Analytics | SwiftJonny POS";
+  }, []);
+
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
   const showToast = (msg: string, ok: boolean) => {
     setToast({ msg, ok });

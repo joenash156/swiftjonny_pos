@@ -1,4 +1,4 @@
-import express, { Router } from "express";
+import express, { Router, Request, Response } from "express";
 import usersRouter from "./users.routes";
 import adminRouter from "./admin.routes";
 import categoriesRouter from "./categories.routes";
@@ -12,6 +12,14 @@ import inventoryRouter from "./inventory.routes";
 
 const router: Router = express.Router();
 
+// testing route
+router.get("/", testRoute);
+
+function testRoute(_req: Request, res: Response) {
+  res.json({ message: "SwiftJonny POS server is working!" });
+}
+
+// main routes
 router.use("/user", usersRouter);
 router.use("/admin", adminRouter);
 router.use("/category", categoriesRouter);

@@ -6,8 +6,6 @@ import { salesService, type Sale, type SalesStats } from "../../services/salesSe
 import { SaleDetailModal } from "../../components/sales/SaleDetailModal";
 import api from "../../services/api";
 
-// ─── helpers ─────────────────────────────────────────────────────────────────
-
 function fmtCurrency(v: number) {
   return `GH₵ ${v.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
@@ -21,8 +19,6 @@ function fmtDate(str: string) {
     minute: "2-digit",
   });
 }
-
-// ─── stat card ───────────────────────────────────────────────────────────────
 
 interface StatCardProps {
   icon: string;
@@ -62,7 +58,7 @@ function SalesStatCard({ icon, label, value, sub, color, isDark }: StatCardProps
   );
 }
 
-// ─── void confirm modal ───────────────────────────────────────────────────────
+// ─── void confirm modal ───
 
 interface VoidModalProps {
   publicId: string;
@@ -209,6 +205,10 @@ export default function Sales() {
   // ── modal state ──
   const [viewId, setViewId] = useState<string | null>(null);
   const [voidId, setVoidId] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = "Sales | SwiftJonny POS";
+  }, []);
 
   // debounce search
   useEffect(() => {

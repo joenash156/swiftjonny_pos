@@ -71,6 +71,10 @@ function Settings() {
 
   const [avatarErrorUrl, setAvatarErrorUrl] = useState<string | null>(null);
 
+  useEffect(() => {
+    document.title = "Settings | SwiftJonny POS";
+  }, []);
+
   // Toast helper
   const showToast = (msg: string, ok: boolean) => {
     setToast({ msg, ok });
@@ -350,7 +354,7 @@ function Settings() {
         ))}
       </div>
 
-      {/* ── Profile Tab ───────────────────────────────────────────────────── */}
+      {/* ── Profile Tab ─── */}
       <AnimatePresence mode="wait" initial={false}>
         {activeTab === "profile" && (
           <motion.div

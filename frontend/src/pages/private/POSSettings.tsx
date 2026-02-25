@@ -40,6 +40,10 @@ function POSSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
+  useEffect(() => {
+    document.title = "POS Settings | SwiftJonny POS";
+  }, []);
+
   const showToast = (msg: string, ok: boolean) => {
     setToast({ msg, ok });
     setTimeout(() => setToast(null), 3500);

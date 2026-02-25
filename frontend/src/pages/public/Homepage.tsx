@@ -36,6 +36,10 @@ export default function Homepage() {
   const isLoggedIn = !!user;
 
   useEffect(() => {
+    document.title = "SwiftJonny POS";
+  }, []);
+
+  useEffect(() => {
     document.documentElement.classList.toggle("dark", isDark);
   }, [isDark]);
 

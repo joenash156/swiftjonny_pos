@@ -1,10 +1,15 @@
 import { motion } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function ApprovalPending() {
   const { theme } = useTheme();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = "Approval Pending | SwiftJonny POS";
+  }, []);
 
   const handleBackToLogin = () => {
     navigate("/login");
