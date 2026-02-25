@@ -48,7 +48,7 @@ export default function ForgotPassword() {
     >
       {/* Header */}
       <header
-        className={`sticky top-0 z-30 border-b backdrop-blur-md px-5 h-14 flex items-center justify-between ${isDark ? "bg-slate-950/85 border-slate-800" : "bg-white/85 border-slate-200"
+        className={`sticky top-0 z-30 border-b backdrop-blur-md px-2 sm:px-5 h-14 flex items-center justify-between ${isDark ? "bg-slate-950/85 border-slate-800" : "bg-white/85 border-slate-200"
           }`}
       >
         <Link to="/" className="flex items-center gap-2.5">
@@ -69,7 +69,7 @@ export default function ForgotPassword() {
               }`}
           >
             <i className="fa-solid fa-arrow-left text-[10px] group-hover:-translate-x-0.5 transition-transform duration-200" />
-            Back to Login
+            <span className="text-[10px] sm:text-xs whitespace-nowrap">Back to Login</span>
           </Link>
         </div>
       </header>
