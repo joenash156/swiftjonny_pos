@@ -129,7 +129,7 @@ export default function ResetPassword() {
     >
       {/* Header */}
       <header
-        className={`sticky top-0 z-30 border-b backdrop-blur-md px-5 h-14 flex items-center justify-between ${isDark ? "bg-slate-950/85 border-slate-800" : "bg-white/85 border-slate-200"
+        className={`sticky top-0 z-30 border-b backdrop-blur-md px-2 sm:px-5 h-14 flex items-center justify-between ${isDark ? "bg-slate-950/85 border-slate-800" : "bg-white/85 border-slate-200"
           }`}
       >
         <Link to="/" className="flex items-center gap-2.5">
@@ -144,7 +144,7 @@ export default function ResetPassword() {
       </header>
 
       {/* Content */}
-      <main className="flex-1 flex items-center justify-center px-5 py-12">
+      <main className="flex-1 flex items-center justify-center px-1 sm:px-5 py-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
