@@ -251,12 +251,16 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
 
     // validate product inputs data
     const validatedProductData = updateProductSchema.parse(req.body);
-    const { name, price, category_id, description, stock } = validatedProductData;
+    const { name, price, category_id, description, stock, remove_image } = validatedProductData;
 
     let imageUrl: string | undefined;
+    let shouldRemoveImage = false;
 
     if(req.file) {
       imageUrl = req.file.filename;
+    } else if (remove_image === true) {
+      imageUrl = null as any; // Will be set to null in database
+      shouldRemoveImage = true;
     }
 
     // check if product exists
@@ -301,7 +305,7 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
     }
 
     const fields: string[] = [];
-    const values: (string | string[] | number | undefined)[] = [];
+    const values: (string | string[] | number | undefined | null)[] = [];
 
     if(name !== undefined) {
       fields.push("name = ?");
@@ -323,9 +327,9 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
       fields.push("stock = ?");
       values.push(stock);
     }
-    if(imageUrl !== undefined) {
+    if(imageUrl !== undefined || shouldRemoveImage) {
       fields.push("image_url = ?");
-      values.push(imageUrl);
+      values.push(shouldRemoveImage ? null : imageUrl);
     }
 
     if(fields.length === 0) {
@@ -349,8 +353,8 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
       return;
     }
 
-    // delete old image if user uploaded a new one
-    if(imageUrl && oldImage) {
+    // delete old image if user uploaded a new one or requested image removal
+    if((imageUrl && oldImage) || (shouldRemoveImage && oldImage)) {
       deleteFile("products", oldImage);
     }
 

@@ -516,7 +516,7 @@ export const reverseSale = async (req: Request, res: Response): Promise<void> =>
     const voided_at = new Date()
 
     // update sale status
-    const [result] = await connection.query<ResultSetHeader>("UPDATE sales SET status = ?, voided_at = ?, voided_by = ?, void_reason = ? WHERE public_id = ?", ["voided", voided_at, req.user.id, void_reason || null, public_id]);
+    const [result] = await connection.query<ResultSetHeader>("UPDATE sales SET status = ?, voided_at = ?, voided_by = ?, void_reason = ? WHERE public_id = ?", ["voided", voided_at, req.user.id, void_reason, public_id]);
 
     if(result.affectedRows === 0) {
       throw new Error("Failed to void sale!")

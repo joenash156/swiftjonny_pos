@@ -103,7 +103,7 @@ function Header() {
       {/* ── Right: Actions ─ */}
       <div className="flex items-center gap-2 ml-auto">
         {/* Notifications */}
-        <button
+        {/* <button
           className={`relative flex items-center justify-center w-9 h-9 rounded-lg transition-colors duration-200
             ${isDark
               ? "text-slate-400 hover:text-white hover:bg-slate-800"
@@ -112,9 +112,9 @@ function Header() {
           aria-label="Notifications"
         >
           <i className="fa-regular fa-bell text-[15px]" />
-          {/* Notification badge */}
+          Notification badge
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
-        </button>
+        </button> */}
 
         {/* Theme toggler */}
         <ThemeToggler theme={theme} onToggle={toggleTheme} />

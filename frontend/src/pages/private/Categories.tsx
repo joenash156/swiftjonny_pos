@@ -177,6 +177,8 @@ function CategoryViewModal({ isDark, category: initial, onClose }: CategoryViewM
     </div>
   );
 
+  // console.log("Category details:", data);
+
   const productCount = data.product_count ?? 0;
 
   return (

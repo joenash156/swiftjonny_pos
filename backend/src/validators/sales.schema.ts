@@ -26,5 +26,4 @@ export const voidSaleSchema = z.object({
     .string()
     .trim()
     .min(3, "Reason must be at least 3 characters (eg. Wrong item scanned)")
-    .optional()
 })

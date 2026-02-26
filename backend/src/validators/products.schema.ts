@@ -66,4 +66,12 @@ export const updateProductSchema = z.object({
   .string()
   .refine((id) => isUUID(id), { message: "Invalid category ID" })
   .optional(),
+
+  remove_image: z
+  .preprocess((val) => {
+    if (val === "true") return true;
+    if (val === "false") return false;
+    return val;
+  }, z.boolean())
+  .optional(),
 });

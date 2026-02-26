@@ -25,9 +25,10 @@ interface FormState {
   stock: string;
   description: string;
   image: File | null;
+  removeImage: boolean;
 }
 
-const emptyForm: FormState = { name: "", price: "", category_id: "", stock: "", description: "", image: null };
+const emptyForm: FormState = { name: "", price: "", category_id: "", stock: "", description: "", image: null, removeImage: false };
 
 interface ProductModalProps {
   isDark: boolean;
@@ -40,7 +41,7 @@ interface ProductModalProps {
 function ProductModal({ isDark, editing, categories, onClose, onSaved }: ProductModalProps) {
   const [form, setForm] = useState<FormState>(
     editing
-      ? { name: editing.name, price: String(editing.price), category_id: editing.category_id, stock: String(editing.stock), description: editing.description ?? "", image: null }
+      ? { name: editing.name, price: String(editing.price), category_id: editing.category_id, stock: String(editing.stock), description: editing.description ?? "", image: null, removeImage: false }
       : emptyForm
   );
   const [saving, setSaving] = useState(false);
@@ -77,6 +78,7 @@ function ProductModal({ isDark, editing, categories, onClose, onSaved }: Product
       fd.append("stock", form.stock);
       if (form.description.trim()) fd.append("description", form.description.trim());
       if (form.image) fd.append("product", form.image);
+      if (editing && form.removeImage && !form.image) fd.append("remove_image", "true");
 
       if (editing) {
         const res = await productService.updateProduct(editing.id, fd);
@@ -184,19 +186,76 @@ function ProductModal({ isDark, editing, categories, onClose, onSaved }: Product
             <label className={`block text-xs font-medium mb-1.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
               Product Image <span className="text-slate-400 font-normal">(optional)</span>
             </label>
+
+            {/* Current Image Preview (if editing and has image and not removing) */}
+            {editing?.image_url && !form.removeImage && !form.image && (
+              <div className={`mb-3 rounded-xl border p-3 ${isDark ? "border-slate-700 bg-slate-800/30" : "border-slate-200 bg-slate-50"}`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <i className={`fa-solid fa-image text-sm ${isDark ? "text-teal-400" : "text-teal-600"}`} />
+                    <span className={`text-sm ${isDark ? "text-slate-300" : "text-slate-700"}`}>Current image</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setForm(f => ({ ...f, removeImage: true }))}
+                    className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-medium transition-colors ${isDark ? "text-red-400 hover:bg-red-500/10" : "text-red-600 hover:bg-red-50"}`}
+                    disabled={saving}
+                  >
+                    <i className="fa-solid fa-trash text-[10px]" />
+                    Remove
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Upload Area */}
             <div
               onClick={() => fileRef.current?.click()}
               className={`cursor-pointer rounded-xl border-2 border-dashed px-4 py-4 text-center transition-colors ${isDark ? "border-slate-700 hover:border-teal-500/40 bg-slate-800/30" : "border-slate-200 hover:border-teal-400/60 bg-slate-50"}`}
             >
               {form.image ? (
-                <p className={`text-sm font-medium ${isDark ? "text-teal-400" : "text-teal-600"}`}>
-                  <i className="fa-solid fa-image mr-2" />
-                  {form.image.name}
-                </p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <i className="fa-solid fa-image text-teal-500" />
+                    <span className={`text-sm font-medium ${isDark ? "text-teal-400" : "text-teal-600"}`}>
+                      {form.image.name}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setForm(f => ({ ...f, image: null }));
+                      if (fileRef.current) fileRef.current.value = "";
+                    }}
+                    className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-colors ${isDark ? "text-red-400 hover:bg-red-500/10" : "text-red-600 hover:bg-red-50"}`}
+                    disabled={saving}
+                  >
+                    <i className="fa-solid fa-times text-[10px]" />
+                  </button>
+                </div>
+              ) : form.removeImage ? (
+                <div>
+                  <p className={`text-xs font-medium ${isDark ? "text-amber-400" : "text-amber-600"}`}>
+                    <i className="fa-solid fa-info-circle mr-1" />
+                    Image will be removed
+                  </p>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setForm(f => ({ ...f, removeImage: false }));
+                    }}
+                    className={`mt-2 text-xs underline ${isDark ? "text-blue-400" : "text-blue-600"}`}
+                    disabled={saving}
+                  >
+                    Keep current image
+                  </button>
+                </div>
               ) : editing?.image_url ? (
                 <p className={`text-xs ${isDark ? "text-slate-500" : "text-slate-400"}`}>
-                  <i className="fa-solid fa-image mr-1 text-teal-500" />
-                  Current image set — click to replace
+                  <i className="fa-solid fa-arrow-up-from-bracket mr-1" />
+                  Click to replace current image
                 </p>
               ) : (
                 <p className={`text-xs ${isDark ? "text-slate-500" : "text-slate-400"}`}>
@@ -205,7 +264,13 @@ function ProductModal({ isDark, editing, categories, onClose, onSaved }: Product
                 </p>
               )}
             </div>
-            <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => setForm(f => ({ ...f, image: e.target.files?.[0] ?? null }))} />
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => setForm(f => ({ ...f, image: e.target.files?.[0] ?? null, removeImage: false }))}
+            />
           </div>
 
           {/* Actions */}

@@ -136,7 +136,15 @@ export const getCategoryById = async (req: Request, res: Response): Promise<void
     // get id from request params
     const { id } = req.params;
 
-    const [rows] = await db.query<RowDataPacket[]>("SELECT id, name, description, created_at, updated_at FROM categories WHERE id = ?", [id]);
+    const [rows] = await db.query<RowDataPacket[]>(
+      `SELECT c.id, c.name, c.description, c.created_at, c.updated_at,
+              COUNT(p.id) AS product_count
+       FROM categories c
+       LEFT JOIN products p ON p.category_id = c.id
+       WHERE c.id = ?
+       GROUP BY c.id`,
+      [id]
+    );
 
     if(rows.length === 0) {
       res.status(404).json({
@@ -146,11 +154,16 @@ export const getCategoryById = async (req: Request, res: Response): Promise<void
       return;
     }
 
+    const sanitizedCategory = {
+      ...rows[0],
+      product_count: Number(rows[0]!.product_count)
+    };
+
     res.status(200).json({
       success: true,
       message: "Category found!✅",
       count: 1,
-      category: rows[0]
+      category: sanitizedCategory
     });
     return;
 
