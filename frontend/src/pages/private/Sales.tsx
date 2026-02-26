@@ -127,7 +127,7 @@ function VoidModal({ publicId, isDark, onClose, onVoided }: VoidModalProps) {
         </p>
 
         <label className={`block text-xs font-medium mb-1.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-          Void reason <span className="text-red-400">(required)</span>
+          Void reason <span className="text-red-400">(required! min 3 characters)</span>
         </label>
         <textarea
           ref={inputRef}
@@ -158,8 +158,8 @@ function VoidModal({ publicId, isDark, onClose, onVoided }: VoidModalProps) {
           </button>
           <button
             onClick={handleVoid}
-            disabled={loading || reason.length === 0}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-60 flex items-center justify-center gap-2 ${loading || reason.length === 0 ? "cursor-not-allowed" : ""}`}
+            disabled={loading || reason.length < 3}
+            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-60 flex items-center justify-center gap-2 ${loading || reason.length < 3 ? "cursor-not-allowed" : ""}`}
           >
             {loading && <i className="fa-solid fa-circle-notch animate-spin text-xs" />}
             {loading ? "Voiding…" : "Void Sale"}

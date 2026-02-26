@@ -226,7 +226,7 @@ export const updateCategory = async (req: Request, res: Response): Promise<void>
     if(fields.length === 0) {
       res.status(400).json({
         success: false,
-        error: "No field provided to udpate category"
+        error: "No field provided to update category"
       });
       return;
     }
