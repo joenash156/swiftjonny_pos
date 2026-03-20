@@ -40,9 +40,10 @@ export const createPOSSettings = async (req: Request, res: Response): Promise<vo
 
   } catch(err: unknown) {
       if (err instanceof ZodError) {
+        const firstIssue = err.issues[0]?.message ?? "Invalid request data";
         res.status(400).json({
           success: false,
-          error: "Invalid request data",
+          error: firstIssue,
           issues: err.issues,
         });
         return;
@@ -64,8 +65,9 @@ export const getActivePOSSettings = async (_req: Request, res: Response): Promis
     const POSSettings = await getPOSSettings(db);
 
     if(!POSSettings) {
-      res.status(404).json({
-        success: false,
+      // Not configured is a valid app state, not a transport error.
+      res.status(200).json({
+        success: true,
         message: "POS settings not yet configured!",
         is_set: false
       });
@@ -170,9 +172,10 @@ export const updatePOSSettings = async (req: Request, res: Response): Promise<vo
 
   } catch(err: unknown) {
       if (err instanceof ZodError) {
+        const firstIssue = err.issues[0]?.message ?? "Invalid request data";
         res.status(400).json({
           success: false,
-          error: "Invalid request data",
+          error: firstIssue,
           issues: err.issues,
         });
         return;

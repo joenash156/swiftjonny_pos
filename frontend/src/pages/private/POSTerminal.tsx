@@ -321,9 +321,24 @@ function POSTerminal() {
     try {
       const res = await posSettingsService.getSettings();
       setSettingsConfigured(res.is_set);
-      if (res.is_set && res.settings) setSettings(res.settings);
-    } catch {
-      setSettingsConfigured(false);
+      if (res.is_set && res.settings) {
+        setSettings(res.settings);
+      } else {
+        setSettings(null);
+      }
+    } catch (err: unknown) {
+      const axiosErr = err instanceof AxiosError ? err : null;
+      const isNotConfigured =
+        axiosErr?.response?.status === 404
+        && (axiosErr.response?.data?.is_set === false
+          || axiosErr.response?.data?.message === "POS settings not yet configured!");
+
+      if (isNotConfigured) {
+        setSettingsConfigured(false);
+        setSettings(null);
+      } else {
+        setSettingsConfigured(false);
+      }
     } finally {
       setSettingsLoading(false);
     }

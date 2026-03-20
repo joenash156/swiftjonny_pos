@@ -68,10 +68,23 @@ function POSSettingsPage() {
         setSettings(res.settings);
         syncFormFromSettings(res.settings);
       } else {
+        setSettings(null);
         setForm({ tax_percent: "", discount_percent: "", receipt_header: "", receipt_footer: "" });
       }
-    } catch {
-      setFetchError("Failed to load POS settings. Please try again.");
+    } catch (err: unknown) {
+      const axiosErr = err instanceof AxiosError ? err : null;
+      const isNotConfigured =
+        axiosErr?.response?.status === 404
+        && (axiosErr.response?.data?.is_set === false
+          || axiosErr.response?.data?.message === "POS settings not yet configured!");
+
+      if (isNotConfigured) {
+        setIsSet(false);
+        setSettings(null);
+        setForm({ tax_percent: "", discount_percent: "", receipt_header: "", receipt_footer: "" });
+      } else {
+        setFetchError("Failed to load POS settings. Please try again.");
+      }
     } finally {
       setPageLoading(false);
     }
@@ -83,11 +96,17 @@ function POSSettingsPage() {
     const tax = parseFloat(form.tax_percent);
     const disc = parseFloat(form.discount_percent);
     if (isNaN(tax) || tax < 0) return "Tax percent must be a non-negative number.";
+    if (tax > 100) return "Tax percent must not exceed 100.";
     if (isNaN(disc) || disc < 0) return "Discount percent must be a non-negative number.";
+    if (disc > 100) return "Discount percent must not exceed 100.";
     if (!form.receipt_header.trim() || form.receipt_header.trim().length < 2)
       return "Receipt header must be at least 2 characters.";
+    if (form.receipt_header.trim().length > 50)
+      return "Receipt header must not exceed 50 characters.";
     if (!form.receipt_footer.trim() || form.receipt_footer.trim().length < 3)
       return "Receipt footer must be at least 3 characters.";
+    if (form.receipt_footer.trim().length > 100)
+      return "Receipt footer must not exceed 100 characters.";
     return null;
   };
 
@@ -116,10 +135,10 @@ function POSSettingsPage() {
       setEditing(false);
       showToast(isSet ? "POS settings updated." : "POS settings configured!", true);
     } catch (err: unknown) {
-      const msg =
-        err instanceof AxiosError
-          ? err.response?.data?.error ?? "Failed to save settings."
-          : "Failed to save settings.";
+      const axiosErr = err instanceof AxiosError ? err : null;
+      const fallback = "Failed to save settings.";
+      const firstIssue = axiosErr?.response?.data?.issues?.[0]?.message;
+      const msg = axiosErr?.response?.data?.error ?? firstIssue ?? fallback;
       showToast(msg, false);
     } finally {
       setSaving(false);
@@ -145,12 +164,12 @@ function POSSettingsPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             className={`fixed top-5 right-5 z-70 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium shadow-lg ${toast.ok
-                ? isDark
-                  ? "bg-teal-900 text-teal-300 border border-teal-700"
-                  : "bg-teal-50 text-teal-700 border border-teal-200"
-                : isDark
-                  ? "bg-red-900/50 text-red-300 border border-red-700"
-                  : "bg-red-50 text-red-600 border border-red-200"
+              ? isDark
+                ? "bg-teal-900 text-teal-300 border border-teal-700"
+                : "bg-teal-50 text-teal-700 border border-teal-200"
+              : isDark
+                ? "bg-red-900/50 text-red-300 border border-red-700"
+                : "bg-red-50 text-red-600 border border-red-200"
               }`}
           >
             <i className={`fa-solid ${toast.ok ? "fa-check" : "fa-xmark"} text-xs`} />
@@ -187,12 +206,12 @@ function POSSettingsPage() {
         {!pageLoading && (
           <div
             className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border ${isSet
-                ? isDark
-                  ? "bg-teal-500/10 text-teal-400 border-teal-500/20"
-                  : "bg-teal-50 text-teal-700 border-teal-200"
-                : isDark
-                  ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                  : "bg-amber-50 text-amber-700 border-amber-200"
+              ? isDark
+                ? "bg-teal-500/10 text-teal-400 border-teal-500/20"
+                : "bg-teal-50 text-teal-700 border-teal-200"
+              : isDark
+                ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                : "bg-amber-50 text-amber-700 border-amber-200"
               }`}
           >
             <span
@@ -257,8 +276,8 @@ function POSSettingsPage() {
               >
                 <i className="fa-solid fa-cash-register text-amber-500 text-xl" />
               </div>
-              <h3 className={`text-base font-semibold mb-1.5 ${isDark ? "text-white" : "text-slate-900"}`}>
-                POS Not Configured
+              <h3 className={`text-base font-semibold mb-1.5 ${isDark ? "text-red-400" : "text-red-500"}`}>
+                POS Settings Not Configured!
               </h3>
               <p className={`text-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                 The POS terminal hasn't been set up yet. Please contact your store admin.
@@ -276,8 +295,8 @@ function POSSettingsPage() {
             >
               <div
                 className={`flex items-start gap-3 rounded-xl px-4 py-3 mb-5 text-sm ${isDark
-                    ? "bg-amber-500/8 border border-amber-500/20 text-amber-300"
-                    : "bg-amber-50 border border-amber-200 text-amber-700"
+                  ? "bg-amber-500/8 border border-amber-500/20 text-amber-300"
+                  : "bg-amber-50 border border-amber-200 text-amber-700"
                   }`}
               >
                 <i className="fa-solid fa-triangle-exclamation mt-0.5 shrink-0" />
@@ -357,8 +376,8 @@ function POSSettingsPage() {
                     <button
                       onClick={() => setEditing(true)}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${isDark
-                          ? "border-slate-700 text-slate-300 hover:bg-slate-800"
-                          : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                        ? "border-slate-700 text-slate-300 hover:bg-slate-800"
+                        : "border-slate-200 text-slate-600 hover:bg-slate-50"
                         }`}
                     >
                       <i className="fa-solid fa-pen text-[10px]" />
@@ -396,8 +415,8 @@ function POSSettingsPage() {
                       <button
                         onClick={handleCancelEdit} disabled={saving}
                         className={`flex-1 py-2 rounded-xl text-sm font-medium border transition-colors ${isDark
-                            ? "border-slate-700 text-slate-300 hover:bg-slate-800"
-                            : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                          ? "border-slate-700 text-slate-300 hover:bg-slate-800"
+                          : "border-slate-200 text-slate-600 hover:bg-slate-50"
                           }`}
                       >
                         Cancel
