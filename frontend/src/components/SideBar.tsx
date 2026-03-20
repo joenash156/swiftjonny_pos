@@ -67,7 +67,7 @@ function SidebarContent() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.2 }}
-              className="flex items-center gap-2 overflow-hidden"
+              className="flex items-center gap-2 mx-auto overflow-hidden"
             >
               <img src={Logo} alt="SwiftJonny" className="h-24 w-auto object-contain shrink-0" />
             </motion.div>
