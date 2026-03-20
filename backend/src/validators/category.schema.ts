@@ -7,14 +7,14 @@ export const createCategorySchema = z.object({
     .string()
     .trim()
     .min(2, "Category name must be at least 2 characters")
-    .max(20, "Category name cannot exceed 20 characters")
+    .max(200, "Category name cannot exceed 20 characters")
     .transform(capitalizeName),
   
   description: z
     .string()
     .trim()
     .min(2, "Category description must be at least 2 characters")
-    .max(100, "Category description cannot exceed 100 characters")
+    .max(300, "Category description cannot exceed 300 characters")
     .optional()
 });
 
@@ -23,7 +23,7 @@ export const updateCategorySchema = z.object({
     .string()
     .trim()
     .min(2, "Category name must be at least 2 characters")
-    .max(20, "Category name cannot exceed 20 characters")
+    .max(200, "Category name cannot exceed 200 characters")
     .transform(capitalizeName)
     .optional(),
   
@@ -31,7 +31,7 @@ export const updateCategorySchema = z.object({
     .string()
     .trim()
     .min(2, "Category description must be at least 2 characters")
-    .max(100, "Category description cannot exceed 100 characters")
+    .max(300, "Category description cannot exceed 300 characters")
     .optional()
 })
 
