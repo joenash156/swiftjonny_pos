@@ -111,7 +111,7 @@ function ConfirmModal({
               {cart.map((entry) => (
                 <div key={entry.product.id} className="flex justify-between items-start gap-2">
                   <span className={`text-xs flex-1 truncate ${isDark ? "text-slate-300" : "text-slate-700"}`}>
-                    {entry.product.name} x {entry.quantity}
+                    {entry.product.name} x {entry.quantity % 1 === 0 ? entry.quantity : entry.quantity.toFixed(1)}
                   </span>
                   <span className={`text-xs font-semibold shrink-0 ${isDark ? "text-white" : "text-slate-900"}`}>
                     {fmt(entry.product.price * entry.quantity)}
@@ -368,16 +368,16 @@ function POSTerminal() {
       if (idx >= 0) {
         const updated = [...prev];
         const entry = updated[idx]!;
-        if (entry.quantity < product.stock) updated[idx] = { ...entry, quantity: entry.quantity + 1 };
+        if (entry.quantity < product.stock) updated[idx] = { ...entry, quantity: parseFloat((entry.quantity + 0.5).toFixed(1)) };
         return updated;
       }
-      return [...prev, { product, quantity: 1 }];
+      return [...prev, { product, quantity: 0.5 }];
     });
   };
 
   const setQty = (productId: string, qty: number) => {
     setCart((prev) =>
-      prev.map((e) => e.product.id === productId ? { ...e, quantity: Math.max(1, Math.min(qty, e.product.stock)) } : e)
+      prev.map((e) => e.product.id === productId ? { ...e, quantity: Math.max(0.5, Math.min(qty, e.product.stock)) } : e)
     );
   };
 
@@ -588,8 +588,8 @@ function POSTerminal() {
                   quantity={entry.quantity}
                   maxQty={entry.product.stock}
                   isDark={isDark}
-                  onIncrement={() => setQty(entry.product.id, entry.quantity + 1)}
-                  onDecrement={() => setQty(entry.product.id, entry.quantity - 1)}
+                  onIncrement={() => setQty(entry.product.id, parseFloat((entry.quantity + 0.5).toFixed(1)))}
+                  onDecrement={() => setQty(entry.product.id, parseFloat((entry.quantity - 0.5).toFixed(1)))}
                   onRemove={() => removeFromCart(entry.product.id)}
                 />
               ))

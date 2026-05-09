@@ -53,7 +53,7 @@ function AdjustModal({ isDark, product, onClose, onAdjusted }: AdjustModalProps)
     return () => document.removeEventListener("keydown", handler);
   }, [onClose]);
 
-  const qty = parseInt(quantity) || 0;
+  const qty = parseFloat(quantity) || 0;
   const previewStock =
     adjType === "add"
       ? product.stock + qty
@@ -66,7 +66,7 @@ function AdjustModal({ isDark, product, onClose, onAdjusted }: AdjustModalProps)
       setError(
         adjType === "remove" && qty > product.stock
           ? `Cannot remove ${qty} unit(s) — current stock is only ${product.stock}.`
-          : "Enter a valid quantity (at least 1)."
+          : "Enter a valid quantity (greater than 0)."
       );
       return;
     }
@@ -175,7 +175,8 @@ function AdjustModal({ isDark, product, onClose, onAdjusted }: AdjustModalProps)
             </label>
             <input
               type="number"
-              min="1"
+              min="0"
+              step="0.5"
               value={quantity}
               onChange={(e) => { setQuantity(e.target.value); setError(null); }}
               placeholder="Enter quantity…"
@@ -191,18 +192,18 @@ function AdjustModal({ isDark, product, onClose, onAdjusted }: AdjustModalProps)
               <p className={`text-xs font-medium mb-2 ${isDark ? "text-slate-400" : "text-slate-500"}`}>Preview</p>
               <div className="flex items-center gap-3">
                 <div className="text-center">
-                  <p className={`text-lg font-bold ${isDark ? "text-slate-300" : "text-slate-700"}`}>{product.stock}</p>
+                  <p className={`text-lg font-bold ${isDark ? "text-slate-300" : "text-slate-700"}`}>{product.stock % 1 === 0 ? product.stock : product.stock.toFixed(1)}</p>
                   <p className={`text-[10px] ${isDark ? "text-slate-600" : "text-slate-400"}`}>Current</p>
                 </div>
                 <div className="flex-1 flex flex-col items-center gap-0.5">
                   <span className={`text-xs font-semibold ${isRemove ? "text-red-500" : "text-teal-500"}`}>
-                    {isRemove ? "−" : "+"}{qty}
+                    {isRemove ? "−" : "+"}{qty % 1 === 0 ? qty : qty.toFixed(1)}
                   </span>
                   <div className={`w-full h-0.5 rounded-full ${isDark ? "bg-slate-700" : "bg-slate-200"}`} />
                 </div>
                 <div className="text-center">
                   <p className={`text-lg font-bold ${previewStock === 0 ? "text-red-500" : previewStock <= LOW_STOCK_THRESHOLD ? "text-amber-500" : isDark ? "text-teal-400" : "text-teal-600"}`}>
-                    {previewStock}
+                    {previewStock % 1 === 0 ? previewStock : previewStock.toFixed(1)}
                   </p>
                   <p className={`text-[10px] ${isDark ? "text-slate-600" : "text-slate-400"}`}>New Stock</p>
                 </div>
@@ -670,7 +671,7 @@ export default function Inventory() {
                           {fmtCurrency(product.unit_price)}
                         </td>
                         <td className="px-3 py-3.5 whitespace-nowrap">
-                          <span className={`text-base font-bold ${stockNumColor(product.stock)}`}>{product.stock}</span>
+                          <span className={`text-base font-bold ${stockNumColor(product.stock)}`}>{product.stock % 1 === 0 ? product.stock : product.stock.toFixed(1)}</span>
                           <span className={`text-xs ml-1 ${isDark ? "text-slate-600" : "text-slate-400"}`}>units</span>
                         </td>
                         <td className="px-3 py-3.5 whitespace-nowrap font-semibold">
@@ -754,7 +755,7 @@ export default function Inventory() {
                     <div className={`flex items-center justify-between mt-3 pt-3 border-t ${isDark ? "border-slate-700/60" : "border-slate-100"}`}>
                       <div>
                         <p className={`text-[11px] uppercase font-medium tracking-wide ${isDark ? "text-slate-600" : "text-slate-400"}`}>Stock</p>
-                        <p className={`text-xl font-bold mt-0.5 ${stockNumColor(product.stock)}`}>{product.stock}</p>
+                        <p className={`text-xl font-bold mt-0.5 ${stockNumColor(product.stock)}`}>{product.stock % 1 === 0 ? product.stock : product.stock.toFixed(1)}</p>
                       </div>
                       <div className="text-right">
                         <p className={`text-[11px] uppercase font-medium tracking-wide ${isDark ? "text-slate-600" : "text-slate-400"}`}>Value</p>

@@ -27,8 +27,8 @@ export function ProductCard({ product, cartQty, isDark, onAdd }: ProductCardProp
   return (
     <div
       className={`relative flex flex-col rounded-2xl border overflow-hidden transition-all duration-200 ${isDark
-          ? "bg-slate-900/70 border-slate-800 hover:border-slate-700"
-          : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm"
+        ? "bg-slate-900/70 border-slate-800 hover:border-slate-700"
+        : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm"
         } ${disabled ? "opacity-60" : ""}`}
     >
       {/* Image */}
@@ -74,15 +74,15 @@ export function ProductCard({ product, cartQty, isDark, onAdd }: ProductCardProp
           </span>
           <span
             className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${isOutOfStock
-                ? isDark
-                  ? "bg-red-500/10 text-red-400"
-                  : "bg-red-50 text-red-500"
-                : isDark
-                  ? "bg-slate-800 text-slate-500"
-                  : "bg-slate-100 text-slate-500"
+              ? isDark
+                ? "bg-red-500/10 text-red-400"
+                : "bg-red-50 text-red-500"
+              : isDark
+                ? "bg-slate-800 text-slate-500"
+                : "bg-slate-100 text-slate-500"
               }`}
           >
-            {isOutOfStock ? "Out of stock" : `${product.stock} left`}
+            {isOutOfStock ? "Out of stock" : `${product.stock % 1 === 0 ? product.stock : product.stock.toFixed(1)} left`}
           </span>
         </div>
 
@@ -90,20 +90,20 @@ export function ProductCard({ product, cartQty, isDark, onAdd }: ProductCardProp
           disabled={disabled}
           onClick={onAdd}
           className={`mt-2 w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold transition-colors ${cartQty > 0
-              ? "bg-teal-600 hover:bg-teal-700 text-white"
-              : disabled
-                ? isDark
-                  ? "bg-slate-800 text-slate-600 cursor-not-allowed"
-                  : "bg-slate-100 text-slate-400 cursor-not-allowed"
-                : isDark
-                  ? "bg-slate-800 hover:bg-teal-600 text-slate-300 hover:text-white"
-                  : "bg-slate-100 hover:bg-teal-600 text-slate-700 hover:text-white"
+            ? "bg-teal-600 hover:bg-teal-700 text-white"
+            : disabled
+              ? isDark
+                ? "bg-slate-800 text-slate-600 cursor-not-allowed"
+                : "bg-slate-100 text-slate-400 cursor-not-allowed"
+              : isDark
+                ? "bg-slate-800 hover:bg-teal-600 text-slate-300 hover:text-white"
+                : "bg-slate-100 hover:bg-teal-600 text-slate-700 hover:text-white"
             }`}
         >
           {cartQty > 0 ? (
             <>
               <i className="fa-solid fa-check text-[10px]" />
-              In cart ({cartQty})
+              In cart ({cartQty % 1 === 0 ? cartQty : cartQty.toFixed(1)})
             </>
           ) : disabled ? (
             isOutOfStock ? "Out of stock" : "Max reached"

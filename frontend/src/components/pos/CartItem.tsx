@@ -32,8 +32,8 @@ export function CartItem({
       <button
         onClick={onRemove}
         className={`mt-0.5 w-6 h-6 flex items-center justify-center rounded-full shrink-0 transition-colors ${isDark
-            ? "text-slate-600 hover:bg-red-500/10 hover:text-red-400"
-            : "text-slate-300 hover:bg-red-50 hover:text-red-400"
+          ? "text-slate-600 hover:bg-red-500/10 hover:text-red-400"
+          : "text-slate-300 hover:bg-red-50 hover:text-red-400"
           }`}
         title="Remove item"
       >
@@ -69,10 +69,10 @@ export function CartItem({
         >
           <button
             onClick={onDecrement}
-            disabled={quantity <= 1}
+            disabled={quantity <= 0.5}
             className={`px-2.5 py-1 text-sm transition-colors disabled:opacity-40 ${isDark
-                ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+              ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
+              : "bg-slate-50 text-slate-600 hover:bg-slate-100"
               }`}
           >
             −
@@ -81,14 +81,14 @@ export function CartItem({
             className={`px-3 py-1 text-sm font-semibold min-w-8 text-center ${isDark ? "bg-slate-900 text-white" : "bg-white text-slate-900"
               }`}
           >
-            {quantity}
+            {quantity % 1 === 0 ? quantity : quantity.toFixed(1)}
           </span>
           <button
             onClick={onIncrement}
             disabled={quantity >= maxQty}
             className={`px-2.5 py-1 text-sm transition-colors disabled:opacity-40 ${isDark
-                ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+              ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
+              : "bg-slate-50 text-slate-600 hover:bg-slate-100"
               }`}
           >
             +

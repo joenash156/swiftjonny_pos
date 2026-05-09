@@ -14,8 +14,7 @@ export const createSaleSchema = z.object({
 
         quantity: z
           .number()
-          .int("Quantity must be an integer")
-          .min(1, "Quantity must be at least 1"),
+          .positive("Quantity must be greater than 0"),
       })
     )
     .min(1, "At least one product is required"),

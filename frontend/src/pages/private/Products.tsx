@@ -59,7 +59,7 @@ function ProductModal({ isDark, editing, categories, onClose, onSaved }: Product
     const price = parseFloat(form.price);
     if (isNaN(price) || price <= 0) return "Price must be a positive number.";
     if (!form.category_id) return "Please select a category.";
-    const stock = parseInt(form.stock);
+    const stock = parseFloat(form.stock);
     if (isNaN(stock) || stock < 0) return "Stock must be 0 or more.";
     return null;
   };
@@ -158,7 +158,7 @@ function ProductModal({ isDark, editing, categories, onClose, onSaved }: Product
               <label className={`block text-xs font-medium mb-1.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                 Stock <span className="text-red-400">*</span>
               </label>
-              <input type="number" min="0" value={form.stock} onChange={(e) => setForm(f => ({ ...f, stock: e.target.value }))} placeholder="0" className={field} disabled={saving} />
+              <input type="number" step="0.5" min="0" value={form.stock} onChange={(e) => setForm(f => ({ ...f, stock: e.target.value }))} placeholder="0" className={field} disabled={saving} />
             </div>
           </div>
 
@@ -323,9 +323,9 @@ function ProductViewModal({ isDark, product: initial, onClose }: ProductViewModa
 
   const stockBadge = (stock: number) =>
     stock > 10
-      ? <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${isDark ? "bg-teal-500/10 text-teal-400" : "bg-teal-50 text-teal-700"}`}><span className="w-1.5 h-1.5 rounded-full bg-teal-500 shrink-0" />{stock}</span>
+      ? <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${isDark ? "bg-teal-500/10 text-teal-400" : "bg-teal-50 text-teal-700"}`}><span className="w-1.5 h-1.5 rounded-full bg-teal-500 shrink-0" />{stock % 1 === 0 ? stock : stock.toFixed(1)}</span>
       : stock > 0
-        ? <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${isDark ? "bg-amber-500/10 text-amber-400" : "bg-amber-50 text-amber-700"}`}><span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />{stock} low</span>
+        ? <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${isDark ? "bg-amber-500/10 text-amber-400" : "bg-amber-50 text-amber-700"}`}><span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />{stock % 1 === 0 ? stock : stock.toFixed(1)} low</span>
         : <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${isDark ? "bg-red-500/10 text-red-400" : "bg-red-50 text-red-600"}`}><span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />Out of stock</span>;
 
   return (

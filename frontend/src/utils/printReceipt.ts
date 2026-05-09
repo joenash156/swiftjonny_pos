@@ -39,7 +39,7 @@ export function printSaleReceipt(receipt: ReceiptData): void {
       (item) => `
       <tr>
         <td style="padding:3px 0">${item.product_name}</td>
-        <td style="padding:3px 0;text-align:center">${item.quantity}</td>
+        <td style="padding:3px 0;text-align:center">${item.quantity % 1 === 0 ? item.quantity : item.quantity.toFixed(1)}</td>
         <td style="padding:3px 0;text-align:right">${fmt(item.product_price)}</td>
         <td style="padding:3px 0;text-align:right">${fmt(item.price)}</td>
       </tr>`

@@ -102,7 +102,7 @@ export default function Homepage() {
           className="max-w-3xl mx-auto px-5 pt-20 pb-16 text-center"
         >
           {/* Badge */}
-          <div
+          {/* <div
             className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-6 border ${isDark
                 ? "bg-teal-500/10 text-teal-400 border-teal-500/20"
                 : "bg-teal-50 text-teal-600 border-teal-200"
@@ -110,7 +110,7 @@ export default function Homepage() {
           >
             <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse" />
             Built for modern retail
-          </div>
+          </div> */}
 
           {/* Heading */}
           <h1

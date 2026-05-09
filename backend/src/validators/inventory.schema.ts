@@ -8,8 +8,7 @@ export const adjustStockSchema = z.object({
   quantity: z
     .coerce
     .number()
-    .int("Quantity must be a whole number")
-    .positive("Quantity must be at least 1"),
+    .positive("Quantity must be greater than 0"),
 
   reason: z
     .string()
